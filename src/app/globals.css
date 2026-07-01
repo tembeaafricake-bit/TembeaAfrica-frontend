@@ -1,0 +1,108 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --safari-green: #1B4332;
+  --safari-mid: #2D6A4F;
+  --safari-light: #40916C;
+  --golden: #D4A017;
+  --golden-light: #F4C842;
+  --ocean: #185FA5;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body { font-family: 'Inter', system-ui, sans-serif; }
+
+.font-display { font-family: 'Playfair Display', Georgia, serif; }
+
+/* Hero specific styles */
+.hero-title { font-family: 'Playfair Display', Georgia, serif; font-weight: 800; letter-spacing: -0.02em; line-height: 0.9; text-transform: none; text-wrap: balance; }
+.hero-title span { display:block; }
+.hero-title .part-top { display: inline-flex; gap: 1rem; align-items: baseline; justify-content: center; }
+.hero-title .part-1 { color: #ffffff; font-size: clamp(2.8rem, 8vw, 4.8rem); }
+.hero-title .part-2 { color: var(--golden); font-size: clamp(2.8rem, 8vw, 4.8rem); }
+.hero-title .part-3 { color: #ffffff; font-size: clamp(2.2rem, 6.8vw, 4rem); }
+.hero-subtitle { color: rgba(255,255,255,0.85); }
+.hero-stats .num { font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 1.45rem; }
+@media (min-width: 768px) {
+  .hero-title .part-1, .hero-title .part-3 { font-size: 4.2rem; }
+  .hero-title .part-2 { font-size: 5.4rem; }
+  .hero-stats .num { font-size: 1.8rem; }
+}
+
+/* tighten heading spacing on large screens */
+@media (min-width: 1024px) {
+  .hero-title { line-height: 0.88; }
+  .hero-title .part-1, .hero-title .part-3 { font-size: 5.2rem; }
+  .hero-title .part-2 { font-size: 7.2rem; }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #40916C; border-radius: 3px; }
+
+/* Glassmorphism */
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.glass-dark {
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Hero gradient overlay */
+.hero-overlay {
+  background: linear-gradient(to bottom, rgba(13,43,30,0.3) 0%, rgba(13,43,30,0.7) 100%);
+}
+
+/* Card hover effects */
+.card-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(27, 67, 50, 0.15);
+}
+
+/* Line clamp utilities */
+.line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
+@layer utilities {
+  .text-balance { text-wrap: balance; }
+  .animate-fade-in { animation: fadeIn 0.5s ease-in-out; }
+  .animate-slide-up { animation: slideUp 0.4s ease-out; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Pills and search box tweaks */
+.pill-list { display:flex; gap:0.45rem; flex-wrap:wrap; justify-content:center; margin-top:0.85rem }
+.pill { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.95); padding:0.35rem 0.75rem; border-radius:9999px; font-weight:600; font-size:0.82rem; border:1px solid rgba(255,255,255,0.06); box-shadow: 0 6px 18px rgba(11,29,18,0.12); transition: transform .18s ease, background .18s ease; }
+.pill:hover { transform: translateY(-2px); background: rgba(255,255,255,0.12); }
+.search-card { backdrop-filter: blur(6px); background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); }
+
+/* Hero stats */
+.hero-stats { display:flex; gap:1.25rem; align-items:center; justify-content:center; margin-top:1.25rem }
+.hero-stats .label { color: rgba(255,255,255,0.75); font-size:0.78rem }
+.hero-stats .num { color: #fff; font-size:1.35rem }
+
