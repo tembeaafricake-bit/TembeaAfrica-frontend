@@ -76,7 +76,7 @@ export function Hero() {
       {/* Content */}
       <div className="relative z-10 w-full max-w-5xl mx-auto px-4 text-center pt-20 pb-12">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-display font-bold leading-tight text-center text-white mb-4">
+          <h1 className="text-2.5xl sm:text-3.5xl lg:text-4.5xl xl:text-5.5xl font-display font-bold leading-tight text-center text-white mb-4">
             <span className="block">Discover. <span className="text-golden-400 text-[0.95em]">Book.</span></span>
             <span className="block">Explore Africa.</span>
           </h1>
