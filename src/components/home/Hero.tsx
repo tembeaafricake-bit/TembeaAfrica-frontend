@@ -40,15 +40,6 @@ export function Hero() {
 
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
-      {/* Top search icon */}
-      <button
-        onClick={handleSearch}
-        className="absolute right-4 top-4 z-20 flex items-center justify-center rounded-full border border-white/20 bg-white/10 p-3 text-white backdrop-blur-md transition hover:bg-white/20 sm:right-6 sm:top-6"
-        aria-label="Search experiences"
-      >
-        <Search className="h-5 w-5" />
-      </button>
-
       {/* Background Image */}
       <Image src="https://res.cloudinary.com/doxwolgpe/image/upload/v1781763818/TembeaAfricaHS3_mriji0.png" alt="Tembea Africa Hero" fill sizes="100vw" className="object-cover" priority />
       <div className="absolute inset-0 bg-black/40" />
