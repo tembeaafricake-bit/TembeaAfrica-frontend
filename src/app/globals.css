@@ -5,19 +5,25 @@
 @tailwind utilities;
 
 :root {
-  --safari-green: #1B4332;
-  --safari-mid: #2D6A4F;
-  --safari-light: #40916C;
-  --golden: #D4A017;
-  --golden-light: #F4C842;
-  --ocean: #185FA5;
+  --safari-green: #1f2937;
+  --safari-mid: #374151;
+  --safari-light: #6b7280;
+  --golden: #b08b4d;
+  --golden-light: #d4b77a;
+  --ocean: #4b5563;
+  --charcoal-950: #111827;
+  --charcoal-900: #1f2937;
+  --charcoal-800: #374151;
+  --charcoal-700: #4b5563;
+  --charcoal-100: #f3f4f6;
+  --charcoal-50: #f9fafb;
 }
 
 * { box-sizing: border-box; }
 
 html { scroll-behavior: smooth; }
 
-body { font-family: 'Inter', system-ui, sans-serif; }
+body { font-family: 'Inter', system-ui, sans-serif; background: var(--charcoal-50); color: var(--charcoal-900); }
 
 .font-display { font-family: 'Playfair Display', Georgia, serif; }
 
@@ -64,7 +70,7 @@ body { font-family: 'Inter', system-ui, sans-serif; }
 
 /* Hero gradient overlay */
 .hero-overlay {
-  background: linear-gradient(to bottom, rgba(13,43,30,0.3) 0%, rgba(13,43,30,0.7) 100%);
+  background: linear-gradient(to bottom, rgba(17,24,39,0.25) 0%, rgba(17,24,39,0.75) 100%);
 }
 
 /* Card hover effects */
@@ -73,7 +79,7 @@ body { font-family: 'Inter', system-ui, sans-serif; }
 }
 .card-hover:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(27, 67, 50, 0.15);
+  box-shadow: 0 12px 40px rgba(17, 24, 39, 0.12);
 }
 
 /* Line clamp utilities */
