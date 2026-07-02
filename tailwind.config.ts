@@ -11,16 +11,16 @@ const config: Config = {
     extend: {
       colors: {
         safari: {
-          50:  '#f0faf4',
-          100: '#dcf1e6',
-          200: '#bbe3ce',
-          300: '#8acead',
-          400: '#56b383',
-          500: '#339762',
-          600: '#237a4d',
-          700: '#1B4332',
-          800: '#163627',
-          900: '#0d2b1e',
+          50:  '#f8fafc',
+          100: '#f1f5f9',
+          200: '#e2e8f0',
+          300: '#cbd5e1',
+          400: '#94a3b8',
+          500: '#64748b',
+          600: '#475569',
+          700: '#1f2937',
+          800: '#111827',
+          900: '#020617',
         },
         golden: {
           50:  '#fffbeb',
@@ -47,8 +47,8 @@ const config: Config = {
         display: ['Playfair Display', 'Georgia', 'serif'],
       },
       backgroundImage: {
-        'safari-gradient': 'linear-gradient(135deg, #0d2b1e 0%, #1B4332 40%, #2D6A4F 100%)',
-        'golden-gradient': 'linear-gradient(135deg, #D4A017 0%, #F4C842 100%)',
+        'safari-gradient': 'linear-gradient(135deg, #111827 0%, #1f2937 45%, #374151 100%)',
+        'golden-gradient': 'linear-gradient(135deg, #b08b4d 0%, #d4b77a 100%)',
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',
