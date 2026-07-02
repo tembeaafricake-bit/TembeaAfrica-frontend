@@ -39,9 +39,17 @@ export function Hero() {
   }
 
   return (
-    <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
+    <section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden">
       {/* Background Image */}
-      <Image src="https://res.cloudinary.com/doxwolgpe/image/upload/v1781763818/TembeaAfricaHS3_mriji0.png" alt="Tembea Africa Hero" fill sizes="100vw" className="object-cover" priority />
+      <Image
+        src="https://res.cloudinary.com/doxwolgpe/image/upload/v1781763818/TembeaAfricaHS3_mriji0.png"
+        alt="Tembea Africa Hero"
+        fill
+        sizes="100vw"
+        priority
+        className="object-cover object-center sm:object-cover"
+        style={{ objectPosition: 'center center' }}
+      />
       <div className="absolute inset-0 bg-black/40" />
       <div className="absolute inset-0 opacity-10"
         style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.15) 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
@@ -85,13 +93,6 @@ export function Hero() {
             Book safaris, stays, local guides, and unforgettable experiences across Kenya and Tanzania — all in one place.
           </p>
         </motion.div>
-
-        {/* Pills */}
-        <div className="pill-list">
-          {['Maasai Mara Safari','Diani Beach','Kilimanjaro','Zanzibar','Amboseli','Watamu'].map(p => (
-            <button key={p} className="pill" onClick={() => { setQuery(p); handleSearch() }}>{p}</button>
-          ))}
-        </div>
 
         {/* Stats */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}
