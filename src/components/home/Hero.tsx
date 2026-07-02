@@ -40,6 +40,15 @@ export function Hero() {
 
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
+      {/* Top search icon */}
+      <button
+        onClick={handleSearch}
+        className="absolute right-4 top-4 z-20 flex items-center justify-center rounded-full border border-white/20 bg-white/10 p-3 text-white backdrop-blur-md transition hover:bg-white/20 sm:right-6 sm:top-6"
+        aria-label="Search experiences"
+      >
+        <Search className="h-5 w-5" />
+      </button>
+
       {/* Background Image */}
       <Image src="https://res.cloudinary.com/doxwolgpe/image/upload/v1781763818/TembeaAfricaHS3_mriji0.png" alt="Tembea Africa Hero" fill sizes="100vw" className="object-cover" priority />
       <div className="absolute inset-0 bg-black/40" />
@@ -86,76 +95,6 @@ export function Hero() {
           </p>
         </motion.div>
 
-        {/* Search Box */}
-        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }}
-          className="search-card rounded-2xl p-1.5 shadow-2xl max-w-3xl mx-auto">
-          <div className="flex flex-col md:flex-row gap-2">
-            {/* Destination */}
-            <div className="flex-1 relative">
-              <div className="flex items-center gap-2 px-4 py-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors cursor-text">
-                <MapPin className="w-5 h-5 text-safari-600 flex-shrink-0" />
-                <div className="flex-1 text-left">
-                  <div className="text-xs text-gray-400 font-medium">Where to?</div>
-                  <input
-                    type="text"
-                    placeholder="Destinations, tours, stays..."
-                    value={query}
-                    onChange={(e) => { setQuery(e.target.value); setShowSuggestions(true) }}
-                    onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-                    className="w-full text-sm font-medium bg-transparent outline-none text-gray-900 dark:text-white placeholder-gray-400"
-                  />
-                </div>
-              </div>
-              {/* Autocomplete */}
-              {showSuggestions && suggestions.length > 0 && (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 z-50 overflow-hidden">
-                  {suggestions.slice(0, 5).map((s) => (
-                    <button key={s} onMouseDown={() => { setQuery(s); setShowSuggestions(false) }}
-                      className="w-full flex items-center gap-3 px-4 py-3 text-sm text-left text-gray-700 dark:text-gray-200 hover:bg-safari-50 dark:hover:bg-safari-900/20 transition-colors">
-                      <MapPin className="w-4 h-4 text-safari-600" /> {s}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div className="hidden md:block w-px bg-gray-200 dark:bg-gray-700 my-2" />
-
-            {/* Category */}
-            <div className="relative md:w-44">
-              <div className="flex items-center gap-2 px-4 py-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                <div className="flex-1">
-                  <div className="text-xs text-gray-400 font-medium">Category</div>
-                  <select value={category} onChange={(e) => setCategory(e.target.value)}
-                    className="w-full text-sm font-medium bg-transparent outline-none text-gray-900 dark:text-white cursor-pointer">
-                    {CATEGORIES.map(c => <option key={c}>{c}</option>)}
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            <div className="hidden md:block w-px bg-gray-200 dark:bg-gray-700 my-2" />
-
-            {/* Guests */}
-            <div className="md:w-32">
-              <div className="flex items-center gap-2 px-4 py-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                <Users className="w-5 h-5 text-safari-600 flex-shrink-0" />
-                <div>
-                  <div className="text-xs text-gray-400 font-medium">Guests</div>
-                  <select value={guests} onChange={(e) => setGuests(Number(e.target.value))}
-                    className="text-sm font-medium bg-transparent outline-none text-gray-900 dark:text-white cursor-pointer">
-                    {[1,2,3,4,5,6,8,10].map(n => <option key={n} value={n}>{n} {n === 1 ? 'guest' : 'guests'}</option>)}
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            <button onClick={handleSearch}
-              className="flex items-center gap-2 bg-safari-700 hover:bg-safari-800 text-white px-5 py-2.5 rounded-xl font-medium text-sm transition-colors whitespace-nowrap">
-              <Search className="w-4 h-4" /> Search
-            </button>
-          </div>
-        </motion.div>
         {/* Pills */}
         <div className="pill-list">
           {['Maasai Mara Safari','Diani Beach','Kilimanjaro','Zanzibar','Amboseli','Watamu'].map(p => (
