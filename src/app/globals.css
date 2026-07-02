@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -17,19 +17,19 @@
 
 html { scroll-behavior: smooth; }
 
-body { font-family: 'Montserrat', system-ui, sans-serif; }
+body { font-family: 'Inter', system-ui, sans-serif; }
 
-.font-display { font-family: 'Montserrat', system-ui, sans-serif; }
+.font-display { font-family: 'Playfair Display', Georgia, serif; }
 
 /* Hero specific styles */
-.hero-title { font-family: 'Montserrat', system-ui, sans-serif; font-weight: 800; letter-spacing: -0.02em; line-height: 0.9; text-transform: none; text-wrap: balance; }
+.hero-title { font-family: 'Playfair Display', Georgia, serif; font-weight: 800; letter-spacing: -0.02em; line-height: 0.9; text-transform: none; text-wrap: balance; }
 .hero-title span { display:block; }
 .hero-title .part-top { display: inline-flex; gap: 1rem; align-items: baseline; justify-content: center; }
 .hero-title .part-1 { color: #ffffff; font-size: clamp(2.8rem, 8vw, 4.8rem); }
 .hero-title .part-2 { color: var(--golden); font-size: clamp(2.8rem, 8vw, 4.8rem); }
 .hero-title .part-3 { color: #ffffff; font-size: clamp(2.2rem, 6.8vw, 4rem); }
 .hero-subtitle { color: rgba(255,255,255,0.85); }
-.hero-stats .num { font-family: 'Montserrat', system-ui, sans-serif; font-weight: 700; font-size: 1.45rem; }
+.hero-stats .num { font-family: 'Playfair Display', Georgia, serif; font-weight: 700; font-size: 1.45rem; }
 @media (min-width: 768px) {
   .hero-title .part-1, .hero-title .part-3 { font-size: 4.2rem; }
   .hero-title .part-2 { font-size: 5.4rem; }
