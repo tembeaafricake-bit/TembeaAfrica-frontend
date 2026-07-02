@@ -5,25 +5,28 @@
 @tailwind utilities;
 
 :root {
-  --safari-green: #1f2937;
-  --safari-mid: #374151;
-  --safari-light: #6b7280;
+  --safari-green: #111827;
+  --safari-mid: #1f2937;
+  --safari-light: #4b5563;
   --golden: #b08b4d;
   --golden-light: #d4b77a;
-  --ocean: #4b5563;
+  --ocean: #6b7280;
   --charcoal-950: #111827;
   --charcoal-900: #1f2937;
   --charcoal-800: #374151;
   --charcoal-700: #4b5563;
   --charcoal-100: #f3f4f6;
   --charcoal-50: #f9fafb;
+  --paper: #ffffff;
+  --paper-soft: #fcfcfd;
+  --line: #e5e7eb;
 }
 
 * { box-sizing: border-box; }
 
 html { scroll-behavior: smooth; }
 
-body { font-family: 'Inter', system-ui, sans-serif; background: var(--charcoal-50); color: var(--charcoal-900); }
+body { font-family: 'Inter', system-ui, sans-serif; background: var(--paper); color: var(--charcoal-900); }
 
 .font-display { font-family: 'Playfair Display', Georgia, serif; }
 
@@ -52,20 +55,20 @@ body { font-family: 'Inter', system-ui, sans-serif; background: var(--charcoal-5
 /* Custom scrollbar */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #40916C; border-radius: 3px; }
+::-webkit-scrollbar-thumb { background: #c7cdd6; border-radius: 3px; }
 
 /* Glassmorphism */
 .glass {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(17, 24, 39, 0.08);
 }
 
 .glass-dark {
-  background: rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(17, 24, 39, 0.82);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 /* Hero gradient overlay */
@@ -79,7 +82,7 @@ body { font-family: 'Inter', system-ui, sans-serif; background: var(--charcoal-5
 }
 .card-hover:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(17, 24, 39, 0.12);
+  box-shadow: 0 14px 40px rgba(17, 24, 39, 0.08);
 }
 
 /* Line clamp utilities */
