@@ -317,7 +317,7 @@ export function Footer() {
           ))}
         </div>
         <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-white/40 text-sm">© 2025 Tembea Africa Ltd. All rights reserved. Nairobi, Kenya.</p>
+          <p className="text-white/40 text-sm">© 2026 Tembea Africa Ltd. All rights reserved. Nairobi, Kenya.</p>
           <div className="flex gap-6">
             {['Privacy Policy', 'Terms of Service', 'Cookie Policy'].map(l => (
               <a key={l} href="#" className="text-white/40 text-xs hover:text-white/70 transition-colors">{l}</a>

@@ -114,9 +114,9 @@ export default function AIPlanner() {
     <>
       <Navbar />
       <main className="min-h-screen pt-16 bg-gray-50 dark:bg-gray-950">
-        <div className="bg-safari-gradient py-14 px-4 text-center">
-          <div className="inline-flex items-center gap-2 bg-golden-500/20 border border-golden-400/30 text-golden-300 text-sm px-4 py-2 rounded-full mb-4">
-            <Sparkles className="w-4 h-4" /> Powered by AI
+        <div className="bg-gradient-to-r from-blue-600 to-blue-800 py-14 px-4 text-center">
+          <div className="inline-flex items-center gap-2 bg-blue-400/20 border border-blue-300/30 text-blue-200 text-sm px-4 py-2 rounded-full mb-4">
+            Powered by AI
           </div>
           <h1 className="font-display text-4xl md:text-5xl font-bold text-white mb-3">AI Travel Planner</h1>
           <p className="text-white/70 max-w-xl mx-auto">Describe your dream African trip and get a fully personalised, bookable itinerary in seconds.</p>
