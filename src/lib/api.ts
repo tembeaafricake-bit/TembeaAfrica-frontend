@@ -49,7 +49,7 @@ export const authApi = {
   me: () => api.get('/auth/me'),
   forgotPassword: (email: string) => api.post('/auth/forgot-password', { email }),
   resetPassword: (token: string, password: string) => api.post('/auth/reset-password', { token, password }),
-  googleAuth: () => `${API_URL}/api/auth/google`,
+  googleAuth: () => `${API_URL}/auth/google`,
 }
 
 // Destinations
