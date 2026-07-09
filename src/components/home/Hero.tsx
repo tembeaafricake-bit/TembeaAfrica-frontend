@@ -57,17 +57,17 @@ export function Hero() {
       {/* Animated landscape SVG */}
       <div className="absolute bottom-0 left-0 right-0 opacity-30">
         <svg viewBox="0 0 1440 300" xmlns="http://www.w3.org/2000/svg" className="w-full">
-          <path d="M0 200 Q200 120 400 180 Q600 240 800 160 Q1000 80 1200 140 Q1320 170 1440 120 L1440 300 L0 300Z" fill="#4b5563" />
-          <path d="M0 240 Q360 180 720 220 Q1080 260 1440 200 L1440 300 L0 300Z" fill="#374151" />
+          <path d="M0 200 Q200 120 400 180 Q600 240 800 160 Q1000 80 1200 140 Q1320 170 1440 120 L1440 300 L0 300Z" fill="#2D6A4F" />
+          <path d="M0 240 Q360 180 720 220 Q1080 260 1440 200 L1440 300 L0 300Z" fill="#1B4332" />
           {/* Trees */}
-          <rect x="120" y="160" width="6" height="60" fill="#374151" />
-          <ellipse cx="123" cy="160" rx="28" ry="22" fill="#6b7280" />
-          <rect x="350" y="140" width="8" height="80" fill="#374151" />
-          <ellipse cx="354" cy="140" rx="36" ry="28" fill="#6b7280" />
-          <rect x="900" y="120" width="7" height="70" fill="#374151" />
-          <ellipse cx="904" cy="120" rx="30" ry="24" fill="#4b5563" />
-          <rect x="1200" y="150" width="6" height="60" fill="#374151" />
-          <ellipse cx="1203" cy="150" rx="26" ry="20" fill="#6b7280" />
+          <rect x="120" y="160" width="6" height="60" fill="#1B4332" />
+          <ellipse cx="123" cy="160" rx="28" ry="22" fill="#40916C" />
+          <rect x="350" y="140" width="8" height="80" fill="#1B4332" />
+          <ellipse cx="354" cy="140" rx="36" ry="28" fill="#40916C" />
+          <rect x="900" y="120" width="7" height="70" fill="#1B4332" />
+          <ellipse cx="904" cy="120" rx="30" ry="24" fill="#2D6A4F" />
+          <rect x="1200" y="150" width="6" height="60" fill="#1B4332" />
+          <ellipse cx="1203" cy="150" rx="26" ry="20" fill="#40916C" />
           {/* Sun */}
           <circle cx="1100" cy="80" r="45" fill="#D4A017" opacity="0.35" />
           <circle cx="1100" cy="80" r="30" fill="#F4C842" opacity="0.25" />

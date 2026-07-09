@@ -5,28 +5,19 @@
 @tailwind utilities;
 
 :root {
-  --safari-green: #111827;
-  --safari-mid: #1f2937;
-  --safari-light: #4b5563;
-  --golden: #b08b4d;
-  --golden-light: #d4b77a;
-  --ocean: #6b7280;
-  --charcoal-950: #111827;
-  --charcoal-900: #1f2937;
-  --charcoal-800: #374151;
-  --charcoal-700: #4b5563;
-  --charcoal-100: #f3f4f6;
-  --charcoal-50: #f9fafb;
-  --paper: #ffffff;
-  --paper-soft: #fcfcfd;
-  --line: #e5e7eb;
+  --safari-green: #1B4332;
+  --safari-mid: #2D6A4F;
+  --safari-light: #40916C;
+  --golden: #D4A017;
+  --golden-light: #F4C842;
+  --ocean: #185FA5;
 }
 
 * { box-sizing: border-box; }
 
 html { scroll-behavior: smooth; }
 
-body { font-family: 'Inter', system-ui, sans-serif; background: var(--paper); color: var(--charcoal-900); }
+body { font-family: 'Inter', system-ui, sans-serif; }
 
 .font-display { font-family: 'Playfair Display', Georgia, serif; }
 
@@ -55,25 +46,25 @@ body { font-family: 'Inter', system-ui, sans-serif; background: var(--paper); co
 /* Custom scrollbar */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #c7cdd6; border-radius: 3px; }
+::-webkit-scrollbar-thumb { background: #40916C; border-radius: 3px; }
 
 /* Glassmorphism */
 .glass {
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(17, 24, 39, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .glass-dark {
-  background: rgba(17, 24, 39, 0.82);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* Hero gradient overlay */
 .hero-overlay {
-  background: linear-gradient(to bottom, rgba(17,24,39,0.25) 0%, rgba(17,24,39,0.75) 100%);
+  background: linear-gradient(to bottom, rgba(13,43,30,0.3) 0%, rgba(13,43,30,0.7) 100%);
 }
 
 /* Card hover effects */
@@ -82,7 +73,7 @@ body { font-family: 'Inter', system-ui, sans-serif; background: var(--paper); co
 }
 .card-hover:hover {
   transform: translateY(-4px);
-  box-shadow: 0 14px 40px rgba(17, 24, 39, 0.08);
+  box-shadow: 0 12px 40px rgba(27, 67, 50, 0.15);
 }
 
 /* Line clamp utilities */

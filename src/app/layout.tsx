@@ -37,12 +37,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png" />
         <link rel="shortcut icon" href="/favicon-192.png" />
         <link rel="apple-touch-icon" sizes="192x192" href="/favicon-192.png" />
-        <meta name="theme-color" content="#111827" />
+        <meta name="theme-color" content="#1B4332" />
       </head>
       <body className={`${inter.variable} ${playfair.variable} font-sans antialiased bg-white dark:bg-gray-950`}>
         <Providers>
           {children}
-          <Toaster position="top-right" toastOptions={{ duration: 4000, style: { borderRadius: '12px', background: '#111827', color: '#fff' } }} />
+          <Toaster position="top-right" toastOptions={{ duration: 4000, style: { borderRadius: '12px', background: '#1B4332', color: '#fff' } }} />
             <UpdatePrompt />
         </Providers>
       </body>
