@@ -114,8 +114,8 @@ export default function AIPlanner() {
     <>
       <Navbar />
       <main className="min-h-screen pt-16 bg-gray-50 dark:bg-gray-950">
-        <div className="bg-gradient-to-r from-blue-600 to-blue-800 py-14 px-4 text-center">
-          <div className="inline-flex items-center gap-2 bg-blue-400/20 border border-blue-300/30 text-blue-200 text-sm px-4 py-2 rounded-full mb-4">
+        <div className="bg-gradient-to-br from-slate-900 via-purple-900 to-slate-800 py-14 px-4 text-center">
+          <div className="inline-flex items-center gap-2 bg-purple-400/20 border border-purple-300/30 text-purple-200 text-sm px-4 py-2 rounded-full mb-4">
             Powered by AI
           </div>
           <h1 className="font-display text-4xl md:text-5xl font-bold text-white mb-3">AI Travel Planner</h1>
@@ -166,7 +166,7 @@ export default function AIPlanner() {
 
                 <button onClick={handleGenerate} disabled={interests.length === 0}
                   className="w-full flex items-center justify-center gap-3 bg-safari-700 hover:bg-safari-800 disabled:opacity-50 disabled:cursor-not-allowed text-white py-4 rounded-2xl font-semibold text-base transition-colors">
-                  <Sparkles className="w-5 h-5" /> Generate my itinerary
+                  Generate my itinerary
                 </button>
               </motion.div>
             )}
@@ -194,8 +194,7 @@ export default function AIPlanner() {
                   <div className="flex items-start justify-between gap-4 mb-4">
                     <div>
                       <div className="flex items-center gap-2 mb-2">
-                        <Sparkles className="w-5 h-5 text-golden-500" />
-                        <span className="text-sm font-medium text-golden-600">AI-Generated Itinerary</span>
+                        <span className="text-sm font-medium text-purple-600">AI-Generated Itinerary</span>
                       </div>
                       <h2 className="font-display text-2xl font-bold text-gray-900 dark:text-white">{form.destination.split('—')[1]?.trim() || form.destination} — {form.duration} Days</h2>
                     </div>

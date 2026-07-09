@@ -29,9 +29,6 @@ export function AIBanner() {
           <div className="relative z-10 grid md:grid-cols-2 gap-8 items-center">
             <div>
               <div className="flex items-center gap-3 mb-4">
-                <div className="bg-golden-500/25 rounded-xl p-2">
-                  <Sparkles className="w-6 h-6 text-golden-300" />
-                </div>
                 <span className="text-golden-300 text-sm uppercase tracking-wide font-medium">AI Travel Planner</span>
               </div>
               <h2 className="font-display text-3xl md:text-4xl font-bold text-white mb-4">
@@ -64,7 +61,7 @@ export function AIBanner() {
               </div>
               <button onClick={handleGenerate}
                 className="flex items-center gap-2 bg-golden-500 hover:bg-golden-400 text-safari-900 font-bold px-6 py-3 rounded-full transition-colors text-sm">
-                <Sparkles className="w-4 h-4" /> Generate my itinerary →
+                Generate my itinerary →
               </button>
             </div>
 
