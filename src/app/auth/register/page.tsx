@@ -50,29 +50,9 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex">
-      <div className="hidden lg:flex lg:w-1/2 bg-safari-gradient flex-col items-center justify-center p-12 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
-        <div className="relative z-10 text-center">
-          <div className="text-6xl mb-6">🌍</div>
-          <h1 className="font-display text-4xl font-bold text-white mb-4">Join <span className="text-golden-400">Tembea Africa</span></h1>
-          <p className="text-white/70 text-lg max-w-sm mx-auto leading-relaxed">Create your free account and unlock Africa's greatest travel experiences — safaris, beaches, mountains, and more.</p>
-          <div className="mt-8 space-y-3 text-left max-w-xs mx-auto">
-            {['Access 2,400+ verified listings', 'AI-powered itinerary planner', 'Book safaris, guides & hotels', 'Secure payments via Paystack', '24/7 travel support'].map(f => (
-              <div key={f} className="flex items-center gap-3 text-white/80 text-sm">
-                <div className="w-5 h-5 bg-golden-500/30 rounded-full flex items-center justify-center flex-shrink-0">
-                  <span className="text-golden-300 text-xs">✓</span>
-                </div>
-                {f}
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <div className="flex-1 flex items-center justify-center p-6 bg-gray-50 dark:bg-gray-950 overflow-y-auto">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md py-8">
-          <div className="bg-white dark:bg-gray-900 rounded-3xl border border-gray-100 dark:border-gray-800 p-8 shadow-sm">
+    <div className="min-h-screen flex items-center justify-center p-6 bg-gray-50 dark:bg-gray-950 overflow-y-auto">
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md py-8">
+        <div className="bg-white dark:bg-gray-900 rounded-3xl border border-gray-100 dark:border-gray-800 p-8 shadow-sm">
             <div className="flex items-center gap-2 mb-6">
               <div className="w-9 h-9 bg-safari-700 rounded-xl flex items-center justify-center text-xl">🐾</div>
               <span className="font-display font-bold text-lg">Tembea <span className="text-safari-600">Africa</span></span>
@@ -152,7 +132,6 @@ export default function RegisterPage() {
             </p>
           </div>
         </motion.div>
-      </div>
     </div>
   )
 }

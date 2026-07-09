@@ -83,29 +83,9 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex">
-      {/* Left panel */}
-      <div className="hidden lg:flex lg:w-1/2 bg-safari-gradient flex-col items-center justify-center p-12 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
-        <div className="relative z-10 text-center">
-          <div className="text-6xl mb-6">🦁</div>
-          <h1 className="font-display text-4xl font-bold text-white mb-4">Welcome back to<br /><span className="text-golden-400">Tembea Africa</span></h1>
-          <p className="text-white/70 text-lg max-w-sm mx-auto leading-relaxed">Your next African adventure is just one login away. Thousands of experiences are waiting for you.</p>
-          <div className="mt-10 grid grid-cols-2 gap-4 max-w-xs mx-auto">
-            {[['2,400+', 'Verified listings'], ['340+', 'Expert guides'], ['4.9★', 'Avg. rating'], ['18', 'Destinations']].map(([n, l]) => (
-              <div key={l} className="bg-white/10 rounded-2xl p-4 text-center">
-                <div className="text-xl font-bold text-golden-400">{n}</div>
-                <div className="text-white/60 text-xs mt-1">{l}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Right panel */}
-      <div className="flex-1 flex items-center justify-center p-6 bg-gray-50 dark:bg-gray-950">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md">
-          <div className="bg-white dark:bg-gray-900 rounded-3xl border border-gray-100 dark:border-gray-800 p-8 shadow-sm">
+    <div className="min-h-screen flex items-center justify-center p-6 bg-gray-50 dark:bg-gray-950">
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md">
+        <div className="bg-white dark:bg-gray-900 rounded-3xl border border-gray-100 dark:border-gray-800 p-8 shadow-sm">
             <div className="flex items-center gap-2 mb-8">
               <div className="w-9 h-9 bg-safari-700 rounded-xl flex items-center justify-center text-xl">🐾</div>
               <span className="font-display font-bold text-lg">Tembea <span className="text-safari-600">Africa</span></span>
@@ -170,7 +150,6 @@ export default function LoginPage() {
             </p>
           </div>
         </motion.div>
-      </div>
     </div>
   )
 }
