@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
@@ -27,6 +27,42 @@ export default function LoginPage() {
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
   })
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const accessToken = params.get('accessToken')
+    const refreshToken = params.get('refreshToken')
+    const nextPath = params.get('next')
+    const error = params.get('error')
+
+    if (error) {
+      toast.error('Google sign-in failed. Please try again.')
+      return
+    }
+
+    if (!accessToken || !refreshToken) return
+
+    const processGoogleLogin = async () => {
+      setLoading(true)
+      try {
+        Cookies.set('access_token', accessToken, { expires: 1, secure: true, sameSite: 'strict' })
+        Cookies.set('refresh_token', refreshToken, { expires: 30, secure: true, sameSite: 'strict' })
+
+        const { data: user } = await authApi.me()
+        setUser(user)
+        const destination = nextPath || '/dashboard'
+        router.replace(destination)
+      } catch (err) {
+        Cookies.remove('access_token')
+        Cookies.remove('refresh_token')
+        toast.error('Google sign-in failed. Please log in manually.')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    processGoogleLogin()
+  }, [router, setUser])
 
   const onSubmit = async (data: FormData) => {
     setLoading(true)
@@ -130,7 +166,7 @@ export default function LoginPage() {
 
             <p className="text-center text-sm text-gray-500 mt-6">
               Don&apos;t have an account?{' '}
-              <Link href="/auth/register" className="text-safari-600 font-semibold hover:underline">Create one free →</Link>
+              <Link href="/auth" className="text-safari-600 font-semibold hover:underline">Create one free →</Link>
             </p>
           </div>
         </motion.div>
