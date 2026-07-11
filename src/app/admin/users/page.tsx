@@ -64,7 +64,7 @@ export default function AdminUsersPage() {
                           className="rounded-2xl bg-red-50 px-3 py-2 text-xs font-semibold text-red-700 hover:bg-red-100 transition-colors">
                           {user.isBanned ? 'Unban' : 'Ban'}
                         </button>
-                        <button onClick={async () => { await adminApi.updateUserRole(user._id, user.role === 'admin' ? 'user' : 'admin'); refetch(); toast.success('Role updated') }}
+                        <button onClick={async () => { await adminApi.updateUserRole(user._id, user.role === 'admin' ? 'tourist' : 'admin'); refetch(); toast.success('Role updated') }}
                           className="rounded-2xl bg-blue-50 px-3 py-2 text-xs font-semibold text-blue-700 hover:bg-blue-100 transition-colors">
                           {user.role === 'admin' ? 'Demote' : 'Promote'}
                         </button>

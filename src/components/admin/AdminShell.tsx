@@ -3,7 +3,7 @@
 import { useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { BarChart2, BookOpen, Users, MapPin, Star, Building2, ChevronRight, LogOut } from 'lucide-react'
+import { BarChart2, BookOpen, Users, MapPin, Star, Building2, Compass, UserCheck, BedDouble, Bus, ChevronRight, LogOut } from 'lucide-react'
 import { useAuthStore } from '@/store'
 
 const SIDEBAR = [
@@ -11,8 +11,12 @@ const SIDEBAR = [
   { label: 'Bookings', href: '/admin/bookings', icon: BookOpen },
   { label: 'Users', href: '/admin/users', icon: Users },
   { label: 'Destinations', href: '/admin/destinations', icon: MapPin },
+  { label: 'Tours & Safaris', href: '/admin/tours', icon: Compass },
+  { label: 'Guides', href: '/admin/guides', icon: UserCheck },
+  { label: 'Stays', href: '/admin/stays', icon: BedDouble },
+  { label: 'Transport', href: '/admin/transport', icon: Bus },
   { label: 'Reviews', href: '/admin/reviews', icon: Star },
-  { label: 'Listings', href: '/admin/listings', icon: Building2 },
+  { label: 'All Listings', href: '/admin/listings', icon: Building2 },
 ]
 
 interface AdminShellProps {

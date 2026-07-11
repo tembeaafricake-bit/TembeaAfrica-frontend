@@ -199,7 +199,12 @@ export default function AdminListingsPage() {
                           className="inline-flex items-center gap-2 rounded-2xl bg-safari-700 px-3 py-2 text-xs font-semibold text-white hover:bg-safari-800 transition-colors">
                           <CheckCircle className="w-3.5 h-3.5" /> Toggle
                         </button>
-                        <button className="inline-flex items-center gap-2 rounded-2xl bg-red-50 px-3 py-2 text-xs font-semibold text-red-700 hover:bg-red-100 transition-colors">
+                        <button onClick={async () => {
+                          if (!confirm('Delete this listing?')) return
+                          await adminApi.deleteListing(type, item._id)
+                          refetch()
+                          toast.success('Listing deleted')
+                        }} className="inline-flex items-center gap-2 rounded-2xl bg-red-50 px-3 py-2 text-xs font-semibold text-red-700 hover:bg-red-100 transition-colors">
                           <Trash2 className="w-3.5 h-3.5" /> Delete
                         </button>
                       </td>

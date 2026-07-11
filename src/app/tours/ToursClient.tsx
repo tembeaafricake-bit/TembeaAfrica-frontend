@@ -1,28 +1,15 @@
 'use client'
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect, Suspense } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { Star, Clock, Users, BadgeCheck, Heart, ShoppingCart, SlidersHorizontal, X } from 'lucide-react'
 import { toursApi } from '@/lib/api'
+import { FALLBACK_TOURS } from '@/lib/fallback-data'
 import { useCartStore, useWishlistStore } from '@/store'
 import toast from 'react-hot-toast'
-
-const FALLBACK_TOURS = [
-  { _id: 't1', title: '5-Day Maasai Mara Safari — Big Five Guaranteed', slug: 'maasai-mara-big-five', category: 'safari', destination: 'Maasai Mara', country: 'kenya', images: ['https://images.unsplash.com/photo-1547970810-dc1eac37d174?w=600'], price: 480, duration: '5 days', groupSize: 8, rating: 4.9, reviewCount: 312, operator: 'Mara Safaris', verified: true, instantBooking: true },
-  { _id: 't2', title: 'Zanzibar Dhow Cruise & Spice Tour', slug: 'zanzibar-dhow-cruise', category: 'beach', destination: 'Zanzibar', country: 'tanzania', images: ['https://images.unsplash.com/photo-1516426122078-c23e76319801?w=600'], price: 75, duration: '1 day', groupSize: 12, rating: 4.8, reviewCount: 197, operator: 'Zanzibar Xplore', verified: true, instantBooking: true },
-  { _id: 't3', title: 'Kilimanjaro Summit Trek — 7 Days Machame', slug: 'kilimanjaro-machame', category: 'mountain', destination: 'Kilimanjaro', country: 'tanzania', images: ['https://images.unsplash.com/photo-1621414050345-53db43f7e7ab?w=600'], price: 1850, duration: '7 days', groupSize: 6, rating: 4.9, reviewCount: 88, operator: 'Kili Climbers', verified: true, instantBooking: false },
-  { _id: 't4', title: 'Serengeti Great Migration Safari', slug: 'serengeti-migration', category: 'safari', destination: 'Serengeti', country: 'tanzania', images: ['https://images.unsplash.com/photo-1534177616072-ef7dc120449d?w=600'], price: 960, duration: '4 days', groupSize: 4, rating: 5.0, reviewCount: 143, operator: 'Tanzania Wild', verified: true, instantBooking: true },
-  { _id: 't5', title: 'Nairobi National Park Half-Day Safari', slug: 'nairobi-national-park', category: 'safari', destination: 'Nairobi', country: 'kenya', images: ['https://images.unsplash.com/photo-1547970810-dc1eac37d174?w=600'], price: 95, duration: '4 hours', groupSize: 8, rating: 4.7, reviewCount: 254, operator: 'Nairobi Safaris', verified: true, instantBooking: true },
-  { _id: 't6', title: 'Diani Beach Snorkeling & Marine Park', slug: 'diani-snorkeling', category: 'beach', destination: 'Diani', country: 'kenya', images: ['https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600'], price: 65, duration: '1 day', groupSize: 10, rating: 4.8, reviewCount: 189, operator: 'Diani Dive', verified: false, instantBooking: true },
-  { _id: 't7', title: 'Amboseli Elephant Safari — 3 Days', slug: 'amboseli-elephant-safari', category: 'safari', destination: 'Amboseli', country: 'kenya', images: ['https://images.unsplash.com/photo-1551649001-7a2482d98d05?w=600'], price: 390, duration: '3 days', groupSize: 6, rating: 4.9, reviewCount: 201, operator: 'Kenya Wilds', verified: true, instantBooking: true },
-  { _id: 't8', title: 'Maasai Cultural Village Experience', slug: 'maasai-cultural', category: 'cultural', destination: 'Maasai Mara', country: 'kenya', images: ['https://images.unsplash.com/photo-1547970810-dc1eac37d174?w=600'], price: 45, duration: '3 hours', groupSize: 15, rating: 4.7, reviewCount: 203, operator: 'Mara Safaris', verified: true, instantBooking: true },
-  { _id: 't9', title: 'Ngorongoro Crater Day Trip', slug: 'ngorongoro-crater', category: 'safari', destination: 'Ngorongoro', country: 'tanzania', images: ['https://images.unsplash.com/photo-1540202403-b7abd6747a18?w=600'], price: 280, duration: '1 day', groupSize: 8, rating: 5.0, reviewCount: 167, operator: 'Tanzania Wild', verified: true, instantBooking: true },
-  { _id: 't10', title: 'Lamu Old Town Cultural Walk', slug: 'lamu-old-town', category: 'cultural', destination: 'Lamu', country: 'kenya', images: ['https://images.unsplash.com/photo-1609198092458-38a293c7ac4b?w=600'], price: 35, duration: '2 hours', groupSize: 12, rating: 4.8, reviewCount: 92, operator: 'Lamu Heritage', verified: false, instantBooking: true },
-  { _id: 't11', title: 'Maasai Mara Balloon Safari at Sunrise', slug: 'mara-balloon', category: 'adventure', destination: 'Maasai Mara', country: 'kenya', images: ['https://images.unsplash.com/photo-1547970810-dc1eac37d174?w=600'], price: 320, duration: '4 hours', groupSize: 8, rating: 5.0, reviewCount: 87, operator: 'Air Kenya Balloons', verified: true, instantBooking: false },
-  { _id: 't12', title: 'Naivasha Boat Safari & Crescent Island', slug: 'naivasha-boat', category: 'adventure', destination: 'Naivasha', country: 'kenya', images: ['https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=600'], price: 55, duration: '1 day', groupSize: 10, rating: 4.6, reviewCount: 134, operator: 'Rift Valley Tours', verified: true, instantBooking: true },
-]
 
 const CATEGORIES = ['All', 'safari', 'beach', 'mountain', 'adventure', 'cultural', 'city']
 const CAT_COLORS: Record<string, string> = {
@@ -31,14 +18,20 @@ const CAT_COLORS: Record<string, string> = {
   cultural: 'bg-pink-100 text-pink-700', city: 'bg-gray-100 text-gray-700',
 }
 
-export function ToursClient() {
-  const [category, setCategory] = useState('All')
+function ToursContent() {
+  const searchParams = useSearchParams()
+  const [category, setCategory] = useState(() => searchParams.get('category') || 'All')
   const [country, setCountry] = useState('all')
   const [maxPrice, setMaxPrice] = useState(5000)
   const [sort, setSort] = useState('rating')
   const [instantOnly, setInstantOnly] = useState(false)
   const [verifiedOnly, setVerifiedOnly] = useState(false)
   const [showFilters, setShowFilters] = useState(false)
+
+  useEffect(() => {
+    const cat = searchParams.get('category')
+    if (cat) setCategory(cat)
+  }, [searchParams])
 
   const { addItem } = useCartStore()
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlistStore()
@@ -48,7 +41,7 @@ export function ToursClient() {
     queryFn: () => toursApi.getAll().then(r => r.data),
     staleTime: 5 * 60 * 1000,
   })
-  const allTours = (data?.data || FALLBACK_TOURS) as typeof FALLBACK_TOURS
+  const allTours = (data?.data?.length ? data.data : FALLBACK_TOURS) as typeof FALLBACK_TOURS
 
   const filtered = useMemo(() => {
     let list = [...allTours]
@@ -204,5 +197,13 @@ export function ToursClient() {
         </div>
       </div>
     </div>
+  )
+}
+
+export function ToursClient() {
+  return (
+    <Suspense fallback={<div className="max-w-7xl mx-auto px-4 py-8 text-center text-gray-400">Loading tours...</div>}>
+      <ToursContent />
+    </Suspense>
   )
 }

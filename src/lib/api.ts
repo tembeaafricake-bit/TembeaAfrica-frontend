@@ -141,4 +141,5 @@ export const adminApi = {
     api.patch(`/admin/${type}/${id}/status`, { status }),
   approveReview: (id: string) => api.patch(`/admin/reviews/${id}/approve`),
   deleteReview: (id: string) => api.delete(`/admin/reviews/${id}`),
+  deleteListing: (type: string, id: string) => api.delete(`/admin/${type}/${id}`),
 }
