@@ -132,6 +132,9 @@ export const adminApi = {
   getBookings: (params?: Record<string, unknown>) => api.get('/admin/bookings', { params }),
   getUsers: (params?: Record<string, unknown>) => api.get('/admin/users', { params }),
   getListings: (params?: Record<string, unknown>) => api.get('/admin/listings', { params }),
+  createListing: (type: string, data: Record<string, unknown>) => api.post(`/admin/listings?type=${type}`, data),
+  banUser: (id: string, banned: boolean) => api.patch(`/admin/users/${id}/ban`, { banned }),
+  updateUserRole: (id: string, role: string) => api.patch(`/admin/users/${id}/role`, { role }),
   getReviews: (params?: Record<string, unknown>) => api.get('/admin/reviews', { params }),
   updateBookingStatus: (id: string, status: string) => api.patch(`/admin/bookings/${id}/status`, { status }),
   updateListingStatus: (type: string, id: string, status: string) =>

@@ -3,21 +3,12 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
-import { Users, BookOpen, DollarSign, TrendingUp, Shield, Eye, Check, Trash2, BarChart2, MapPin, Star, AlertTriangle, ChevronRight } from 'lucide-react'
+import { Users, BookOpen, DollarSign, TrendingUp, Check, Trash2, BarChart2, MapPin, Star, Building2, ChevronRight } from 'lucide-react'
 import { useAuthStore } from '@/store'
 import { adminApi } from '@/lib/api'
 import toast from 'react-hot-toast'
 import Link from 'next/link'
-
-const SIDEBAR = [
-  { label: 'Dashboard', icon: BarChart2, href: '/admin/dashboard', active: true },
-  { label: 'Bookings', icon: BookOpen, href: '/admin/bookings' },
-  { label: 'Users', icon: Users, href: '/admin/users' },
-  { label: 'Destinations', icon: MapPin, href: '/admin/destinations' },
-  { label: 'Reviews', icon: Star, href: '/admin/reviews' },
-  { label: 'Disputes', icon: AlertTriangle, href: '/admin/disputes' },
-  { label: 'Payments', icon: DollarSign, href: '/admin/payments' },
-]
+import { AdminShell } from '@/components/admin/AdminShell'
 
 export default function AdminDashboard() {
   const router = useRouter()
@@ -63,188 +54,115 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-50 dark:bg-gray-950">
-      {/* Sidebar */}
-      <aside className="w-56 bg-safari-900 flex flex-col flex-shrink-0 min-h-screen">
-        <div className="px-4 py-5 border-b border-white/10">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-white/15 rounded-lg flex items-center justify-center text-base">🐾</div>
-            <div>
-              <div className="text-white font-semibold text-sm">Tembea Africa</div>
-              <div className="text-white/40 text-xs">Admin Panel</div>
-            </div>
-          </div>
-        </div>
-        <nav className="flex-1 py-3">
-          {SIDEBAR.map(item => (
-            <Link key={item.label} href={item.href}
-              className={`flex items-center gap-3 px-4 py-2.5 text-sm border-l-2 transition-all ${item.active ? 'text-white bg-white/10 border-golden-400' : 'text-white/60 border-transparent hover:text-white hover:bg-white/5'}`}>
-              <item.icon className="w-4 h-4" />
-              {item.label}
-            </Link>
+    <AdminShell title="Dashboard">
+      <div className="space-y-6">
+        <section className="grid grid-cols-1 gap-4 lg:grid-cols-4">
+          {kpis.map((kpi, i) => (
+            <motion.div key={kpi.label} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}
+              className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+              <div className="flex items-center justify-between mb-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-gray-500 dark:text-gray-400">{kpi.label}</p>
+                <div className={`rounded-2xl p-3 ${kpi.color}`}>
+                  <kpi.icon className="w-4 h-4" />
+                </div>
+              </div>
+              <p className="text-3xl font-semibold text-gray-900 dark:text-white">{statsLoading ? '—' : kpi.value}</p>
+              <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">{kpi.sub}</p>
+            </motion.div>
           ))}
-        </nav>
-        <div className="p-4 border-t border-white/10">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 bg-safari-600 rounded-full flex items-center justify-center text-xs text-white font-bold">
-              {user?.firstName[0]}{user?.lastName[0]}
-            </div>
-            <div className="min-w-0">
-              <div className="text-white text-xs font-medium truncate">{user?.firstName} {user?.lastName}</div>
-              <div className="text-white/40 text-xs">Administrator</div>
-            </div>
-          </div>
-        </div>
-      </aside>
+        </section>
 
-      {/* Main */}
-      <div className="flex-1 flex flex-col min-w-0">
-        {/* Topbar */}
-        <header className="bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 px-6 py-3.5 flex items-center justify-between">
-          <div>
-            <h1 className="font-semibold text-gray-900 dark:text-white">Dashboard</h1>
-            <p className="text-xs text-gray-400">{new Date().toDateString()}</p>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="w-2 h-2 bg-green-500 rounded-full" />
-            <span className="text-xs text-gray-500">All systems operational</span>
-            <Link href="/" className="text-xs text-safari-600 font-medium">View site →</Link>
-          </div>
-        </header>
-
-        <main className="flex-1 p-6">
-          {/* KPIs */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            {kpis.map((kpi, i) => (
-              <motion.div key={kpi.label} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}
-                className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs text-gray-500">{kpi.label}</span>
-                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${kpi.color}`}>
-                    <kpi.icon className="w-4 h-4" />
-                  </div>
-                </div>
-                <div className="text-2xl font-bold text-gray-900 dark:text-white">{statsLoading ? <span className="text-gray-300">—</span> : kpi.value}</div>
-                <div className="text-xs text-gray-400 mt-1">{kpi.sub}</div>
-              </motion.div>
-            ))}
-          </div>
-
-          {/* Booking status pills */}
-          {stats?.bookingsByStatus && (
-            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4 mb-6">
-              <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Bookings by status</h3>
-              <div className="flex gap-3 flex-wrap">
-                {Object.entries(stats.bookingsByStatus).map(([status, count]) => (
-                  <div key={status} className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium ${STATUS_COLORS[status] || 'bg-gray-50 text-gray-600'}`}>
-                    {status.charAt(0).toUpperCase() + status.slice(1)}: <span className="font-bold">{count as number}</span>
-                  </div>
-                ))}
+        {stats?.bookingsByStatus && (
+          <section className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-sm font-semibold text-gray-900 dark:text-white">Bookings by status</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Track the latest booking states.</p>
               </div>
             </div>
-          )}
-
-          {/* Tabs */}
-          <div className="flex gap-1 mb-4">
-            {(['bookings', 'reviews'] as const).map(tab => (
-              <button key={tab} onClick={() => setActiveTab(tab)}
-                className={`px-4 py-2 rounded-xl text-sm font-medium capitalize transition-all ${activeTab === tab ? 'bg-safari-700 text-white' : 'text-gray-500 hover:text-gray-900 dark:hover:text-white bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800'}`}>
-                {tab}
-                {tab === 'reviews' && reviewsData?.data?.length > 0 && (
-                  <span className="ml-2 bg-golden-500 text-white text-xs px-1.5 py-0.5 rounded-full">{reviewsData.data.length}</span>
-                )}
-              </button>
-            ))}
-          </div>
-
-          {/* Bookings table */}
-          {activeTab === 'bookings' && (
-            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden">
-              <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
-                <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Recent bookings</h3>
-                <Link href="/admin/bookings" className="text-xs text-safari-600 font-medium flex items-center gap-1">View all <ChevronRight className="w-3 h-3" /></Link>
-              </div>
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="bg-gray-50 dark:bg-gray-800">
-                      {['Booking #', 'Guest', 'Items', 'Date', 'Amount', 'Status', 'Payment'].map(h => (
-                        <th key={h} className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wide whitespace-nowrap">{h}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {bookingsData?.data?.length === 0 ? (
-                      <tr><td colSpan={7} className="px-4 py-8 text-center text-gray-400 text-sm">No bookings yet</td></tr>
-                    ) : bookingsData?.data?.map((b: any) => (
-                      <tr key={b._id} className="border-t border-gray-50 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
-                        <td className="px-4 py-3 font-mono text-xs text-gray-500">{b.bookingNumber}</td>
-                        <td className="px-4 py-3 font-medium text-gray-900 dark:text-white whitespace-nowrap">{b.user?.firstName} {b.user?.lastName}</td>
-                        <td className="px-4 py-3 text-gray-500 text-xs max-w-32 truncate">{b.items?.[0]?.name || '—'}</td>
-                        <td className="px-4 py-3 text-gray-400 text-xs whitespace-nowrap">{b.startDate}</td>
-                        <td className="px-4 py-3 font-semibold text-safari-700">${b.totalAmount?.toLocaleString()}</td>
-                        <td className="px-4 py-3">
-                          <span className={`inline-flex text-xs font-medium px-2.5 py-1 rounded-full ${STATUS_COLORS[b.status] || 'bg-gray-50 text-gray-600'}`}>
-                            {b.status}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3">
-                          <span className={`text-xs font-medium ${b.paymentStatus === 'paid' ? 'text-green-600' : 'text-yellow-600'}`}>
-                            {b.paymentStatus}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-
-          {/* Reviews moderation */}
-          {activeTab === 'reviews' && (
-            <div className="space-y-3">
-              {!reviewsData?.data?.length ? (
-                <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-10 text-center">
-                  <Check className="w-10 h-10 text-green-500 mx-auto mb-3" />
-                  <p className="text-gray-900 dark:text-white font-medium">All reviews approved!</p>
-                  <p className="text-gray-400 text-sm mt-1">No pending reviews to moderate</p>
-                </div>
-              ) : reviewsData.data.map((review: any) => (
-                <div key={review._id} className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="w-7 h-7 bg-safari-600 rounded-full flex items-center justify-center text-white text-xs font-bold">
-                          {review.user?.firstName?.[0]}
-                        </div>
-                        <span className="text-sm font-medium text-gray-900 dark:text-white">{review.user?.firstName} {review.user?.lastName}</span>
-                        <span className="text-xs text-gray-400">·</span>
-                        <span className="text-xs text-gray-400 capitalize">{review.targetType}</span>
-                        <div className="flex items-center gap-0.5">
-                          {[...Array(5)].map((_, j) => <Star key={j} className={`w-3 h-3 ${j < review.rating ? 'fill-golden-400 text-golden-400' : 'text-gray-200'}`} />)}
-                        </div>
-                      </div>
-                      <p className="text-sm font-semibold text-gray-900 dark:text-white mb-1">{review.title}</p>
-                      <p className="text-sm text-gray-500 line-clamp-2">{review.body}</p>
-                    </div>
-                    <div className="flex gap-2 flex-shrink-0">
-                      <button onClick={async () => { await adminApi.approveReview(review._id); refetchReviews(); toast.success('Review approved') }}
-                        className="flex items-center gap-1 px-3 py-1.5 bg-green-50 border border-green-200 text-green-700 rounded-lg text-xs font-medium hover:bg-green-100 transition-colors">
-                        <Check className="w-3 h-3" /> Approve
-                      </button>
-                      <button onClick={async () => { await adminApi.deleteReview(review._id); refetchReviews(); toast.success('Review deleted') }}
-                        className="flex items-center gap-1 px-3 py-1.5 bg-red-50 border border-red-200 text-red-700 rounded-lg text-xs font-medium hover:bg-red-100 transition-colors">
-                        <Trash2 className="w-3 h-3" /> Delete
-                      </button>
-                    </div>
-                  </div>
+            <div className="mt-4 flex flex-wrap gap-3">
+              {Object.entries(stats.bookingsByStatus).map(([status, count]) => (
+                <div key={status} className={`rounded-full px-4 py-2 text-sm font-semibold ${STATUS_COLORS[status] || 'bg-gray-100 text-gray-700'} `}>
+                  {status.charAt(0).toUpperCase() + status.slice(1)}: {String(count)}
                 </div>
               ))}
             </div>
-          )}
-        </main>
+          </section>
+        )}
+
+        <section className="grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">
+          <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+            <div className="flex items-center justify-between gap-3 mb-6">
+              <div>
+                <p className="text-sm font-semibold text-gray-900 dark:text-white">Recent bookings</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Latest activity from customers.</p>
+              </div>
+              <Link href="/admin/bookings" className="text-xs font-semibold text-safari-600 hover:underline">View all</Link>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="min-w-full text-left text-sm">
+                <thead className="bg-gray-50 text-gray-500 dark:bg-gray-800 dark:text-gray-400">
+                  <tr>
+                    {['Booking #', 'Guest', 'Items', 'Date', 'Amount', 'Status', 'Payment'].map((label) => (
+                      <th key={label} className="whitespace-nowrap px-4 py-3 font-medium">{label}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {!bookingsData?.data?.length ? (
+                    <tr>
+                      <td colSpan={7} className="px-4 py-10 text-center text-sm text-gray-500 dark:text-gray-400">No bookings yet.</td>
+                    </tr>
+                  ) : bookingsData.data.map((booking: any) => (
+                    <tr key={booking._id} className="border-t border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-950/50 transition-colors">
+                      <td className="px-4 py-3 font-mono text-xs text-gray-500 dark:text-gray-400">{booking.bookingNumber}</td>
+                      <td className="px-4 py-3 text-sm text-gray-900 dark:text-white">{booking.user?.firstName} {booking.user?.lastName}</td>
+                      <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">{booking.items?.[0]?.name || '—'}</td>
+                      <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">{booking.startDate}</td>
+                      <td className="px-4 py-3 text-sm font-semibold text-safari-700">${booking.totalAmount?.toLocaleString()}</td>
+                      <td className="px-4 py-3">
+                        <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${STATUS_COLORS[booking.status] || 'bg-gray-100 text-gray-700'}`}>
+                          {booking.status}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">{booking.paymentStatus}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+            <div className="flex items-center justify-between gap-3 mb-6">
+              <div>
+                <p className="text-sm font-semibold text-gray-900 dark:text-white">Pending reviews</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Review items that need approval.</p>
+              </div>
+              <Link href="/admin/reviews" className="text-xs font-semibold text-safari-600 hover:underline">Manage</Link>
+            </div>
+            {reviewsData?.data?.length ? (
+              <div className="space-y-4">
+                {reviewsData.data.map((review: any) => (
+                  <div key={review._id} className="rounded-3xl border border-gray-100 bg-gray-50 p-4 dark:border-gray-800 dark:bg-gray-950">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <p className="text-sm font-semibold text-gray-900 dark:text-white">{review.user?.firstName} {review.user?.lastName}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">{review.targetType}</p>
+                        <p className="mt-2 text-sm text-gray-700 dark:text-gray-300 line-clamp-2">{review.body}</p>
+                      </div>
+                      <span className="rounded-full bg-safari-100 px-3 py-1 text-xs font-semibold text-safari-700">{review.rating} ★</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="rounded-3xl border border-gray-100 bg-gray-50 p-6 text-center text-sm text-gray-500 dark:border-gray-800 dark:bg-gray-950 dark:text-gray-400">
+                No pending reviews.
+              </div>
+            )}
+          </div>
+        </section>
       </div>
-    </div>
+    </AdminShell>
   )
 }
