@@ -3,7 +3,6 @@ import { Inter, Playfair_Display } from 'next/font/google'
 import './globals.css'
 import { Providers } from '@/components/layout/Providers'
 import { Toaster } from 'react-hot-toast'
-import { PWAInstallPrompt } from '@/components/pwa/PWAInstallPrompt'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-playfair' })
@@ -43,7 +42,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Providers>
           {children}
           <Toaster position="top-right" toastOptions={{ duration: 4000, style: { borderRadius: '12px', background: '#1B4332', color: '#fff' } }} />
-          <PWAInstallPrompt />
         </Providers>
       </body>
     </html>
