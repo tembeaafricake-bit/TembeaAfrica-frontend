@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "tsc --noEmit"
+  },
+  "engines": {
+    "node": ">=18.17.0"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",

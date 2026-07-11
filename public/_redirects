@@ -1,0 +1,8 @@
+# Cloudflare Pages — ensure trailing-slash routes resolve correctly
+/tours /tours/ 301
+/destinations /destinations/ 301
+/guides /guides/ 301
+/stays /stays/ 301
+/transport /transport/ 301
+/search /search/ 301
+/admin/dashboard /admin/dashboard/ 301
