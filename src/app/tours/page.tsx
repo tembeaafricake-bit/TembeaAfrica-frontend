@@ -1,6 +1,7 @@
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
 import { ToursClient } from './ToursClient'
+import { BackButton } from '@/components/ui/BackButton'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {

@@ -1,6 +1,6 @@
 'use client'
 import { useState, useMemo, useEffect, Suspense } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -19,6 +19,7 @@ const CAT_COLORS: Record<string, string> = {
 }
 
 function ToursContent() {
+  const router = useRouter()
   const searchParams = useSearchParams()
   const [category, setCategory] = useState(() => searchParams.get('category') || 'All')
   const [country, setCountry] = useState('all')
@@ -30,8 +31,23 @@ function ToursContent() {
 
   useEffect(() => {
     const cat = searchParams.get('category')
-    if (cat) setCategory(cat)
+    setCategory(cat || 'All')
   }, [searchParams])
+
+  const setCategoryFilter = (cat: string) => {
+    setCategory(cat)
+    if (cat === 'All') router.push('/tours/')
+    else router.push(`/tours/?category=${cat}`)
+  }
+
+  const clearFilters = () => {
+    setCategory('All')
+    setCountry('all')
+    setMaxPrice(5000)
+    setInstantOnly(false)
+    setVerifiedOnly(false)
+    router.push('/tours/')
+  }
 
   const { addItem } = useCartStore()
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlistStore()
@@ -87,7 +103,7 @@ function ToursContent() {
       {/* Category pills */}
       <div className="flex gap-2 overflow-x-auto pb-3 mb-6 scrollbar-hide">
         {CATEGORIES.map(cat => (
-          <button key={cat} onClick={() => setCategory(cat)}
+          <button key={cat} onClick={() => setCategoryFilter(cat)}
             className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap capitalize border transition-all ${category === cat ? 'bg-safari-700 text-white border-safari-700' : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-safari-400'}`}>
             {cat}
           </button>

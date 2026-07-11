@@ -4,6 +4,7 @@ import './globals.css'
 import { Providers } from '@/components/layout/Providers'
 import { Toaster } from 'react-hot-toast'
 import UpdatePrompt from '@/components/pwa/UpdatePrompt'
+import InstallPrompt from '@/components/pwa/InstallPrompt'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-playfair' })
@@ -43,7 +44,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Providers>
           {children}
           <Toaster position="top-right" toastOptions={{ duration: 4000, style: { borderRadius: '12px', background: '#1B4332', color: '#fff' } }} />
-            <UpdatePrompt />
+          <UpdatePrompt />
+          <InstallPrompt />
         </Providers>
       </body>
     </html>

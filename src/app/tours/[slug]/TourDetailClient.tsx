@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { Star, Clock, Users, BadgeCheck, ShoppingCart, Heart, ArrowLeft, MapPin } from 'lucide-react'
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
+import { BackButton } from '@/components/ui/BackButton'
 import { toursApi } from '@/lib/api'
 import { findTourBySlug } from '@/lib/fallback-data'
 import { useCartStore, useWishlistStore } from '@/store'
@@ -31,7 +32,7 @@ export default function TourDetailClient({ slug }: { slug: string }) {
         <main className="min-h-screen pt-24 px-4 text-center">
           <p className="text-4xl mb-4">🦒</p>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Tour not found</h1>
-          <Link href="/tours" className="text-safari-600 font-medium">← Back to tours</Link>
+          <BackButton fallback="/tours" label="Back to tours" className="text-safari-600 font-medium" />
         </main>
         <Footer />
       </>
@@ -75,9 +76,7 @@ export default function TourDetailClient({ slug }: { slug: string }) {
           <Image src={image} alt={tour.title} fill className="object-cover" priority />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 max-w-7xl mx-auto">
-            <Link href="/tours" className="inline-flex items-center gap-1 text-white/80 text-sm mb-3 hover:text-white">
-              <ArrowLeft className="w-4 h-4" /> All tours
-            </Link>
+            <BackButton fallback="/tours" label="All tours" className="inline-flex items-center gap-1 text-white/80 text-sm mb-3 hover:text-white" />
             <span className="inline-block bg-white/20 backdrop-blur-sm text-white text-xs px-3 py-1 rounded-full capitalize mb-2">{tour.category}</span>
             <h1 className="font-display text-3xl md:text-4xl font-bold text-white">{tour.title}</h1>
             {destName && (

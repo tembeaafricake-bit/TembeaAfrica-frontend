@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { Star, Award, ArrowLeft, Languages, ShoppingCart } from 'lucide-react'
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
+import { BackButton } from '@/components/ui/BackButton'
 import { guidesApi } from '@/lib/api'
 import { findGuideById } from '@/lib/fallback-data'
 import { useCartStore } from '@/store'
@@ -49,7 +50,7 @@ export default function GuideDetailClient({ id }: { id: string }) {
         <main className="min-h-screen pt-24 px-4 text-center">
           <p className="text-4xl mb-4">🦉</p>
           <h1 className="text-2xl font-bold mb-2">Guide not found</h1>
-          <Link href="/guides" className="text-safari-600 font-medium">← Back to guides</Link>
+          <BackButton fallback="/guides" label="Back to guides" className="text-safari-600 font-medium" />
         </main>
         <Footer />
       </>
@@ -72,9 +73,7 @@ export default function GuideDetailClient({ id }: { id: string }) {
       <Navbar />
       <main className="min-h-screen pt-16 bg-gray-50 dark:bg-gray-950">
         <div className="max-w-4xl mx-auto px-4 py-10">
-          <Link href="/guides" className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-safari-600 mb-6">
-            <ArrowLeft className="w-4 h-4" /> All guides
-          </Link>
+          <BackButton fallback="/guides" label="All guides" className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-safari-600 mb-6" />
 
           <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 md:p-8">
             <div className="flex flex-col sm:flex-row items-start gap-6">

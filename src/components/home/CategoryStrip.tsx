@@ -3,15 +3,15 @@ import Link from 'next/link'
 import { useState } from 'react'
 
 const CATEGORIES = [
-  { label: 'All', href: '/search' },
-  { label: 'Safaris', href: '/tours?category=safari' },
-  { label: 'Hotels & Lodges', href: '/stays?type=hotel' },
-  { label: 'BnBs & Villas', href: '/stays?type=bnb' },
-  { label: 'Adventures', href: '/tours?category=adventure' },
-  { label: 'Beach Escapes', href: '/tours?category=beach' },
-  { label: 'Local Guides', href: '/guides' },
-  { label: 'Transport', href: '/transport' },
-  { label: 'Attraction Tickets', href: '/tickets' },
+  { label: 'All', href: '/search/' },
+  { label: 'Safaris', href: '/tours/?category=safari' },
+  { label: 'Hotels & Lodges', href: '/stays/?type=hotel' },
+  { label: 'BnBs & Villas', href: '/stays/?type=bnb' },
+  { label: 'Adventures', href: '/tours/?category=adventure' },
+  { label: 'Beach Escapes', href: '/tours/?category=beach' },
+  { label: 'Local Guides', href: '/guides/' },
+  { label: 'Transport', href: '/transport/' },
+  { label: 'Attraction Tickets', href: '/tickets/' },
 ]
 
 export function CategoryStrip() {
