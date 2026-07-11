@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
@@ -6,6 +7,26 @@ import { BLOG_POSTS } from '../posts'
 
 export function generateStaticParams() {
   return BLOG_POSTS.map(({ slug }) => ({ slug }))
+}
+
+export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
+  const post = BLOG_POSTS.find(item => item.slug === params.slug)
+
+  if (!post) {
+    return {
+      title: 'Blog Post',
+      description: 'Read more about travel in Kenya and Tanzania.',
+    }
+  }
+
+  return {
+    title: `${post.title} | Tembea Africa`,
+    description: post.metaDescription || post.excerpt,
+    keywords: post.keywords,
+    alternates: {
+      canonical: `/blog/${post.slug}`,
+    },
+  }
 }
 
 export default function BlogPostPage({ params }: { params: { slug: string } }) {
@@ -22,14 +43,15 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
             <BackButton fallback="/blog" label="Back to blog" className="text-white/90 hover:text-white mb-4" />
             <span className="text-xs font-semibold uppercase tracking-wide text-white/80">{post.category}</span>
             <h1 className="font-display text-3xl md:text-4xl font-bold text-white mt-2">{post.title}</h1>
-            <p className="text-white/70 mt-3">{new Date(post.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
+            <p className="text-white/70 mt-3 max-w-2xl">{post.excerpt}</p>
+            <p className="text-white/60 mt-2">{new Date(post.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
           </div>
         </div>
 
         <div className="max-w-3xl mx-auto px-4 py-10">
           <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 md:p-8">
-            {post.content.map(paragraph => (
-              <p key={paragraph} className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">{paragraph}</p>
+            {post.content.map((paragraph, index) => (
+              <p key={`${post.slug}-${index}`} className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">{paragraph}</p>
             ))}
 
             <div className="mt-8 rounded-2xl bg-safari-50 dark:bg-safari-900/20 p-4">

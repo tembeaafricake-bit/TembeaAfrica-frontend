@@ -2,18 +2,14 @@ import Link from 'next/link'
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
 import type { Metadata } from 'next'
+import { BLOG_POSTS } from './posts'
 
 export const metadata: Metadata = {
   title: 'Travel Blog',
   description: 'Stories, tips and inspiration for travelling across Kenya and Tanzania.',
 }
 
-const POSTS = [
-  { slug: 'great-migration-guide', title: 'Ultimate Guide to the Great Migration', excerpt: 'Everything you need to know about witnessing the wildebeest migration in the Maasai Mara and Serengeti.', date: '2026-03-15', category: 'Safari' },
-  { slug: 'zanzibar-travel-tips', title: '10 Things to Know Before Visiting Zanzibar', excerpt: 'From spice tours to beach etiquette — your essential Zanzibar travel guide.', date: '2026-02-28', category: 'Beach' },
-  { slug: 'kilimanjaro-preparation', title: 'How to Prepare for Kilimanjaro', excerpt: 'Training, gear, and altitude tips for a successful summit attempt.', date: '2026-02-10', category: 'Adventure' },
-  { slug: 'kenya-safari-budget', title: 'Kenya Safari on a Budget', excerpt: 'Affordable ways to experience world-class wildlife without breaking the bank.', date: '2026-01-22', category: 'Safari' },
-]
+const POSTS = BLOG_POSTS
 
 export default function BlogPage() {
   return (

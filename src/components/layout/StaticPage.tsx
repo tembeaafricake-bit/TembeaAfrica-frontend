@@ -6,11 +6,15 @@ interface StaticPageProps {
   title: string
   description: string
   bullets?: string[]
+  sections?: Array<{
+    title: string
+    content: string[]
+  }>
   ctaLabel?: string
   ctaHref?: string
 }
 
-export function StaticPage({ title, description, bullets = [], ctaLabel = 'Explore trips', ctaHref = '/tours' }: StaticPageProps) {
+export function StaticPage({ title, description, bullets = [], sections = [], ctaLabel = 'Explore trips', ctaHref = '/tours' }: StaticPageProps) {
   return (
     <>
       <Navbar />
@@ -29,6 +33,21 @@ export function StaticPage({ title, description, bullets = [], ctaLabel = 'Explo
                   <li key={item} className="flex items-start gap-2"><span className="mt-1 h-2.5 w-2.5 rounded-full bg-safari-600" />{item}</li>
                 ))}
               </ul>
+            )}
+
+            {sections.length > 0 && (
+              <div className="mt-6 space-y-6 text-gray-600 dark:text-gray-300">
+                {sections.map(section => (
+                  <div key={section.title}>
+                    <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">{section.title}</h2>
+                    <div className="space-y-3">
+                      {section.content.map(paragraph => (
+                        <p key={paragraph} className="leading-relaxed">{paragraph}</p>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
             )}
             <div className="mt-8 flex flex-wrap gap-3">
               <Link href={ctaHref} className="rounded-2xl bg-safari-700 px-5 py-3 text-sm font-semibold text-white hover:bg-safari-800 transition-colors">{ctaLabel}</Link>
