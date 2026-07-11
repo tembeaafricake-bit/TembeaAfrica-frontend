@@ -280,6 +280,45 @@ export function TestimonialsSection() {
 
 // ─── Footer ──────────────────────────────────────────────────────────────────
 export function Footer() {
+  const footerSections = [
+    {
+      title: 'Explore',
+      links: [
+        { label: 'Destinations', href: '/destinations' },
+        { label: 'Tours & Safaris', href: '/tours' },
+        { label: 'Hotels & Stays', href: '/stays' },
+        { label: 'Local Guides', href: '/guides' },
+        { label: 'Transport', href: '/transport' },
+      ],
+    },
+    {
+      title: 'Company',
+      links: [
+        { label: 'About us', href: '/about' },
+        { label: 'Careers', href: '/about' },
+        { label: 'Press', href: '/about' },
+        { label: 'Blog', href: '/blog' },
+        { label: 'Contact', href: '/contact' },
+      ],
+    },
+    {
+      title: 'Support',
+      links: [
+        { label: 'Help Center', href: '/help' },
+        { label: 'Safety', href: '/safety' },
+        { label: 'Cancellations', href: '/cancellations' },
+        { label: 'Refunds', href: '/refunds' },
+        { label: 'Partner with us', href: '/partner-with-us' },
+      ],
+    },
+  ]
+
+  const legalLinks = [
+    { label: 'Privacy Policy', href: '/privacy' },
+    { label: 'Terms of Service', href: '/terms' },
+    { label: 'Cookie Policy', href: '/cookie-policy' },
+  ]
+
   return (
     <footer className="bg-safari-900 text-white">
       <div className="max-w-7xl mx-auto px-4 py-14">
@@ -298,16 +337,12 @@ export function Footer() {
               ))}
             </div>
           </div>
-          {[
-            { title: 'Explore', links: ['Destinations', 'Tours & Safaris', 'Hotels & Stays', 'Local Guides', 'Transport'] },
-            { title: 'Company', links: ['About us', 'Careers', 'Press', 'Blog', 'Contact'] },
-            { title: 'Support', links: ['Help Center', 'Safety', 'Cancellations', 'Refunds', 'Partner with us'] },
-          ].map(col => (
+          {footerSections.map(col => (
             <div key={col.title}>
               <h4 className="font-semibold text-sm mb-4">{col.title}</h4>
               <ul className="space-y-2">
-                {col.links.map(l => (
-                  <li key={l}><a href="#" className="text-white/60 text-sm hover:text-white transition-colors">{l}</a></li>
+                {col.links.map(link => (
+                  <li key={link.label}><a href={link.href} className="text-white/60 text-sm hover:text-white transition-colors">{link.label}</a></li>
                 ))}
               </ul>
             </div>
@@ -316,8 +351,8 @@ export function Footer() {
         <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-white/40 text-sm">© 2026 Tembea Africa Ltd. All rights reserved. Nairobi, Kenya.</p>
           <div className="flex gap-6">
-            {['Privacy Policy', 'Terms of Service', 'Cookie Policy'].map(l => (
-              <a key={l} href="#" className="text-white/40 text-xs hover:text-white/70 transition-colors">{l}</a>
+            {legalLinks.map(link => (
+              <a key={link.label} href={link.href} className="text-white/40 text-xs hover:text-white/70 transition-colors">{link.label}</a>
             ))}
           </div>
         </div>
