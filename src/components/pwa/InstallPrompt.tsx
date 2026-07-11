@@ -11,6 +11,7 @@ interface BeforeInstallPromptEvent extends Event {
 export default function InstallPrompt() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null)
   const [visible, setVisible] = useState(false)
+  const [permissionNoticeVisible, setPermissionNoticeVisible] = useState(false)
 
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -23,10 +24,12 @@ export default function InstallPrompt() {
       event.preventDefault()
       setDeferredPrompt(event as BeforeInstallPromptEvent)
       window.setTimeout(() => setVisible(true), 1200)
+      window.setTimeout(() => setPermissionNoticeVisible(true), 2200)
     }
 
     const handleAppInstalled = () => {
       setVisible(false)
+      setPermissionNoticeVisible(false)
       setDeferredPrompt(null)
       window.localStorage.setItem('tembea-install-dismissed', 'true')
     }
@@ -58,12 +61,28 @@ export default function InstallPrompt() {
   const handleDismiss = () => {
     window.localStorage.setItem('tembea-install-dismissed', 'true')
     setVisible(false)
+    setPermissionNoticeVisible(false)
   }
 
-  if (!visible) return null
-
   return (
-    <div className="fixed bottom-4 left-1/2 z-[1000] w-[calc(100%-1.5rem)] max-w-md -translate-x-1/2 rounded-2xl border border-safari-200 bg-white/95 p-4 shadow-2xl backdrop-blur">
+    <>
+      {permissionNoticeVisible && (
+        <div className="fixed bottom-24 left-1/2 z-[1000] w-[calc(100%-1.5rem)] max-w-md -translate-x-1/2 rounded-2xl border border-safari-200 bg-white/95 p-4 shadow-2xl backdrop-blur">
+          <div className="flex items-start gap-3">
+            <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-2xl bg-safari-700 text-xl text-white">🔐</div>
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-gray-900">Permission notice</p>
+              <p className="mt-1 text-sm text-gray-600">Tembea Africa may ask for limited browser permission when you install or use the app on supported devices. This does not access your personal data without your approval.</p>
+              <div className="mt-3 flex items-center gap-2">
+                <button onClick={() => setPermissionNoticeVisible(false)} className="rounded-xl bg-safari-700 px-3 py-2 text-sm font-semibold text-white">Continue</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {visible && (
+        <div className="fixed bottom-4 left-1/2 z-[1000] w-[calc(100%-1.5rem)] max-w-md -translate-x-1/2 rounded-2xl border border-safari-200 bg-white/95 p-4 shadow-2xl backdrop-blur">
       <div className="flex items-start gap-3">
         <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-2xl bg-safari-700 text-xl text-white">🦁</div>
         <div className="flex-1">
@@ -75,6 +94,8 @@ export default function InstallPrompt() {
           </div>
         </div>
       </div>
-    </div>
+        </div>
+      )}
+    </>
   )
 }
