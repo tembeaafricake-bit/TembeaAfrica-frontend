@@ -11,8 +11,8 @@ export default function ContactPage() {
       title="Contact Tembea Africa"
       description="Whether you are planning a safari, booking a stay, or exploring partnership opportunities, our team is here to help."
       bullets={[
-        'Email: hello@tembeaafrica.com',
-        'Inquiries: bookings@tembeaafrica.com',
+        'Email: tembeaafricake@gmail.com',
+        'Inquiries: tembeaafricake@gmail.com',
         'Phone: +254 700 000 000',
         'Nairobi, Kenya',
       ]}

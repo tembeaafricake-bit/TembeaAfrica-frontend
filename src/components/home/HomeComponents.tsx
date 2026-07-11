@@ -334,7 +334,7 @@ export function Footer() {
             </p>
             <div className="flex items-center gap-2 text-sm text-white/70 mb-4">
               <Mail size={16} className="text-golden-400" />
-              <a href="mailto:hello@tembeaafrica.com" className="hover:text-white transition-colors">hello@tembeaafrica.com</a>
+              <a href="mailto:tembeaafricake@gmail.com" className="hover:text-white transition-colors">tembeaafricake@gmail.com</a>
             </div>
             <div className="flex gap-3">
               {[
