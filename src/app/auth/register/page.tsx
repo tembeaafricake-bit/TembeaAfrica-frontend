@@ -36,9 +36,7 @@ export default function RegisterPage() {
     try {
       const { confirmPassword, ...payload } = data
       const res = await authApi.register(payload)
-      const { user, accessToken, refreshToken } = res.data
-      Cookies.set('access_token', accessToken, { expires: 1, secure: true, sameSite: 'strict' })
-      Cookies.set('refresh_token', refreshToken, { expires: 30, secure: true, sameSite: 'strict' })
+      const { user } = res.data
       setUser(user)
       toast.success(`Welcome to Tembea Africa, ${user.firstName}! 🌍`)
       router.push('/destinations')

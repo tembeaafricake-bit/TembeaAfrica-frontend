@@ -30,6 +30,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
+    const googleLoginSuccess = params.get('googleLoginSuccess')
     const accessToken = params.get('accessToken')
     const refreshToken = params.get('refreshToken')
     const nextPath = params.get('next')
@@ -40,21 +41,25 @@ export default function LoginPage() {
       return
     }
 
-    if (!accessToken || !refreshToken) return
+    if (!googleLoginSuccess && !accessToken && !refreshToken) return
 
     const processGoogleLogin = async () => {
       setLoading(true)
       try {
-        Cookies.set('access_token', accessToken, { expires: 1, secure: true, sameSite: 'strict' })
-        Cookies.set('refresh_token', refreshToken, { expires: 30, secure: true, sameSite: 'strict' })
+        if (accessToken && refreshToken) {
+          Cookies.set('access_token', accessToken, { expires: 1, secure: true, sameSite: 'strict' })
+          Cookies.set('refresh_token', refreshToken, { expires: 30, secure: true, sameSite: 'strict' })
+        }
 
         const { data: user } = await authApi.me()
         setUser(user)
         const destination = nextPath || '/dashboard'
         router.replace(destination)
       } catch (err) {
-        Cookies.remove('access_token')
-        Cookies.remove('refresh_token')
+        if (accessToken && refreshToken) {
+          Cookies.remove('access_token')
+          Cookies.remove('refresh_token')
+        }
         toast.error('Google sign-in failed. Please log in manually.')
       } finally {
         setLoading(false)
@@ -68,9 +73,7 @@ export default function LoginPage() {
     setLoading(true)
     try {
       const res = await authApi.login(data)
-      const { user, accessToken, refreshToken } = res.data
-      Cookies.set('access_token', accessToken, { expires: 1, secure: true, sameSite: 'strict' })
-      Cookies.set('refresh_token', refreshToken, { expires: 30, secure: true, sameSite: 'strict' })
+      const { user } = res.data
       setUser(user)
       toast.success(`Welcome back, ${user.firstName}! 🦁`)
       if (user.role === 'admin') router.push('/admin/dashboard')

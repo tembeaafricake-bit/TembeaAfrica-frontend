@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { User, CartItem } from '@/types'
 import Cookies from 'js-cookie'
+import { authApi } from '@/lib/api'
 
 // Auth Store
 interface AuthState {
@@ -10,7 +11,7 @@ interface AuthState {
   isLoading: boolean
   setUser: (user: User | null) => void
   setLoading: (loading: boolean) => void
-  logout: () => void
+  logout: () => Promise<void>
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -21,7 +22,12 @@ export const useAuthStore = create<AuthState>()(
       isLoading: false,
       setUser: (user) => set({ user, isAuthenticated: !!user }),
       setLoading: (isLoading) => set({ isLoading }),
-      logout: () => {
+      logout: async () => {
+        try {
+          await authApi.logout()
+        } catch (err) {
+          console.error('Failed to logout on backend:', err)
+        }
         Cookies.remove('access_token')
         Cookies.remove('refresh_token')
         set({ user: null, isAuthenticated: false })

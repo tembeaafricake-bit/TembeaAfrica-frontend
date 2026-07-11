@@ -1,5 +1,4 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios'
-import Cookies from 'js-cookie'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || (typeof window !== 'undefined' && window.location.hostname === 'localhost'
   ? 'http://localhost:3001'
@@ -9,13 +8,10 @@ export const api = axios.create({
   baseURL: `${API_URL}/api`,
   timeout: 5000,
   headers: { 'Content-Type': 'application/json' },
+  withCredentials: true,
 })
 
 api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-  const token = Cookies.get('access_token')
-  if (token && config.headers) {
-    config.headers.Authorization = `Bearer ${token}`
-  }
   return config
 })
 
@@ -25,18 +21,11 @@ api.interceptors.response.use(
     const original = error.config as InternalAxiosRequestConfig & { _retry?: boolean }
     if (error.response?.status === 401 && !original._retry) {
       original._retry = true
-      const refreshToken = Cookies.get('refresh_token')
-      if (refreshToken) {
-        try {
-          const { data } = await axios.post(`${API_URL}/api/auth/refresh`, { refreshToken })
-          Cookies.set('access_token', data.accessToken, { expires: 1, secure: true, sameSite: 'strict' })
-          if (original.headers) original.headers.Authorization = `Bearer ${data.accessToken}`
-          return api(original)
-        } catch {
-          Cookies.remove('access_token')
-          Cookies.remove('refresh_token')
-          window.location.href = '/auth/login'
-        }
+      try {
+        await axios.post(`${API_URL}/api/auth/refresh`, {}, { withCredentials: true })
+        return api(original)
+      } catch {
+        window.location.href = '/auth/login'
       }
     }
     return Promise.reject(error)
