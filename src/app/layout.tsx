@@ -3,8 +3,6 @@ import { Inter, Playfair_Display } from 'next/font/google'
 import './globals.css'
 import { Providers } from '@/components/layout/Providers'
 import { Toaster } from 'react-hot-toast'
-import UpdatePrompt from '@/components/pwa/UpdatePrompt'
-import InstallPrompt from '@/components/pwa/InstallPrompt'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-playfair' })
@@ -34,7 +32,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <link rel="manifest" href="/manifest.webmanifest" />
         <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png" />
         <link rel="shortcut icon" href="/favicon-192.png" />
         <link rel="apple-touch-icon" sizes="192x192" href="/favicon-192.png" />
@@ -44,8 +41,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Providers>
           {children}
           <Toaster position="top-right" toastOptions={{ duration: 4000, style: { borderRadius: '12px', background: '#1B4332', color: '#fff' } }} />
-          <UpdatePrompt />
-          <InstallPrompt />
         </Providers>
       </body>
     </html>
