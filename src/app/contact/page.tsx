@@ -12,8 +12,18 @@ export default function ContactPage() {
       description="Whether you are planning a safari, booking a stay, or exploring partnership opportunities, our team is here to help."
       bullets={[
         'Email: hello@tembeaafrica.com',
+        'Inquiries: bookings@tembeaafrica.com',
         'Phone: +254 700 000 000',
         'Nairobi, Kenya',
+      ]}
+      sections={[
+        {
+          title: 'How we can help',
+          content: [
+            'For travel planning assistance, itinerary questions, itinerary changes, or booking support, send us an email and our team will get back to you as soon as possible.',
+            'For partnerships, media requests, or business inquiries, please reach out to our team directly using the contact details above.',
+          ],
+        },
       ]}
       ctaLabel="View tours"
       ctaHref="/tours"

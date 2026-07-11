@@ -1,5 +1,6 @@
 'use client'
 import { useState } from 'react'
+import { Facebook, Instagram, Linkedin, Mail, Twitter } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { Sparkles, Star, Shield, RefreshCw, Clock, DollarSign, Award } from 'lucide-react'
 import Link from 'next/link'
@@ -331,10 +332,24 @@ export function Footer() {
             <p className="text-white/60 text-sm leading-relaxed mb-4">
               Africa&apos;s leading travel marketplace. Discover, book, and explore Kenya and Tanzania with ease.
             </p>
+            <div className="flex items-center gap-2 text-sm text-white/70 mb-4">
+              <Mail size={16} className="text-golden-400" />
+              <a href="mailto:hello@tembeaafrica.com" className="hover:text-white transition-colors">hello@tembeaafrica.com</a>
+            </div>
             <div className="flex gap-3">
-              {['Twitter', 'Instagram', 'Facebook', 'YouTube'].map(s => (
-                <a key={s} href="#" className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center text-xs hover:bg-white/20 transition-colors">{s[0]}</a>
-              ))}
+              {[
+                { label: 'Twitter', href: '#', icon: Twitter },
+                { label: 'Instagram', href: '#', icon: Instagram },
+                { label: 'Facebook', href: '#', icon: Facebook },
+                { label: 'LinkedIn', href: '#', icon: Linkedin },
+              ].map(social => {
+                const Icon = social.icon
+                return (
+                  <a key={social.label} href={social.href} aria-label={social.label} className="w-9 h-9 bg-white/10 rounded-lg flex items-center justify-center hover:bg-white/20 transition-colors">
+                    <Icon size={16} />
+                  </a>
+                )
+              })}
             </div>
           </div>
           {footerSections.map(col => (
