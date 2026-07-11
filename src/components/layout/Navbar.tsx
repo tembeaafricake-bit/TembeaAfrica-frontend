@@ -7,7 +7,6 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { ShoppingCart, Menu, X, Search, Sun, Moon, User, ChevronDown, MapPin } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { useAuthStore, useCartStore } from '@/store'
-import InstallButton from '@/components/pwa/InstallButton'
 
 const navLinks = [
   { label: 'Destinations', href: '/destinations', submenu: [
@@ -96,8 +95,6 @@ export function Navbar() {
                 {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
               </button>
 
-              <InstallButton className="hidden sm:inline-flex items-center gap-2 rounded-full bg-safari-700 px-4 py-2 text-sm font-semibold text-white hover:bg-safari-800 transition-colors" />
-
               <Link href="/checkout" className="relative p-2 rounded-lg hover:bg-black/10 dark:hover:bg-white/10 transition-colors">
                 <ShoppingCart className="w-5 h-5" />
                 {totalItems > 0 && (
@@ -173,7 +170,6 @@ export function Navbar() {
                 </div>
               ))}
               <div className="mt-6 flex flex-col gap-3">
-                <InstallButton className="w-full inline-flex justify-center rounded-full bg-safari-700 px-4 py-2 text-sm font-semibold text-white hover:bg-safari-800 transition-colors" />
                 <Link href="/auth/login" onClick={() => setMobileOpen(false)}
                   className="w-full py-2.5 text-center border border-safari-700 text-safari-700 rounded-full font-medium">
                   Sign in

@@ -8,7 +8,6 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-playfair' })
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://www.tembeaafrica.com'),
   title: { default: 'Tembea Africa — Discover. Book. Explore Africa.', template: '%s | Tembea Africa' },
   icons: {
     icon: '/favicon.ico',
@@ -33,7 +32,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <link rel="manifest" href="/manifest.webmanifest" />
         <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png" />
         <link rel="shortcut icon" href="/favicon-192.png" />
         <link rel="apple-touch-icon" sizes="192x192" href="/favicon-192.png" />
