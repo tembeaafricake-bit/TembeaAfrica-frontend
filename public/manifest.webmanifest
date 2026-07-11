@@ -4,6 +4,7 @@
   "description": "Discover. Book. Explore Africa.",
   "start_url": "/",
   "display": "standalone",
+  "scope": "/",
   "background_color": "#1B4332",
   "theme_color": "#1B4332",
   "icons": [
