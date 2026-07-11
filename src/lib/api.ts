@@ -41,6 +41,7 @@ export const authApi = {
   forgotPassword: (email: string) => api.post('/auth/forgot-password', { email }),
   resetPassword: (token: string, password: string) => api.post('/auth/reset-password', { token, password }),
   googleAuth: () => `${API_URL}/api/auth/google`,
+  logVisit: (pageUrl: string) => api.post('/auth/visit', { pageUrl }),
 }
 
 // Destinations
@@ -133,4 +134,5 @@ export const adminApi = {
   approveReview: (id: string) => api.patch(`/admin/reviews/${id}/approve`),
   deleteReview: (id: string) => api.delete(`/admin/reviews/${id}`),
   deleteListing: (type: string, id: string) => api.delete(`/admin/${type}/${id}`),
+  getAnalytics: () => api.get('/admin/analytics'),
 }
