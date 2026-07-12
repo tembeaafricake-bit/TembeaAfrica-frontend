@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Eye, EyeOff, Loader, Mail, Lock } from 'lucide-react'
@@ -20,6 +20,7 @@ type FormData = z.infer<typeof schema>
 
 export default function LoginPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { setUser } = useAuthStore()
   const [showPass, setShowPass] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -33,7 +34,7 @@ export default function LoginPage() {
     const googleLoginSuccess = params.get('googleLoginSuccess')
     const accessToken = params.get('accessToken')
     const refreshToken = params.get('refreshToken')
-    const nextPath = params.get('next')
+    const nextPath = params.get('next') || searchParams.get('next') || '/dashboard'
     const error = params.get('error')
 
     if (error) {
@@ -76,8 +77,9 @@ export default function LoginPage() {
       const { user } = res.data
       setUser(user)
       toast.success(`Welcome back, ${user.firstName}! 🦁`)
+      const nextPath = searchParams.get('next') || '/dashboard'
       if (user.role === 'admin') router.push('/admin/dashboard')
-      else router.push('/dashboard')
+      else router.push(nextPath)
     } catch (err: any) {
       toast.error(err?.response?.data?.message || 'Invalid email or password')
     } finally {

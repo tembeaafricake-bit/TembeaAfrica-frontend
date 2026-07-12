@@ -31,11 +31,19 @@ api.interceptors.response.use(
 )
 
 // Auth
+const silentAuthClient = axios.create({
+  baseURL: `${API_URL}/api`,
+  timeout: 5000,
+  headers: { 'Content-Type': 'application/json' },
+  withCredentials: true,
+})
+
 export const authApi = {
   login: (data: { email: string; password: string }) => api.post('/auth/login', data),
   register: (data: { firstName: string; lastName: string; email: string; password: string }) => api.post('/auth/register', data),
   logout: () => api.post('/auth/logout'),
   me: () => api.get('/auth/me'),
+  silentMe: () => silentAuthClient.get('/auth/me'),
   forgotPassword: (email: string) => api.post('/auth/forgot-password', { email }),
   resetPassword: (token: string, password: string) => api.post('/auth/reset-password', { token, password }),
   googleAuth: () => `${API_URL}/api/auth/google`,

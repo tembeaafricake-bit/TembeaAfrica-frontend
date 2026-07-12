@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Trash2, ShoppingCart, CreditCard, Shield, ChevronRight, Loader, Check } from 'lucide-react'
@@ -7,7 +7,7 @@ import Image from 'next/image'
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
 import { useCartStore, useAuthStore } from '@/store'
-import { bookingsApi, paymentsApi } from '@/lib/api'
+import { authApi, bookingsApi, paymentsApi } from '@/lib/api'
 import toast from 'react-hot-toast'
 
 type Step = 'cart' | 'details' | 'payment' | 'success'
@@ -15,10 +15,11 @@ type Step = 'cart' | 'details' | 'payment' | 'success'
 export default function CheckoutPage() {
   const router = useRouter()
   const { items, removeItem, updateQuantity, clearCart, totalPrice } = useCartStore()
-  const { isAuthenticated, user } = useAuthStore()
+  const { isAuthenticated, user, setUser } = useAuthStore()
   const [step, setStep] = useState<Step>('cart')
   const [loading, setLoading] = useState(false)
   const [bookingRef, setBookingRef] = useState('')
+  const [checkingAuth, setCheckingAuth] = useState(true)
 
   const [details, setDetails] = useState({
     firstName: user?.firstName || '', lastName: user?.lastName || '',
@@ -28,6 +29,26 @@ export default function CheckoutPage() {
   const subtotal = totalPrice()
   const serviceFee = Math.round(subtotal * 0.08)
   const total = subtotal + serviceFee
+
+  useEffect(() => {
+    const restoreSession = async () => {
+      if (isAuthenticated) {
+        setCheckingAuth(false)
+        return
+      }
+
+      try {
+        const { data: user } = await authApi.silentMe()
+        setUser(user)
+      } catch {
+        // no valid session available
+      } finally {
+        setCheckingAuth(false)
+      }
+    }
+
+    restoreSession()
+  }, [isAuthenticated, setUser, authApi])
 
   const handlePayment = async () => {
     if (!isAuthenticated) { router.push('/auth/login?next=/checkout'); return }
@@ -214,11 +235,25 @@ export default function CheckoutPage() {
                     <button onClick={() => setStep('details')} className="px-6 py-3 border border-gray-200 dark:border-gray-700 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                       ← Back
                     </button>
-                    <button onClick={handlePayment} disabled={loading}
-                      className="flex-1 flex items-center justify-center gap-2 bg-safari-700 text-white py-3 rounded-xl font-semibold hover:bg-safari-800 transition-colors disabled:opacity-60">
-                      {loading ? <><Loader className="w-5 h-5 animate-spin" /> Processing…</> : `Pay $${total.toLocaleString()} via Paystack`}
-                    </button>
+                    {checkingAuth ? (
+                      <button disabled className="flex-1 flex items-center justify-center gap-2 bg-gray-300 text-gray-600 py-3 rounded-xl font-semibold transition-colors">
+                        <Loader className="w-5 h-5 animate-spin" /> Checking login…
+                      </button>
+                    ) : !isAuthenticated ? (
+                      <button onClick={() => router.push('/auth/login?next=/checkout')}
+                        className="flex-1 bg-safari-700 text-white py-3 rounded-xl font-semibold hover:bg-safari-800 transition-colors">
+                        Sign in to pay
+                      </button>
+                    ) : (
+                      <button onClick={handlePayment} disabled={loading}
+                        className="flex-1 flex items-center justify-center gap-2 bg-safari-700 text-white py-3 rounded-xl font-semibold hover:bg-safari-800 transition-colors disabled:opacity-60">
+                        {loading ? <><Loader className="w-5 h-5 animate-spin" /> Processing…</> : `Pay $${total.toLocaleString()} via Paystack`}
+                      </button>
+                    )}
                   </div>
+                  {!isAuthenticated && !checkingAuth && (
+                    <p className="mt-3 text-sm text-gray-500">You need to sign in before paying with Paystack.</p>
+                  )}
                 </div>
               )}
             </div>
