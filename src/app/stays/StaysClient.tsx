@@ -10,6 +10,19 @@ import { Star, Search } from 'lucide-react'
 import { accommodationsApi } from '@/lib/api'
 import { FALLBACK_STAYS } from '@/lib/fallback-data'
 
+const normalizeStay = (stay: any) => {
+  const destName = typeof stay.destination === 'object' && stay.destination
+    ? (stay.destination as { name?: string }).name
+    : (stay.destination as string)
+  return {
+    ...stay,
+    destination: destName || 'Unknown destination',
+    images: Array.isArray(stay.images) && stay.images.length > 0
+      ? stay.images
+      : ['https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=800'],
+  }
+}
+
 function StaysContent() {
   const searchParams = useSearchParams()
   const initialType = searchParams.get('type') || 'all'
@@ -23,7 +36,10 @@ function StaysContent() {
     staleTime: 5 * 60 * 1000,
   })
 
-  const allStays = (data?.data?.length ? data.data : FALLBACK_STAYS) as typeof FALLBACK_STAYS
+  const allStays = useMemo(() => {
+    const list = data?.data?.length ? data.data : FALLBACK_STAYS
+    return list.map(normalizeStay)
+  }, [data])
 
   const filtered = useMemo(() => {
     let list = [...allStays]
@@ -77,7 +93,7 @@ function StaysContent() {
                 <h3 className="font-semibold text-gray-900 dark:text-white mb-1">{stay.name}</h3>
                 <p className="text-xs text-gray-500 mb-2">{stay.destination}</p>
                 <div className="flex flex-wrap gap-1 mb-3">
-                  {stay.amenities.slice(0, 3).map(a => (
+                  {stay.amenities.slice(0, 3).map((a: string) => (
                     <span key={a} className="text-xs bg-safari-50 dark:bg-safari-900/20 text-safari-700 px-2 py-0.5 rounded-full">{a}</span>
                   ))}
                 </div>
