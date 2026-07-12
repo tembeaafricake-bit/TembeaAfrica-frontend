@@ -3,10 +3,12 @@ import { useState, useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { Star, Award, Languages, DollarSign, Search, SlidersHorizontal } from 'lucide-react'
+import { Star, Award, Languages, DollarSign, Search, SlidersHorizontal, ShoppingCart } from 'lucide-react'
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
 import { guidesApi } from '@/lib/api'
+import { useCartStore } from '@/store'
+import toast from 'react-hot-toast'
 
 const FALLBACK_GUIDES = [
   { _id: 'g1', name: 'Joseph Kamau', category: 'safari', languages: ['English', 'Swahili', 'French'], rating: 5.0, reviewCount: 128, dailyRate: 80, experience: 12, verified: true, color: '#1B4332', initials: 'JK', specializations: ['Big Five tracking', 'Bird watching', 'Photography'], bio: 'KWS-certified guide with 12 years in Maasai Mara. Specialist in big cat behaviour.' },
@@ -47,6 +49,26 @@ export default function GuidesPage() {
   const [maxRate, setMaxRate] = useState(200)
   const [verifiedOnly, setVerifiedOnly] = useState(false)
   const [sort, setSort] = useState('rating')
+  const { addItem } = useCartStore()
+
+  const handleBookGuide = (guide: any) => {
+    addItem({
+      id: guide._id,
+      type: 'guide',
+      name: `${guide.name} — Guide`,
+      image: '',
+      price: guide.dailyRate,
+      quantity: 1,
+      startDate: new Date().toISOString().split('T')[0],
+      guests: 1,
+      details: {
+        category: guide.category,
+        specializations: guide.specializations,
+        languages: guide.languages,
+      },
+    })
+    toast.success('Guide added to cart!')
+  }
 
   const { data, isError, error } = useQuery({
     queryKey: ['all-guides'],
@@ -161,16 +183,19 @@ export default function GuidesPage() {
                   ))}
                 </div>
 
-                <div className="flex items-center justify-between pt-3 border-t border-gray-100 dark:border-gray-800">
+                <div className="flex items-center justify-between pt-3 border-t border-gray-100 dark:border-gray-800 mb-3">
                   <div>
                     <span className="text-xl font-bold text-safari-700">${guide.dailyRate}</span>
                     <span className="text-xs text-gray-400">/day</span>
                   </div>
                   <Link href={`/guides/${guide._id}`}
-                    className="px-4 py-2 bg-safari-700 text-white rounded-xl text-xs font-medium hover:bg-safari-800 transition-colors">
-                    View profile
+                    className="px-3 py-1.5 border border-safari-200 dark:border-safari-700 text-safari-700 dark:text-safari-400 rounded-xl text-xs font-medium hover:bg-safari-50 dark:hover:bg-safari-900/20 transition-colors">
+                    Profile
                   </Link>
                 </div>
+                <button onClick={() => handleBookGuide(guide)} className="w-full flex items-center justify-center gap-1 py-2 text-xs font-medium bg-safari-700 text-white rounded-xl hover:bg-safari-800 transition-colors">
+                  <ShoppingCart className="w-3.5 h-3.5" /> Book Guide
+                </button>
               </motion.div>
             ))}
           </div>

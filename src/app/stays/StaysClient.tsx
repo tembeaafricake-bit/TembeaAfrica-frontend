@@ -6,9 +6,11 @@ import { useQuery } from '@tanstack/react-query'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
-import { Star, Search } from 'lucide-react'
+import { Star, Search, ShoppingCart } from 'lucide-react'
 import { accommodationsApi } from '@/lib/api'
 import { FALLBACK_STAYS } from '@/lib/fallback-data'
+import { useCartStore } from '@/store'
+import toast from 'react-hot-toast'
 
 const normalizeStay = (stay: any) => {
   const destName = typeof stay.destination === 'object' && stay.destination
@@ -29,6 +31,25 @@ function StaysContent() {
   const [type, setType] = useState(initialType)
   const [search, setSearch] = useState('')
   const [sort, setSort] = useState('rating')
+  const { addItem } = useCartStore()
+
+  const handleBookStay = (stay: any) => {
+    addItem({
+      id: stay._id,
+      type: 'accommodation',
+      name: stay.name,
+      image: stay.images?.[0] || '',
+      price: stay.pricePerNight,
+      quantity: 1,
+      startDate: new Date().toISOString().split('T')[0],
+      guests: 2,
+      details: {
+        type: stay.type,
+        destination: stay.destination,
+      },
+    })
+    toast.success('Stay added to cart!')
+  }
 
   const { data } = useQuery({
     queryKey: ['all-stays'],
@@ -83,26 +104,36 @@ function StaysContent() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {filtered.map((stay, i) => (
           <motion.div key={stay._id} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
-            className="bg-white dark:bg-gray-900 rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800 hover:shadow-lg transition-shadow">
-            <Link href={`/stays/${stay.slug}`}>
-              <div className="relative h-48">
-                <Image src={stay.images[0]} alt={stay.name} fill className="object-cover hover:scale-105 transition-transform duration-500" />
-                <span className="absolute top-3 left-3 bg-white/90 text-xs font-medium px-2.5 py-1 rounded-full capitalize">{stay.type}</span>
-              </div>
-              <div className="p-4">
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-1">{stay.name}</h3>
-                <p className="text-xs text-gray-500 mb-2">{stay.destination}</p>
-                <div className="flex flex-wrap gap-1 mb-3">
-                  {stay.amenities.slice(0, 3).map((a: string) => (
-                    <span key={a} className="text-xs bg-safari-50 dark:bg-safari-900/20 text-safari-700 px-2 py-0.5 rounded-full">{a}</span>
-                  ))}
+            className="bg-white dark:bg-gray-900 rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800 hover:shadow-md transition-shadow flex flex-col justify-between">
+            <div>
+              <Link href={`/stays/${stay.slug}`}>
+                <div className="relative h-44">
+                  <Image src={stay.images[0]} alt={stay.name} fill className="object-cover" />
+                  <span className="absolute top-3 left-3 bg-white/90 text-xs font-medium px-2.5 py-1 rounded-full capitalize">{stay.type}</span>
                 </div>
-                <div className="flex items-center justify-between">
-                  <div><span className="text-lg font-bold text-safari-700">${stay.pricePerNight}</span><span className="text-xs text-gray-400">/night</span></div>
-                  <div className="flex items-center gap-1 text-xs"><Star className="w-3.5 h-3.5 fill-golden-400 text-golden-400" /><span className="font-semibold">{stay.rating}</span></div>
+                <div className="p-4 pb-0">
+                  <h3 className="font-semibold text-gray-900 dark:text-white mb-1">{stay.name}</h3>
+                  <p className="text-xs text-gray-500 mb-2">{stay.destination}</p>
+                  <div className="flex flex-wrap gap-1 mb-3">
+                    {stay.amenities.slice(0, 3).map((a: string) => (
+                      <span key={a} className="text-xs bg-safari-50 dark:bg-safari-900/20 text-safari-700 px-2 py-0.5 rounded-full">{a}</span>
+                    ))}
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div><span className="text-lg font-bold text-safari-700">${stay.pricePerNight}</span><span className="text-xs text-gray-400">/night</span></div>
+                    <div className="flex items-center gap-1 text-xs"><Star className="w-3.5 h-3.5 fill-golden-400 text-golden-400" /><span className="font-semibold">{stay.rating}</span></div>
+                  </div>
                 </div>
-              </div>
-            </Link>
+              </Link>
+            </div>
+            <div className="p-4 pt-3 flex gap-2">
+              <Link href={`/stays/${stay.slug}`} className="flex-1 text-center py-2 border border-safari-200 dark:border-safari-700 text-safari-700 dark:text-safari-400 rounded-xl text-xs font-medium hover:bg-safari-50 dark:hover:bg-safari-900/20 transition-colors">
+                Details
+              </Link>
+              <button onClick={() => handleBookStay(stay)} className="flex-1 py-2 bg-safari-700 text-white rounded-xl text-xs font-medium hover:bg-safari-800 transition-colors">
+                Book
+              </button>
+            </div>
           </motion.div>
         ))}
       </div>

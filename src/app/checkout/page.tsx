@@ -17,7 +17,6 @@ export default function CheckoutPage() {
   const { items, removeItem, updateQuantity, clearCart, totalPrice } = useCartStore()
   const { isAuthenticated, user } = useAuthStore()
   const [step, setStep] = useState<Step>('cart')
-  const [payMethod, setPayMethod] = useState<'paystack'>('paystack')
   const [loading, setLoading] = useState(false)
   const [bookingRef, setBookingRef] = useState('')
 
@@ -37,7 +36,7 @@ export default function CheckoutPage() {
       const bookingData = {
         items: items.map(i => ({ type: i.type, itemId: i.id, name: i.name, quantity: i.quantity, price: i.price, startDate: i.startDate, endDate: i.endDate })),
         totalAmount: total, currency: 'USD', guests: items[0]?.guests || 2,
-        guestDetails: details, paymentMethod: payMethod,
+        guestDetails: details, paymentMethod: 'paystack',
         startDate: items[0]?.startDate, endDate: items[0]?.endDate,
       }
       const { data: booking } = await bookingsApi.create(bookingData)
@@ -199,14 +198,13 @@ export default function CheckoutPage() {
                     <CreditCard className="w-5 h-5 text-safari-600" /> Payment method
                   </h2>
                   <div className="space-y-3 mb-6">
-                    <label className={`flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all ${payMethod === 'paystack' ? 'border-safari-600 bg-safari-50 dark:bg-safari-900/20' : 'border-gray-100 dark:border-gray-700 hover:border-gray-200 dark:hover:border-gray-600'}`}>
-                      <input type="radio" name="payment" value="paystack" checked={payMethod === 'paystack'} onChange={() => setPayMethod('paystack')} className="text-safari-600" />
+                    <div className="flex items-center gap-4 p-4 rounded-xl border-2 border-safari-600 bg-safari-50 dark:bg-safari-900/20">
                       <span className="text-2xl">💳</span>
                       <div>
                         <div className="font-medium text-gray-900 dark:text-white text-sm">Paystack</div>
                         <div className="text-xs text-gray-500">Cards, mobile money, bank transfer</div>
                       </div>
-                    </label>
+                    </div>
                   </div>
                   <div className="flex items-center gap-2 text-xs text-gray-400 mb-6 bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
                     <Shield className="w-4 h-4 text-safari-600 flex-shrink-0" />

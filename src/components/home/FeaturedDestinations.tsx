@@ -44,8 +44,8 @@ export function FeaturedDestinations() {
             <motion.div key={dest._id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 }} viewport={{ once: true }}
               className="group relative rounded-2xl overflow-hidden bg-gray-100 dark:bg-gray-800 card-hover cursor-pointer">
-              <Link href={`/destinations/${dest.slug}`}>
-                <div className="relative h-56 overflow-hidden">
+              <div className="relative h-56 overflow-hidden">
+                <Link href={`/destinations/${dest.slug}`}>
                   <Image src={dest.heroImage} alt={dest.name} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                   <div className="absolute top-3 left-3">
@@ -53,21 +53,31 @@ export function FeaturedDestinations() {
                       {dest.country}
                     </span>
                   </div>
-                </div>
-                <div className="p-4">
+                </Link>
+              </div>
+              <div className="p-4">
+                <Link href={`/destinations/${dest.slug}`}>
                   <h3 className="font-display text-xl font-semibold text-gray-900 dark:text-white mb-1">{dest.name}</h3>
                   <p className="text-gray-500 dark:text-gray-400 text-sm line-clamp-2 mb-3">{dest.description}</p>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-300">
-                      <Star className="w-4 h-4 fill-golden-400 text-golden-400" />
-                      <span className="font-medium">{dest.rating}</span>
-                      <span className="text-gray-400">·</span>
-                      <span>{dest.reviewCount.toLocaleString()} reviews</span>
-                    </div>
-                    <span className="text-safari-600 text-sm font-medium">{dest.tourCount} tours</span>
+                </Link>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-300">
+                    <Star className="w-4 h-4 fill-golden-400 text-golden-400" />
+                    <span className="font-medium">{dest.rating}</span>
+                    <span className="text-gray-400">·</span>
+                    <span>{dest.reviewCount.toLocaleString()} reviews</span>
                   </div>
+                  <span className="text-safari-600 text-sm font-medium">{dest.tourCount} tours</span>
                 </div>
-              </Link>
+                <div className="flex gap-2">
+                  <Link href={`/destinations/${dest.slug}`} className="flex-1 text-center py-2 border border-safari-200 dark:border-safari-700 text-safari-700 dark:text-safari-400 rounded-xl text-sm font-medium hover:bg-safari-50 dark:hover:bg-safari-900/20 transition-colors">
+                    Details
+                  </Link>
+                  <Link href={`/tours?category=safari`} className="flex-1 text-center py-2 bg-safari-700 text-white rounded-xl text-sm font-medium hover:bg-safari-800 transition-colors">
+                    Explore tours
+                  </Link>
+                </div>
+              </div>
               <button onClick={(e) => { e.preventDefault(); isInWishlist(dest._id) ? removeFromWishlist(dest._id) : addToWishlist(dest._id) }}
                 className="absolute top-3 right-3 w-8 h-8 bg-white/90 dark:bg-gray-800/90 rounded-full flex items-center justify-center shadow-sm hover:scale-110 transition-transform">
                 <Heart className={`w-4 h-4 ${isInWishlist(dest._id) ? 'fill-red-500 text-red-500' : 'text-gray-400'}`} />

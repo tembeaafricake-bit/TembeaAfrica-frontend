@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import { Facebook, Instagram, Linkedin, Mail, Twitter } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { Sparkles, Star, Shield, RefreshCw, Clock, DollarSign, Award } from 'lucide-react'
+import { Sparkles, Star, Shield, RefreshCw, Clock, DollarSign, Award, ShoppingCart } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
@@ -120,7 +120,7 @@ export function FeaturedStays() {
     if (e) { e.preventDefault(); e.stopPropagation(); }
     addItem({
       id: stay._id,
-      type: 'stay',
+      type: 'accommodation',
       name: stay.name,
       image: stay.images[0],
       price: stay.pricePerNight,
@@ -191,6 +191,28 @@ const GUIDES = [
 ]
 
 export function FeaturedGuides() {
+  const { addItem } = useCartStore()
+
+  const handleBookGuide = (guide: any, e?: React.MouseEvent) => {
+    if (e) { e.preventDefault(); e.stopPropagation(); }
+    addItem({
+      id: guide._id,
+      type: 'guide',
+      name: `${guide.name} — Guide`,
+      image: '',
+      price: guide.dailyRate,
+      quantity: 1,
+      startDate: new Date().toISOString().split('T')[0],
+      guests: 1,
+      details: {
+        category: guide.category,
+        specializations: [],
+        languages: guide.languages,
+      },
+    })
+    toast.success('Guide added to cart!')
+  }
+
   return (
     <section className="py-16 bg-gray-50 dark:bg-gray-900">
       <div className="max-w-7xl mx-auto px-4">
@@ -204,8 +226,9 @@ export function FeaturedGuides() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {GUIDES.map((guide, i) => (
             <motion.div key={guide._id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }} viewport={{ once: true }}>
-              <Link href={`/guides/${guide._id}`} className="block bg-white dark:bg-gray-800 rounded-2xl p-5 text-center card-hover border border-gray-100 dark:border-gray-700">
+              transition={{ delay: i * 0.1 }} viewport={{ once: true }}
+              className="bg-white dark:bg-gray-800 rounded-2xl p-5 border border-gray-100 dark:border-gray-700 card-hover flex flex-col justify-between">
+              <Link href={`/guides/${guide._id}`} className="block text-center">
                 <div className="w-16 h-16 rounded-full mx-auto mb-3 flex items-center justify-center text-white text-xl font-bold" style={{ background: guide.color }}>
                   {guide.initials}
                 </div>
@@ -222,8 +245,12 @@ export function FeaturedGuides() {
                 <div className="flex items-center justify-center gap-1 mb-1">
                   {[...Array(5)].map((_, j) => <Star key={j} className={`w-3 h-3 ${j < Math.floor(guide.rating) ? 'fill-golden-400 text-golden-400' : 'text-gray-200'}`} />)}
                 </div>
-                <p className="text-sm font-bold text-safari-700">${guide.dailyRate}/day</p>
+                <p className="text-sm font-bold text-safari-700 mb-3">${guide.dailyRate}/day</p>
               </Link>
+              <div className="mt-2 flex gap-2">
+                <Link href={`/guides/${guide._id}`} className="flex-1 text-center py-2 border border-safari-200 dark:border-safari-700 text-safari-700 dark:text-safari-400 rounded-xl text-xs font-medium hover:bg-safari-50 dark:hover:bg-safari-900/20 transition-colors">Profile</Link>
+                <button onClick={(e) => handleBookGuide(guide, e)} className="flex-1 py-2 bg-safari-700 text-white rounded-xl text-xs font-medium hover:bg-safari-800 transition-colors">Book</button>
+              </div>
             </motion.div>
           ))}
         </div>

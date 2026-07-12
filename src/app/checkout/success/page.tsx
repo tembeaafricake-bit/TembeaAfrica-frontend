@@ -21,14 +21,11 @@ function SuccessContent() {
 
   useEffect(() => {
     const verifyPayment = async () => {
-      const provider = searchParams.get('provider')
       const reference = searchParams.get('reference') || searchParams.get('trxref')
-      const token = searchParams.get('token') // PayPal order ID
-      const bookingId = searchParams.get('bookingId')
 
       try {
         if (reference) {
-          // Paystack Flow (default)
+          // Paystack Flow
           const { data } = await paymentsApi.verifyPaystack(reference)
           if (data.success) {
             setSuccess(true)
@@ -37,7 +34,7 @@ function SuccessContent() {
             throw new Error(data.message || 'Paystack verification failed')
           }
         } else {
-          // No reference found
+          // No parameters found, check if we arrived here by mistake
           throw new Error('No payment reference found. If you paid, please contact support.')
         }
       } catch (err: any) {

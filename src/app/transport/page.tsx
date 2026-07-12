@@ -4,16 +4,38 @@ import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
-import { Star, Bus, Car, Plane, Ship } from 'lucide-react'
+import { Star, Bus, Car, Plane, Ship, ShoppingCart } from 'lucide-react'
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
 import { FALLBACK_TRANSPORT } from '@/lib/fallback-data'
+import { useCartStore } from '@/store'
+import toast from 'react-hot-toast'
 
 const TYPE_ICONS: Record<string, typeof Bus> = { bus: Bus, car: Car, flight: Plane, ferry: Ship }
 const TYPES = ['all', 'bus', 'car', 'flight', 'ferry']
 
 export default function TransportPage() {
   const [type, setType] = useState('all')
+  const { addItem } = useCartStore()
+
+  const handleCart = (transport: typeof FALLBACK_TRANSPORT[0]) => {
+    addItem({
+      id: transport._id,
+      type: 'transport',
+      name: `${transport.name} — Transport`,
+      image: transport.image,
+      price: transport.price,
+      quantity: 1,
+      startDate: new Date().toISOString().split('T')[0],
+      guests: 2,
+      details: {
+        type: transport.type,
+        route: transport.route,
+        duration: transport.duration,
+      },
+    })
+    toast.success('Transport added to cart!')
+  }
 
   const filtered = useMemo(() => {
     if (type === 'all') return FALLBACK_TRANSPORT
@@ -56,10 +78,13 @@ export default function TransportPage() {
                     <h3 className="font-semibold text-gray-900 dark:text-white text-sm mb-1">{item.name}</h3>
                     <p className="text-xs text-gray-500 mb-2">{item.route}</p>
                     <p className="text-xs text-gray-500 line-clamp-2 mb-3">{item.description}</p>
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between mb-3">
                       <div><span className="text-lg font-bold text-safari-700">${item.price}</span><span className="text-xs text-gray-400"> · {item.duration}</span></div>
                       <div className="flex items-center gap-1 text-xs"><Star className="w-3.5 h-3.5 fill-golden-400 text-golden-400" /><span>{item.rating}</span></div>
                     </div>
+                    <button onClick={() => handleCart(item)} className="w-full flex items-center justify-center gap-1 py-2 text-xs font-medium bg-safari-700 text-white rounded-xl hover:bg-safari-800 transition-colors">
+                      <ShoppingCart className="w-3.5 h-3.5" /> Book
+                    </button>
                   </div>
                 </motion.div>
               )

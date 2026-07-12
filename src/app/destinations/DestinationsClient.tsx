@@ -120,10 +120,12 @@ export function DestinationsClient() {
                 {dest.country}
               </div>
             </div>
-            <Link href={`/destinations/${dest.slug}`} className="block p-4">
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-1">{dest.name}</h3>
-              <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 mb-3">{dest.description}</p>
-              <div className="flex items-center justify-between text-xs text-gray-500">
+            <div className="p-4">
+              <Link href={`/destinations/${dest.slug}`}>
+                <h3 className="font-semibold text-gray-900 dark:text-white mb-1">{dest.name}</h3>
+                <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 mb-3">{dest.description}</p>
+              </Link>
+              <div className="flex items-center justify-between text-xs text-gray-500 mb-4">
                 <div className="flex items-center gap-1">
                   <Star className="w-3.5 h-3.5 fill-golden-400 text-golden-400" />
                   <span className="font-semibold text-gray-900 dark:text-white">{dest.rating}</span>
@@ -131,7 +133,15 @@ export function DestinationsClient() {
                 </div>
                 <span className="text-safari-600 font-medium">{dest.tourCount} tours</span>
               </div>
-            </Link>
+              <div className="flex gap-2">
+                <Link href={`/destinations/${dest.slug}`} className="flex-1 text-center py-2 border border-safari-200 dark:border-safari-700 text-safari-700 dark:text-safari-400 rounded-xl text-xs font-medium hover:bg-safari-50 dark:hover:bg-safari-900/20 transition-colors">
+                  Details
+                </Link>
+                <Link href={`/tours?category=safari`} className="flex-1 text-center py-2 bg-safari-700 text-white rounded-xl text-xs font-medium hover:bg-safari-800 transition-colors">
+                  Explore tours
+                </Link>
+              </div>
+            </div>
           </motion.div>
         ))}
       </div>
