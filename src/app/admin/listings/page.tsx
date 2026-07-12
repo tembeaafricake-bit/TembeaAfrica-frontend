@@ -47,8 +47,22 @@ export default function AdminListingsPage() {
     const form = event.currentTarget
     const formData = new FormData(form)
     const payload: Record<string, unknown> = {}
+    const uploadTasks: Promise<void>[] = []
+
     Array.from(formData.entries()).forEach(([key, value]) => {
-      if (value !== null) payload[key] = value
+      if (value === null || value === '') return
+      if (key === 'heroImage' && value instanceof File && value.size > 0) {
+        uploadTasks.push((async () => {
+          const response = await adminApi.uploadImage(value)
+          payload.heroImage = response.data.url
+        })())
+        return
+      }
+      if (key === 'heroImageUrl' && typeof value === 'string' && value.trim() !== '' && !payload.heroImage) {
+        payload.heroImage = value.trim()
+        return
+      }
+      payload[key] = value
     })
 
     if (formData.get('featured')) payload.featured = true
@@ -62,6 +76,8 @@ export default function AdminListingsPage() {
     ;['user', 'owner', 'destination', 'operator', 'primaryDestination'].forEach((field) => {
       if (formData.get(field)) payload[field] = String(formData.get(field))
     })
+
+    await Promise.all(uploadTasks)
 
     try {
       await adminApi.createListing(type, payload)
@@ -148,6 +164,17 @@ export default function AdminListingsPage() {
                   )
                 }
 
+                if (field === 'heroImage') {
+                  return (
+                    <label key={field} className="space-y-2 text-sm text-gray-700 dark:text-gray-200">
+                      Image URL or upload
+                      <input name="heroImageUrl" placeholder="https://..." className="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none focus:border-safari-500 dark:border-gray-800 dark:bg-gray-950 dark:text-white" />
+                      <input name="heroImage" type="file" accept="image/*"
+                        className="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none focus:border-safari-500 dark:border-gray-800 dark:bg-gray-950 dark:text-white" />
+                      <p className="text-xs text-gray-500 dark:text-gray-400">Provide an image URL or upload a file.</p>
+                    </label>
+                  )
+                }
                 if (['destination', 'owner', 'operator', 'user', 'primaryDestination'].includes(field)) {
                   return (
                     <label key={field} className="space-y-2 text-sm text-gray-700 dark:text-gray-200">

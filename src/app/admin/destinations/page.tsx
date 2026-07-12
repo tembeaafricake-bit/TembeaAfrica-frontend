@@ -22,15 +22,24 @@ export default function AdminDestinationsPage() {
     event.preventDefault()
     const form = event.currentTarget
     const formData = new FormData(form)
-    const payload = {
+    const heroImageFile = formData.get('heroImageFile')
+    const heroImageUrl = formData.get('heroImageUrl')
+    const payload: Record<string, unknown> = {
       name: formData.get('name'),
       country: formData.get('country'),
       description: formData.get('description'),
-      heroImage: formData.get('heroImage'),
       shortDescription: formData.get('shortDescription'),
       featured: formData.get('featured') === 'on',
       status: formData.get('status'),
     }
+
+    if (heroImageFile instanceof File && heroImageFile.size > 0) {
+      const response = await adminApi.uploadImage(heroImageFile)
+      payload.heroImage = response.data.url
+    } else if (typeof heroImageUrl === 'string' && heroImageUrl.trim() !== '') {
+      payload.heroImage = heroImageUrl.trim()
+    }
+
     try {
       await adminApi.createListing('destinations', payload)
       toast.success('Destination created')
@@ -79,8 +88,10 @@ export default function AdminDestinationsPage() {
                 <textarea name="description" rows={4} required className="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none focus:border-safari-500 dark:border-gray-800 dark:bg-gray-950 dark:text-white" />
               </label>
               <label className="space-y-2 text-sm text-gray-700 dark:text-gray-200">
-                Hero image URL
-                <input name="heroImage" required className="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none focus:border-safari-500 dark:border-gray-800 dark:bg-gray-950 dark:text-white" />
+                Hero image URL or upload
+                <input name="heroImageUrl" placeholder="https://..." className="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none focus:border-safari-500 dark:border-gray-800 dark:bg-gray-950 dark:text-white" />
+                <input name="heroImageFile" type="file" accept="image/*" className="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none focus:border-safari-500 dark:border-gray-800 dark:bg-gray-950 dark:text-white" />
+                <p className="text-xs text-gray-500 dark:text-gray-400">Provide an image URL or upload a file.</p>
               </label>
               <label className="space-y-2 text-sm text-gray-700 dark:text-gray-200">
                 Status

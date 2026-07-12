@@ -10,7 +10,7 @@ import toast from 'react-hot-toast'
 export interface FormField {
   name: string
   label?: string
-  type?: 'text' | 'number' | 'textarea' | 'select' | 'checkbox'
+  type?: 'text' | 'number' | 'textarea' | 'select' | 'checkbox' | 'file'
   options?: { value: string; label: string }[]
   required?: boolean
   placeholder?: string
@@ -54,17 +54,38 @@ export function AdminContentManager({ title, description, type, singular, fields
     const form = event.currentTarget
     const formData = new FormData(form)
     const payload: Record<string, unknown> = {}
+    const uploadTasks: Promise<void>[] = []
 
     fields.forEach((field) => {
       if (field.type === 'checkbox') {
         if (formData.get(field.name)) payload[field.name] = true
         return
       }
+      if (field.type === 'file') {
+        const file = formData.get(`${field.name}File`)
+        const urlValue = formData.get(`${field.name}Url`)
+
+        if (file instanceof File && file.size > 0) {
+          uploadTasks.push((async () => {
+            const response = await adminApi.uploadImage(file)
+            payload[field.name] = response.data.url
+          })())
+          return
+        }
+
+        if (typeof urlValue === 'string' && urlValue.trim() !== '') {
+          payload[field.name] = urlValue.trim()
+        }
+        return
+      }
+
       const value = formData.get(field.name)
       if (value === null || value === '') return
       if (field.type === 'number') payload[field.name] = Number(value)
       else payload[field.name] = value
     })
+
+    await Promise.all(uploadTasks)
 
     try {
       await adminApi.createListing(type, payload)
@@ -111,6 +132,28 @@ export function AdminContentManager({ title, description, type, singular, fields
               <option key={opt.value} value={opt.value}>{opt.label}</option>
             ))}
           </select>
+        </label>
+      )
+    }
+    if (field.type === 'file') {
+      return (
+        <label key={field.name} className={wrapperClass}>
+          {label}
+          <div className="space-y-3">
+            <input
+              name={`${field.name}Url`}
+              type="text"
+              placeholder={field.placeholder ?? 'https://...'}
+              className={className}
+            />
+            <input
+              name={`${field.name}File`}
+              type="file"
+              accept="image/*"
+              className={className}
+            />
+            <p className="text-xs text-gray-500 dark:text-gray-400">Provide an image URL or upload a file.</p>
+          </div>
         </label>
       )
     }
@@ -217,7 +260,7 @@ export const ADMIN_FIELD_CONFIGS = {
     { name: 'price', type: 'number' as const, required: true },
     { name: 'duration', required: true, placeholder: 'e.g. 3 days' },
     { name: 'groupSize', type: 'number' as const, required: true },
-    { name: 'heroImage', label: 'Image URL', placeholder: 'https://...' },
+    { name: 'heroImage', type: 'file' as const, label: 'Image', placeholder: 'https://...' },
     { name: 'status', type: 'select' as const, options: [{ value: 'active', label: 'Active' }, { value: 'draft', label: 'Draft' }] },
   ],
   guides: [
@@ -241,7 +284,7 @@ export const ADMIN_FIELD_CONFIGS = {
       { value: 'camping', label: 'Camping' }, { value: 'restaurant', label: 'Restaurant' },
     ], required: true },
     { name: 'pricePerNight', type: 'number' as const, required: true },
-    { name: 'heroImage', label: 'Image URL', placeholder: 'https://...' },
+    { name: 'heroImage', type: 'file' as const, label: 'Image', placeholder: 'https://...' },
     { name: 'status', type: 'select' as const, options: [{ value: 'active', label: 'Active' }, { value: 'draft', label: 'Draft' }] },
   ],
 }

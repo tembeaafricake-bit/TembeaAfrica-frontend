@@ -130,6 +130,11 @@ export const adminApi = {
   getBookings: (params?: Record<string, unknown>) => api.get('/admin/bookings', { params }),
   getUsers: (params?: Record<string, unknown>) => api.get('/admin/users', { params }),
   getListings: (params?: Record<string, unknown>) => api.get('/admin/listings', { params }),
+  uploadImage: (file: File) => {
+    const formData = new FormData()
+    formData.append('image', file)
+    return api.post('/admin/upload-image', formData)
+  },
   createListing: (type: string, data: Record<string, unknown>) => api.post(`/admin/listings?type=${type}`, data),
   banUser: (id: string, banned: boolean) => api.patch(`/admin/users/${id}/ban`, { banned }),
   updateUserRole: (id: string, role: string) => api.patch(`/admin/users/${id}/role`, { role }),
