@@ -9,6 +9,15 @@ const DESTINATIONS = ['Maasai Mara, Kenya', 'Zanzibar, Tanzania', 'Serengeti, Ta
   'Kilimanjaro, Tanzania', 'Mombasa, Kenya', 'Nairobi, Kenya', 'Diani, Kenya', 'Ngorongoro, Tanzania']
 
 const CATEGORIES = ['All', 'Safaris', 'Hotels & Lodges', 'BnBs & Villas', 'Adventures', 'Beach Escapes', 'Guides', 'Transport']
+const CATEGORY_QUERY_VALUES: Record<string, string> = {
+  Safaris: 'safari',
+  Adventures: 'adventure',
+  'Beach Escapes': 'beach',
+}
+const STAY_TYPE_VALUES: Record<string, string> = {
+  'Hotels & Lodges': 'hotel',
+  'BnBs & Villas': 'bnb',
+}
 
 export function Hero() {
   const router = useRouter()
@@ -23,19 +32,32 @@ export function Hero() {
   const handleSearch = () => {
     const params = new URLSearchParams()
     if (query) params.set('q', query)
-    if (category !== 'All') params.set('category', category)
     if (guests) params.set('guests', guests.toString())
     if (dates) params.set('dates', dates)
 
-    if (category === 'Safaris' || category === 'Adventures') {
-      router.push(`/tours?${params.toString()}`)
-    } else if (category === 'Hotels & Lodges' || category === 'BnBs & Villas') {
-      router.push(`/stays?${params.toString()}`)
-    } else if (category === 'Guides') {
-      router.push(`/guides?${params.toString()}`)
-    } else {
-      router.push(`/search?${params.toString()}`)
+    const categoryQuery = CATEGORY_QUERY_VALUES[category]
+    const stayType = STAY_TYPE_VALUES[category]
+
+    if (categoryQuery) {
+      params.set('category', categoryQuery)
     }
+    if (stayType) {
+      params.set('type', stayType)
+    }
+
+    let target = '/search'
+    if (category === 'Safaris' || category === 'Adventures' || category === 'Beach Escapes') {
+      target = '/tours'
+    } else if (category === 'Hotels & Lodges' || category === 'BnBs & Villas') {
+      target = '/stays'
+    } else if (category === 'Guides') {
+      target = '/guides'
+    } else if (category === 'Transport') {
+      target = '/transport'
+    }
+
+    const queryString = params.toString()
+    router.push(queryString ? `${target}?${queryString}` : target)
   }
 
   return (

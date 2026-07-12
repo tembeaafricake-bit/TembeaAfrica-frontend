@@ -12,16 +12,39 @@ import { useCartStore, useWishlistStore } from '@/store'
 import toast from 'react-hot-toast'
 
 const CATEGORIES = ['All', 'safari', 'beach', 'mountain', 'adventure', 'cultural', 'city']
+const CATEGORY_ALIASES: Record<string, string> = {
+  wildlife: 'safari',
+}
 const CAT_COLORS: Record<string, string> = {
   safari: 'bg-green-100 text-green-700', beach: 'bg-blue-100 text-blue-700',
   mountain: 'bg-purple-100 text-purple-700', adventure: 'bg-orange-100 text-orange-700',
   cultural: 'bg-pink-100 text-pink-700', city: 'bg-gray-100 text-gray-700',
 }
 
+const normalizeCategory = (cat: string | null) => {
+  if (!cat) return 'All'
+  const lower = cat.toLowerCase()
+  if (lower === 'all') return 'All'
+  if (CATEGORY_ALIASES[lower]) return CATEGORY_ALIASES[lower]
+  return CATEGORIES.find((item) => item.toLowerCase() === lower) || 'All'
+}
+
+const normalizeTour = (tour: any) => ({
+  ...tour,
+  operator: typeof tour.operator === 'string'
+    ? tour.operator
+    : tour.operator?.name || 'Unknown operator',
+  verified: tour.verified ?? !!tour.operator?.verified,
+  country: tour.country || tour.destination?.country || 'unknown',
+  destination: typeof tour.destination === 'string'
+    ? tour.destination
+    : tour.destination?.name || 'Unknown destination',
+})
+
 function ToursContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const [category, setCategory] = useState(() => searchParams.get('category') || 'All')
+  const [category, setCategory] = useState(() => normalizeCategory(searchParams.get('category')))
   const [country, setCountry] = useState('all')
   const [maxPrice, setMaxPrice] = useState(5000)
   const [sort, setSort] = useState('rating')
@@ -31,7 +54,7 @@ function ToursContent() {
 
   useEffect(() => {
     const cat = searchParams.get('category')
-    setCategory(cat || 'All')
+    setCategory(normalizeCategory(cat))
   }, [searchParams])
 
   const setCategoryFilter = (cat: string) => {
@@ -71,7 +94,10 @@ function ToursContent() {
     console.error('Tours query error:', error)
   }
   
-  const allTours = (data?.data?.length ? data.data : FALLBACK_TOURS) as typeof FALLBACK_TOURS
+  const allTours = useMemo(() => {
+    if (data?.data?.length) return data.data.map(normalizeTour)
+    return FALLBACK_TOURS
+  }, [data])
 
   const filtered = useMemo(() => {
     let list = [...allTours]

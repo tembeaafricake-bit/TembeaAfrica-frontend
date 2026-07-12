@@ -35,7 +35,7 @@ export function FeaturedTours() {
   })
   const { addItem } = useCartStore()
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlistStore()
-  const tours: Tour[] = (data?.data || FALLBACK_TOURS) as unknown as Tour[]
+  const tours: Tour[] = (data?.data?.length ? data.data : FALLBACK_TOURS) as unknown as Tour[]
 
   const handleAddToCart = (tour: Tour) => {
     addItem({

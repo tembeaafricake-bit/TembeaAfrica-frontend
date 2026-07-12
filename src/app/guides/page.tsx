@@ -19,6 +19,27 @@ const FALLBACK_GUIDES = [
 
 const CATEGORIES = ['All', 'safari', 'cultural', 'mountain', 'photography', 'city']
 const CAT_LABELS: Record<string, string> = { safari: 'Safari Guide', cultural: 'Cultural Guide', mountain: 'Mountain Guide', photography: 'Photography Guide', city: 'City Guide' }
+const GUIDE_CATEGORY_COLORS: Record<string, string> = {
+  safari: '#1B4332',
+  cultural: '#185FA5',
+  mountain: '#7B341E',
+  photography: '#5C2D91',
+  city: '#0B5394',
+}
+
+const normalizeGuide = (guide: any) => {
+  const name = guide.name || `${guide.user?.firstName || ''} ${guide.user?.lastName || ''}`.trim() || 'Guide'
+  const initials = guide.initials || name.split(' ').map((part: string) => part[0]).join('').slice(0, 2).toUpperCase()
+  const color = guide.color || GUIDE_CATEGORY_COLORS[guide.category] || '#1B4332'
+
+  return {
+    ...guide,
+    name,
+    initials,
+    color,
+    verified: guide.verified ?? !!guide.verified,
+  }
+}
 
 export default function GuidesPage() {
   const [search, setSearch] = useState('')
@@ -38,11 +59,14 @@ export default function GuidesPage() {
     console.error('Guides query error:', error)
   }
   
-  const guides = (data?.data || FALLBACK_GUIDES) as typeof FALLBACK_GUIDES
+  const guides = useMemo(() => {
+    const rawGuides = data?.data?.length ? data.data : FALLBACK_GUIDES
+    return rawGuides.map(normalizeGuide)
+  }, [data])
 
   const filtered = useMemo(() => {
     let list = [...guides]
-    if (search) list = list.filter(g => g.name.toLowerCase().includes(search.toLowerCase()) || g.specializations.some(s => s.toLowerCase().includes(search.toLowerCase())))
+    if (search) list = list.filter(g => g.name.toLowerCase().includes(search.toLowerCase()) || g.specializations.some((s: string) => s.toLowerCase().includes(search.toLowerCase())))
     if (category !== 'All') list = list.filter(g => g.category === category)
     list = list.filter(g => g.dailyRate <= maxRate)
     if (verifiedOnly) list = list.filter(g => g.verified)
@@ -126,13 +150,13 @@ export default function GuidesPage() {
                 <p className="text-xs text-gray-500 line-clamp-2 mb-3">{guide.bio}</p>
 
                 <div className="flex flex-wrap gap-1 mb-4">
-                  {guide.languages.map(l => (
+                  {guide.languages.map((l: string) => (
                     <span key={l} className="text-xs bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 px-2 py-0.5 rounded-full">{l}</span>
                   ))}
                 </div>
 
                 <div className="flex flex-wrap gap-1 mb-4">
-                  {guide.specializations.slice(0, 2).map(s => (
+                  {guide.specializations.slice(0, 2).map((s: string) => (
                     <span key={s} className="text-xs bg-safari-50 dark:bg-safari-900/20 text-safari-700 dark:text-safari-400 px-2 py-0.5 rounded-full">{s}</span>
                   ))}
                 </div>
