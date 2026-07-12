@@ -27,11 +27,17 @@ export default function GuidesPage() {
   const [verifiedOnly, setVerifiedOnly] = useState(false)
   const [sort, setSort] = useState('rating')
 
-  const { data } = useQuery({
+  const { data, isError, error } = useQuery({
     queryKey: ['all-guides'],
     queryFn: () => guidesApi.getAll().then(r => r.data),
     staleTime: 5 * 60 * 1000,
+    retry: 2,
   })
+  
+  if (isError) {
+    console.error('Guides query error:', error)
+  }
+  
   const guides = (data?.data || FALLBACK_GUIDES) as typeof FALLBACK_GUIDES
 
   const filtered = useMemo(() => {
@@ -57,6 +63,13 @@ export default function GuidesPage() {
         </div>
 
         <div className="max-w-7xl mx-auto px-4 py-8">
+          {/* Error Alert */}
+          {isError && (
+            <div className="mb-6 p-4 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-900 rounded-xl">
+              <p className="text-sm text-red-700 dark:text-red-200">Failed to load guides. Showing available guides.</p>
+            </div>
+          )}
+          
           {/* Filters bar */}
           <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4 mb-6 flex flex-wrap gap-3 items-center">
             <div className="flex items-center gap-2 flex-1 min-w-48 bg-gray-50 dark:bg-gray-800 rounded-xl px-3 py-2">

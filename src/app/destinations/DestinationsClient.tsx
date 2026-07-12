@@ -32,11 +32,16 @@ export function DestinationsClient() {
   const [sort, setSort] = useState('rating')
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlistStore()
 
-  const { data } = useQuery({
+  const { data, isError, error } = useQuery({
     queryKey: ['all-destinations'],
     queryFn: () => destinationsApi.getAll().then(r => r.data),
     staleTime: 5 * 60 * 1000,
+    retry: 2,
   })
+  
+  if (isError) {
+    console.error('Destinations query error:', error)
+  }
 
   const destinations = (data?.data || FALLBACK) as typeof FALLBACK
 
@@ -53,6 +58,13 @@ export function DestinationsClient() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-10">
+      {/* Error Alert */}
+      {isError && (
+        <div className="mb-6 p-4 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-900 rounded-xl">
+          <p className="text-sm text-red-700 dark:text-red-200">Failed to load destinations. Showing available data.</p>
+        </div>
+      )}
+      
       {/* Filters */}
       <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4 mb-8 flex flex-col md:flex-row gap-3">
         <div className="flex items-center gap-2 flex-1 bg-gray-50 dark:bg-gray-800 rounded-xl px-3 py-2">
