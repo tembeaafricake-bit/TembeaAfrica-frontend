@@ -41,7 +41,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={`${inter.variable} ${playfair.variable} font-sans antialiased bg-white dark:bg-gray-950`}>
         <Providers>
           {children}
-          <Toaster position="top-right" toastOptions={{ duration: 4000, style: { borderRadius: '12px', background: '#1B4332', color: '#fff' } }} />
+          <Toaster position="top-right" toastOptions={{ duration: 1500, style: { borderRadius: '12px', background: '#1B4332', color: '#fff' } }} />
         </Providers>
       </body>
     </html>

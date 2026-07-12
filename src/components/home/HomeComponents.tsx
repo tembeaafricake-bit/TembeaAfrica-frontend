@@ -6,6 +6,8 @@ import { Sparkles, Star, Shield, RefreshCw, Clock, DollarSign, Award } from 'luc
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
+import { useCartStore } from '@/store'
+import toast from 'react-hot-toast'
 
 // ─── AI Banner ──────────────────────────────────────────────────────────────
 export function AIBanner() {
@@ -112,6 +114,24 @@ const STAYS = [
 ]
 
 export function FeaturedStays() {
+  const { addItem } = useCartStore()
+
+  const handleAddStayToCart = (stay: any, e?: React.MouseEvent) => {
+    if (e) { e.preventDefault(); e.stopPropagation(); }
+    addItem({
+      id: stay._id,
+      type: 'stay',
+      name: stay.name,
+      image: stay.images[0],
+      price: stay.pricePerNight,
+      quantity: 1,
+      startDate: new Date().toISOString().split('T')[0],
+      guests: 2,
+      details: { type: stay.type, destination: stay.destination },
+    })
+    toast.success('Added to cart!')
+  }
+
   return (
     <section className="py-16 bg-white dark:bg-gray-950">
       <div className="max-w-7xl mx-auto px-4">
@@ -148,6 +168,12 @@ export function FeaturedStays() {
                   </div>
                 </div>
               </Link>
+              <div className="p-4 pt-0">
+                <div className="mt-3 flex gap-2">
+                  <Link href={`/stays/${stay.slug}`} className="flex-1 text-center py-2 border border-safari-200 dark:border-safari-700 text-safari-700 dark:text-safari-400 rounded-xl text-sm font-medium hover:bg-safari-50 dark:hover:bg-safari-900/20 transition-colors">View stay</Link>
+                  <button onClick={(e) => handleAddStayToCart(stay, e)} className="flex-1 py-2 bg-safari-700 text-white rounded-xl text-sm font-medium hover:bg-safari-800 transition-colors">Add to cart</button>
+                </div>
+              </div>
             </motion.div>
           ))}
         </div>
@@ -210,7 +236,7 @@ export function FeaturedGuides() {
 export function TrustStrip() {
   const items = [
     { icon: Shield, label: 'Verified listings', desc: 'Every listing manually reviewed' },
-    { icon: Award, label: 'Secure payments', desc: 'Paystack & PayPal protected' },
+    { icon: Award, label: 'Secure payments', desc: 'Paystack protected' },
     { icon: Clock, label: '24/7 support', desc: 'Always here to help' },
     { icon: RefreshCw, label: 'Free cancellations', desc: 'On most bookings' },
     { icon: DollarSign, label: 'Best price guarantee', desc: 'Or we match it' },

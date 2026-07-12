@@ -7,7 +7,7 @@ import Image from 'next/image'
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
 import { useCartStore, useAuthStore } from '@/store'
-import { bookingsApi } from '@/lib/api'
+import { bookingsApi, paymentsApi } from '@/lib/api'
 import toast from 'react-hot-toast'
 
 type Step = 'cart' | 'details' | 'payment' | 'success'
@@ -17,7 +17,7 @@ export default function CheckoutPage() {
   const { items, removeItem, updateQuantity, clearCart, totalPrice } = useCartStore()
   const { isAuthenticated, user } = useAuthStore()
   const [step, setStep] = useState<Step>('cart')
-  const [payMethod, setPayMethod] = useState<'paystack' | 'paypal'>('paystack')
+  const [payMethod, setPayMethod] = useState<'paystack'>('paystack')
   const [loading, setLoading] = useState(false)
   const [bookingRef, setBookingRef] = useState('')
 
@@ -40,14 +40,21 @@ export default function CheckoutPage() {
         guestDetails: details, paymentMethod: payMethod,
         startDate: items[0]?.startDate, endDate: items[0]?.endDate,
       }
-      const { data } = await bookingsApi.create(bookingData)
-      setBookingRef(data.bookingNumber || 'TA-' + Math.random().toString(36).substring(2, 8).toUpperCase())
-      // In production: redirect to Paystack/PayPal payment URL from data.paymentUrl
-      await new Promise(r => setTimeout(r, 1500))
+      const { data: booking } = await bookingsApi.create(bookingData)
+
+      const { data: initData } = await paymentsApi.initializePaystack(booking._id)
+      if (initData?.paymentUrl) {
+        clearCart()
+        window.location.href = initData.paymentUrl
+        return
+      }
+
+      setBookingRef(booking.bookingNumber || 'TA-' + Math.random().toString(36).substring(2, 8).toUpperCase())
       clearCart()
       setStep('success')
-    } catch {
-      toast.error('Booking failed. Please try again.')
+    } catch (err: any) {
+      console.error('Payment initiation error:', err)
+      toast.error(err?.response?.data?.message || 'Booking or payment failed. Please try again.')
     } finally {
       setLoading(false)
     }
@@ -192,17 +199,14 @@ export default function CheckoutPage() {
                     <CreditCard className="w-5 h-5 text-safari-600" /> Payment method
                   </h2>
                   <div className="space-y-3 mb-6">
-                    {[{ id: 'paystack', label: 'Paystack', desc: 'Cards, mobile money, bank transfer', icon: '💳' },
-                      { id: 'paypal', label: 'PayPal', desc: 'PayPal balance or linked card', icon: '🅿️' }].map(m => (
-                      <label key={m.id} className={`flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all ${payMethod === m.id ? 'border-safari-600 bg-safari-50 dark:bg-safari-900/20' : 'border-gray-100 dark:border-gray-700 hover:border-gray-200 dark:hover:border-gray-600'}`}>
-                        <input type="radio" name="payment" value={m.id} checked={payMethod === m.id} onChange={() => setPayMethod(m.id as 'paystack' | 'paypal')} className="text-safari-600" />
-                        <span className="text-2xl">{m.icon}</span>
-                        <div>
-                          <div className="font-medium text-gray-900 dark:text-white text-sm">{m.label}</div>
-                          <div className="text-xs text-gray-500">{m.desc}</div>
-                        </div>
-                      </label>
-                    ))}
+                    <label className={`flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all ${payMethod === 'paystack' ? 'border-safari-600 bg-safari-50 dark:bg-safari-900/20' : 'border-gray-100 dark:border-gray-700 hover:border-gray-200 dark:hover:border-gray-600'}`}>
+                      <input type="radio" name="payment" value="paystack" checked={payMethod === 'paystack'} onChange={() => setPayMethod('paystack')} className="text-safari-600" />
+                      <span className="text-2xl">💳</span>
+                      <div>
+                        <div className="font-medium text-gray-900 dark:text-white text-sm">Paystack</div>
+                        <div className="text-xs text-gray-500">Cards, mobile money, bank transfer</div>
+                      </div>
+                    </label>
                   </div>
                   <div className="flex items-center gap-2 text-xs text-gray-400 mb-6 bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
                     <Shield className="w-4 h-4 text-safari-600 flex-shrink-0" />
@@ -214,7 +218,7 @@ export default function CheckoutPage() {
                     </button>
                     <button onClick={handlePayment} disabled={loading}
                       className="flex-1 flex items-center justify-center gap-2 bg-safari-700 text-white py-3 rounded-xl font-semibold hover:bg-safari-800 transition-colors disabled:opacity-60">
-                      {loading ? <><Loader className="w-5 h-5 animate-spin" /> Processing…</> : `Pay $${total.toLocaleString()} via ${payMethod === 'paystack' ? 'Paystack' : 'PayPal'}`}
+                      {loading ? <><Loader className="w-5 h-5 animate-spin" /> Processing…</> : `Pay $${total.toLocaleString()} via Paystack`}
                     </button>
                   </div>
                 </div>

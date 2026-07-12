@@ -134,3 +134,10 @@ export const adminApi = {
   deleteListing: (type: string, id: string) => api.delete(`/admin/${type}/${id}`),
   getAnalytics: () => api.get('/admin/analytics'),
 }
+
+// Payments
+export const paymentsApi = {
+  initializePaystack: (bookingId: string) => api.post(`/payments/paystack/initialize/${bookingId}`),
+  verifyPaystack: (reference: string) => api.get(`/payments/paystack/verify/${reference}`),
+  // PayPal removed — use Paystack only
+}
