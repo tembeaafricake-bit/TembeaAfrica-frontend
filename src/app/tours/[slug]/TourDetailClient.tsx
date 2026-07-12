@@ -12,6 +12,20 @@ import { findTourBySlug } from '@/lib/fallback-data'
 import { useCartStore, useWishlistStore } from '@/store'
 import toast from 'react-hot-toast'
 
+const getOperatorName = (operator: unknown) => {
+  if (!operator) return 'Verified operator'
+  if (typeof operator === 'string') return operator
+  const firstName = (operator as { firstName?: string }).firstName || ''
+  const lastName = (operator as { lastName?: string }).lastName || ''
+  return `${firstName} ${lastName}`.trim() || 'Verified operator'
+}
+
+const getDestinationName = (destination: unknown) => {
+  if (!destination) return 'Unknown destination'
+  if (typeof destination === 'string') return destination
+  return (destination as { name?: string }).name || 'Unknown destination'
+}
+
 export default function TourDetailClient({ slug }: { slug: string }) {
   const { addItem } = useCartStore()
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlistStore()
@@ -52,12 +66,10 @@ export default function TourDetailClient({ slug }: { slug: string }) {
   }
 
   const image = tour.images?.[0] || 'https://images.unsplash.com/photo-1547970810-dc1eac37d174?w=800'
-  const operatorName = typeof tour.operator === 'object' && tour.operator
-    ? `${(tour.operator as { firstName?: string }).firstName || ''} ${(tour.operator as { lastName?: string }).lastName || ''}`.trim()
-    : (tour.operator as string) || 'Verified operator'
-  const destName = typeof tour.destination === 'object' && tour.destination
-    ? (tour.destination as { name?: string }).name
-    : (tour.destination as string)
+  const operatorName = getOperatorName(tour.operator)
+  const destName = getDestinationName(tour.destination)
+  const tourTags = Array.isArray(tour.tags) ? tour.tags : []
+  const itinerary = Array.isArray(tour.itinerary) ? tour.itinerary : []
 
   const handleBook = () => {
     addItem({
@@ -102,6 +114,37 @@ export default function TourDetailClient({ slug }: { slug: string }) {
               <h2 className="font-semibold text-gray-900 dark:text-white mb-3">About this tour</h2>
               <p className="text-gray-600 dark:text-gray-300 leading-relaxed">{tour.description}</p>
             </div>
+
+            {tourTags.length > 0 && (
+              <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6">
+                <h2 className="font-semibold text-gray-900 dark:text-white mb-3">Perfect for</h2>
+                <div className="flex flex-wrap gap-2">
+                  {tourTags.map((tag: string) => (
+                    <span key={tag} className="text-xs uppercase tracking-wide bg-safari-50 dark:bg-safari-900/20 text-safari-700 px-3 py-1 rounded-full">{tag}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {itinerary.length > 0 && (
+              <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6">
+                <h2 className="font-semibold text-gray-900 dark:text-white mb-3">Sample itinerary</h2>
+                <div className="space-y-4">
+                  {itinerary.map((item: any) => (
+                    <div key={item.day} className="rounded-2xl bg-safari-50 dark:bg-safari-900/20 p-4">
+                      <p className="text-sm font-semibold text-safari-700">Day {item.day}: {item.title}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">{item.description}</p>
+                      {item.activities?.length > 0 && (
+                        <div className="mt-3 text-sm text-gray-500 dark:text-gray-400">
+                          <span className="font-semibold">Activities:</span> {item.activities.join(', ')}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {tour.highlights && tour.highlights.length > 0 && (
               <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6">
                 <h2 className="font-semibold text-gray-900 dark:text-white mb-3">Highlights</h2>
@@ -114,6 +157,7 @@ export default function TourDetailClient({ slug }: { slug: string }) {
                 </ul>
               </div>
             )}
+
             {tour.includes && tour.includes.length > 0 && (
               <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6">
                 <h2 className="font-semibold text-gray-900 dark:text-white mb-3">What&apos;s included</h2>
@@ -122,6 +166,17 @@ export default function TourDetailClient({ slug }: { slug: string }) {
                     <span key={item} className="text-xs bg-safari-50 dark:bg-safari-900/20 text-safari-700 px-3 py-1 rounded-full">{item}</span>
                   ))}
                 </div>
+              </div>
+            )}
+
+            {tour.excludes && tour.excludes.length > 0 && (
+              <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6">
+                <h2 className="font-semibold text-gray-900 dark:text-white mb-3">What&apos;s not included</h2>
+                <ul className="list-disc list-inside text-sm text-gray-600 dark:text-gray-300 space-y-2">
+                  {tour.excludes.map((item: string) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
               </div>
             )}
           </div>
