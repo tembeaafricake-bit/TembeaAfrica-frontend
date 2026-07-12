@@ -61,9 +61,20 @@ export default function TourDetailClient({ slug }: { slug: string }) {
 
   const handleBook = () => {
     addItem({
-      id: tour._id, type: 'tour', name: tour.title, image,
-      price: tour.price, quantity: 1,
-      startDate: new Date().toISOString().split('T')[0], guests: 2, details: {},
+      id: tour._id,
+      type: 'tour',
+      name: tour.title,
+      image,
+      price: tour.price,
+      quantity: 1,
+      startDate: new Date().toISOString().split('T')[0],
+      guests: 2,
+      details: {
+        category: tour.category,
+        duration: tour.duration,
+        destination: destName,
+        operator: operatorName,
+      },
     })
     toast.success('Added to cart!')
   }

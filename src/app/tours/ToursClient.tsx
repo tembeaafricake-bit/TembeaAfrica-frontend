@@ -114,7 +114,22 @@ function ToursContent() {
   }, [allTours, category, country, maxPrice, sort, instantOnly, verifiedOnly])
 
   const handleCart = (tour: typeof FALLBACK_TOURS[0]) => {
-    addItem({ id: tour._id, type: 'tour', name: tour.title, image: tour.images[0], price: tour.price, quantity: 1, startDate: new Date().toISOString().split('T')[0], guests: 2, details: {} })
+    addItem({
+      id: tour._id,
+      type: 'tour',
+      name: tour.title,
+      image: tour.images[0],
+      price: tour.price,
+      quantity: 1,
+      startDate: new Date().toISOString().split('T')[0],
+      guests: 2,
+      details: {
+        category: tour.category,
+        duration: tour.duration,
+        destination: typeof tour.destination === 'string' ? tour.destination : tour.destination?.name,
+        operator: typeof tour.operator === 'string' ? tour.operator : tour.operator?.name,
+      },
+    })
     toast.success('Added to cart!')
   }
 

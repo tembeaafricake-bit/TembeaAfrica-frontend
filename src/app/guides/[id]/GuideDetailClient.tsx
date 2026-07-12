@@ -61,9 +61,19 @@ export default function GuideDetailClient({ id }: { id: string }) {
 
   const handleBook = () => {
     addItem({
-      id: guide._id, type: 'guide', name: `${guide.name} — Guide`, image: '',
-      price: guide.dailyRate, quantity: 1,
-      startDate: new Date().toISOString().split('T')[0], guests: 1, details: {},
+      id: guide._id,
+      type: 'guide',
+      name: `${guide.name} — Guide`,
+      image: '',
+      price: guide.dailyRate,
+      quantity: 1,
+      startDate: new Date().toISOString().split('T')[0],
+      guests: 1,
+      details: {
+        category: guide.category,
+        specializations: guide.specializations,
+        languages: guide.languages,
+      },
     })
     toast.success('Guide added to cart!')
   }

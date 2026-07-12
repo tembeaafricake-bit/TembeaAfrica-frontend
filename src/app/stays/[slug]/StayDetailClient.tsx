@@ -46,9 +46,19 @@ export default function StayDetailClient({ slug }: { slug: string }) {
 
   const handleBook = () => {
     addItem({
-      id: stay._id, type: 'accommodation', name: stay.name, image,
-      price: stay.pricePerNight, quantity: 1,
-      startDate: new Date().toISOString().split('T')[0], guests: 2, details: {},
+      id: stay._id,
+      type: 'accommodation',
+      name: stay.name,
+      image,
+      price: stay.pricePerNight,
+      quantity: 1,
+      startDate: new Date().toISOString().split('T')[0],
+      guests: 2,
+      details: {
+        type: stay.type,
+        destination: destName,
+        amenities: stay.amenities || [],
+      },
     })
     toast.success('Added to cart!')
   }

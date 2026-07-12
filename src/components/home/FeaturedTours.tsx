@@ -47,7 +47,12 @@ export function FeaturedTours() {
       quantity: 1,
       startDate: new Date().toISOString().split('T')[0],
       guests: 2,
-      details: { duration: tour.duration, category: tour.category },
+      details: {
+        category: tour.category,
+        duration: tour.duration,
+        destination: typeof tour.destination === 'string' ? tour.destination : tour.destination?.name,
+        operator: typeof tour.operator === 'string' ? tour.operator : tour.operator?.name,
+      },
     })
     toast.success('Added to cart!')
   }
