@@ -26,9 +26,15 @@ export default function CheckoutPage() {
     email: user?.email || '', phone: '', nationality: '', specialRequests: '',
   })
 
+  const USD_TO_KES_RATE = Number(process.env.NEXT_PUBLIC_USD_TO_KES_RATE || 150)
+  const usdToKes = (amount: number) => Math.round(amount * USD_TO_KES_RATE)
+
   const subtotal = totalPrice()
   const serviceFee = Math.round(subtotal * 0.08)
   const total = subtotal + serviceFee
+  const subtotalKes = usdToKes(subtotal)
+  const serviceFeeKes = usdToKes(serviceFee)
+  const totalKes = subtotalKes + serviceFeeKes
 
   useEffect(() => {
     const restoreSession = async () => {
@@ -55,8 +61,8 @@ export default function CheckoutPage() {
     setLoading(true)
     try {
       const bookingData = {
-        items: items.map(i => ({ type: i.type, itemId: i.id, name: i.name, quantity: i.quantity, price: i.price, startDate: i.startDate, endDate: i.endDate })),
-        totalAmount: total, currency: 'USD', guests: items[0]?.guests || 2,
+        items: items.map(i => ({ type: i.type, itemId: i.id, name: i.name, quantity: i.quantity, price: usdToKes(i.price), startDate: i.startDate, endDate: i.endDate })),
+        totalAmount: totalKes, currency: 'KES', guests: items[0]?.guests || 2,
         guestDetails: details, paymentMethod: 'paystack',
         startDate: items[0]?.startDate, endDate: items[0]?.endDate,
       }
@@ -222,7 +228,7 @@ export default function CheckoutPage() {
                     <div className="flex items-center gap-4 p-4 rounded-xl border-2 border-safari-600 bg-safari-50 dark:bg-safari-900/20">
                       <span className="text-2xl">💳</span>
                       <div>
-                        <div className="font-medium text-gray-900 dark:text-white text-sm">Paystack</div>
+                        <div className="font-medium text-gray-900 dark:text-white text-sm">Secure checkout</div>
                         <div className="text-xs text-gray-500">Cards, mobile money, bank transfer</div>
                       </div>
                     </div>
@@ -242,17 +248,17 @@ export default function CheckoutPage() {
                     ) : !isAuthenticated ? (
                       <button onClick={() => router.push('/auth/login?next=/checkout')}
                         className="flex-1 bg-safari-700 text-white py-3 rounded-xl font-semibold hover:bg-safari-800 transition-colors">
-                        Sign in to pay
+                        Sign in to continue
                       </button>
                     ) : (
                       <button onClick={handlePayment} disabled={loading}
                         className="flex-1 flex items-center justify-center gap-2 bg-safari-700 text-white py-3 rounded-xl font-semibold hover:bg-safari-800 transition-colors disabled:opacity-60">
-                        {loading ? <><Loader className="w-5 h-5 animate-spin" /> Processing…</> : `Pay $${total.toLocaleString()} via Paystack`}
+                        {loading ? <><Loader className="w-5 h-5 animate-spin" /> Processing…</> : 'Pay for booking'}
                       </button>
                     )}
                   </div>
                   {!isAuthenticated && !checkingAuth && (
-                    <p className="mt-3 text-sm text-gray-500">You need to sign in before paying with Paystack.</p>
+                    <p className="mt-3 text-sm text-gray-500">You need to sign in before completing checkout.</p>
                   )}
                 </div>
               )}
@@ -272,13 +278,13 @@ export default function CheckoutPage() {
                 </div>
                 <div className="border-t border-gray-100 dark:border-gray-800 pt-3 space-y-2">
                   <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400">
-                    <span>Subtotal</span><span>${subtotal.toLocaleString()}</span>
+                    <span>Subtotal</span><span>KSh {subtotalKes.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400">
-                    <span>Service fee (8%)</span><span>${serviceFee.toLocaleString()}</span>
+                    <span>Service fee (8%)</span><span>KSh {serviceFeeKes.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between font-bold text-gray-900 dark:text-white border-t border-gray-100 dark:border-gray-800 pt-2 mt-1">
-                    <span>Total</span><span className="text-safari-700">${total.toLocaleString()}</span>
+                    <span>Total</span><span className="text-safari-700">KSh {totalKes.toLocaleString()}</span>
                   </div>
                 </div>
                 <div className="mt-4 text-xs text-gray-400 space-y-1">
