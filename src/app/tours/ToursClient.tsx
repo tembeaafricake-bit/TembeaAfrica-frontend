@@ -35,9 +35,16 @@ function ToursContent() {
   }, [searchParams])
 
   const setCategoryFilter = (cat: string) => {
-    setCategory(cat)
-    if (cat === 'All') router.push('/tours/')
-    else router.push(`/tours/?category=${cat}`)
+    try {
+      setCategory(cat)
+      if (cat === 'All') {
+        router.push('/tours')
+      } else {
+        router.push(`/tours?category=${encodeURIComponent(cat)}`)
+      }
+    } catch (e) {
+      console.error('Navigation error:', e)
+    }
   }
 
   const clearFilters = () => {
@@ -46,17 +53,24 @@ function ToursContent() {
     setMaxPrice(5000)
     setInstantOnly(false)
     setVerifiedOnly(false)
-    router.push('/tours/')
+    router.push('/tours')
   }
 
   const { addItem } = useCartStore()
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlistStore()
 
-  const { data } = useQuery({
+  const { data, isLoading, isError, error } = useQuery({
     queryKey: ['all-tours'],
     queryFn: () => toursApi.getAll().then(r => r.data),
     staleTime: 5 * 60 * 1000,
+    retry: 2,
   })
+  
+  // Handle query errors
+  if (isError) {
+    console.error('Tours query error:', error)
+  }
+  
   const allTours = (data?.data?.length ? data.data : FALLBACK_TOURS) as typeof FALLBACK_TOURS
 
   const filtered = useMemo(() => {
@@ -80,6 +94,13 @@ function ToursContent() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
+      {/* Error Alert */}
+      {isError && (
+        <div className="mb-6 p-4 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-900 rounded-xl">
+          <p className="text-sm text-red-700 dark:text-red-200">Failed to load tours. Showing available data.</p>
+        </div>
+      )}
+      
       {/* Top bar */}
       <div className="flex items-center justify-between mb-6">
         <div>
