@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Eye, EyeOff, Loader, Mail, Lock } from 'lucide-react'
@@ -20,9 +20,9 @@ type FormData = z.infer<typeof schema>
 
 export default function LoginPage() {
   const router = useRouter()
-  const searchParams = useSearchParams()
   const { setUser } = useAuthStore()
   const [showPass, setShowPass] = useState(false)
+  const [nextPath, setNextPath] = useState('/dashboard')
   const [loading, setLoading] = useState(false)
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
@@ -34,13 +34,15 @@ export default function LoginPage() {
     const googleLoginSuccess = params.get('googleLoginSuccess')
     const accessToken = params.get('accessToken')
     const refreshToken = params.get('refreshToken')
-    const nextPath = params.get('next') || searchParams.get('next') || '/dashboard'
+    const nextParam = params.get('next') || '/dashboard'
     const error = params.get('error')
 
     if (error) {
       toast.error('Google sign-in failed. Please try again.')
       return
     }
+
+    setNextPath(nextParam)
 
     if (!googleLoginSuccess && !accessToken && !refreshToken) return
 
@@ -54,8 +56,7 @@ export default function LoginPage() {
 
         const { data: user } = await authApi.me()
         setUser(user)
-        const destination = nextPath || '/dashboard'
-        router.replace(destination)
+        router.replace(nextParam)
       } catch (err) {
         if (accessToken && refreshToken) {
           Cookies.remove('access_token')
@@ -77,9 +78,12 @@ export default function LoginPage() {
       const { user } = res.data
       setUser(user)
       toast.success(`Welcome back, ${user.firstName}! 🦁`)
-      const nextPath = searchParams.get('next') || '/dashboard'
-      if (user.role === 'admin') router.push('/admin/dashboard')
-      else router.push(nextPath)
+
+      if (user.role === 'admin') {
+        router.push('/admin/dashboard')
+      } else {
+        router.push(nextPath)
+      }
     } catch (err: any) {
       toast.error(err?.response?.data?.message || 'Invalid email or password')
     } finally {
