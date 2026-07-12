@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { BarChart2, BookOpen, Users, MapPin, Star, Building2, Compass, UserCheck, BedDouble, Bus, ChevronRight, LogOut } from 'lucide-react'
@@ -28,16 +28,22 @@ export function AdminShell({ title, children }: AdminShellProps) {
   const router = useRouter()
   const pathname = usePathname()
   const { user, isAuthenticated, logout } = useAuthStore()
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (!mounted) return
     if (!isAuthenticated) {
       router.push('/auth/login')
     } else if (user?.role !== 'admin') {
       router.push('/dashboard')
     }
-  }, [isAuthenticated, user, router])
+  }, [mounted, isAuthenticated, user, router])
 
-  if (!isAuthenticated || user?.role !== 'admin') return null
+  if (!mounted || !isAuthenticated || user?.role !== 'admin') return null
 
   return (
     <div className="flex min-h-screen bg-gray-50 dark:bg-gray-950">

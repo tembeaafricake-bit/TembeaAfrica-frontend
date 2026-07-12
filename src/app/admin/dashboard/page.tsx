@@ -35,11 +35,17 @@ export default function AdminDashboard() {
   const { user, isAuthenticated } = useAuthStore()
   const [activeTab, setActiveTab] = useState<'bookings' | 'reviews'>('bookings')
   const [activeDashboard, setActiveDashboard] = useState<'overview' | 'analytics'>('overview')
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (!mounted) return
     if (!isAuthenticated) router.push('/auth/login')
     else if (user?.role !== 'admin') router.push('/dashboard')
-  }, [isAuthenticated, user, router])
+  }, [mounted, isAuthenticated, user, router])
 
   const { data: stats, isLoading: statsLoading } = useQuery({
     queryKey: ['admin-stats'],
@@ -67,7 +73,7 @@ export default function AdminDashboard() {
     enabled: user?.role === 'admin',
   })
 
-  if (!isAuthenticated || user?.role !== 'admin') return null
+  if (!mounted || !isAuthenticated || user?.role !== 'admin') return null
 
   const kpis = [
     { label: 'Revenue (MTD)', value: stats ? `$${(stats.revenue?.thisMonth || 0).toLocaleString()}` : '—', sub: stats ? `+${stats.revenue?.growth?.toFixed(1) || 0}% vs last month` : '', icon: DollarSign, color: 'text-safari-600 bg-safari-50 dark:bg-safari-900/20' },

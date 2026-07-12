@@ -23,10 +23,16 @@ export default function DashboardPage() {
   const router = useRouter()
   const { user, isAuthenticated, logout } = useAuthStore()
   const [activeTab, setActiveTab] = useState('Bookings')
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (!mounted) return
     if (!isAuthenticated) router.push('/auth/login?next=/dashboard')
-  }, [isAuthenticated, router])
+  }, [mounted, isAuthenticated, router])
 
   const { data: bookingsData, isLoading } = useQuery({
     queryKey: ['my-bookings'],
@@ -36,7 +42,7 @@ export default function DashboardPage() {
 
   const bookings = bookingsData || []
 
-  if (!isAuthenticated || !user) return null
+  if (!mounted || !isAuthenticated || !user) return null
 
   return (
     <>
