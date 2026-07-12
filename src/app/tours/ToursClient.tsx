@@ -41,6 +41,18 @@ const normalizeTour = (tour: any) => ({
     : tour.destination?.name || 'Unknown destination',
 })
 
+const getDestinationName = (destination: unknown) => {
+  if (!destination) return ''
+  if (typeof destination === 'string') return destination
+  return (destination as { name?: string }).name || ''
+}
+
+const getOperatorName = (operator: unknown) => {
+  if (!operator) return ''
+  if (typeof operator === 'string') return operator
+  return (operator as { name?: string }).name || ''
+}
+
 function ToursContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -126,8 +138,8 @@ function ToursContent() {
       details: {
         category: tour.category,
         duration: tour.duration,
-        destination: typeof tour.destination === 'string' ? tour.destination : tour.destination?.name,
-        operator: typeof tour.operator === 'string' ? tour.operator : tour.operator?.name,
+        destination: getDestinationName(tour.destination),
+        operator: getOperatorName(tour.operator),
       },
     })
     toast.success('Added to cart!')
