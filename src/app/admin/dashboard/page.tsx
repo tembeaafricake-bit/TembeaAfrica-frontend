@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
-import { Users, BookOpen, DollarSign, TrendingUp, Check, Trash2, BarChart2, MapPin, Star, Building2, ChevronRight, Eye, UserCheck, UserX, Globe, BedDouble, Compass } from 'lucide-react'
+import { Users, BookOpen, DollarSign, TrendingUp, Check, Trash2, BarChart2, MapPin, Star, Building2, ChevronRight, Eye, UserCheck, UserX, Globe, BedDouble, Compass, Clock3 } from 'lucide-react'
 import { useAuthStore } from '@/store'
 import { adminApi } from '@/lib/api'
 import toast from 'react-hot-toast'
@@ -87,6 +87,7 @@ export default function AdminDashboard() {
     { label: 'Signed-in Visits', value: analytics ? analytics.authenticatedVisits?.toLocaleString() : '—', sub: analytics ? `${((analytics.authenticatedVisits / (analytics.totalVisits || 1)) * 100).toFixed(1)}% of pageviews` : '', icon: UserCheck, color: 'text-green-600 bg-green-50 dark:bg-green-900/20' },
     { label: 'Anonymous Visits', value: analytics ? analytics.anonymousVisits?.toLocaleString() : '—', sub: analytics ? `${((analytics.anonymousVisits / (analytics.totalVisits || 1)) * 100).toFixed(1)}% of pageviews` : '', icon: UserX, color: 'text-gray-500 bg-gray-50 dark:bg-gray-800/20' },
     { label: 'Unique Countries', value: analytics ? analytics.uniqueCountries?.toLocaleString() : '—', sub: 'Geographic traffic spread', icon: Globe, color: 'text-purple-600 bg-purple-50 dark:bg-purple-900/20' },
+    { label: 'Last 24h Visits', value: analytics?.last24Hours?.total ? analytics.last24Hours.total.toLocaleString() : '—', sub: analytics?.last24Hours ? `${analytics.last24Hours.authenticated.toLocaleString()} signed-in • ${analytics.last24Hours.anonymous.toLocaleString()} anonymous` : '', icon: Clock3, color: 'text-safari-600 bg-safari-50 dark:bg-safari-900/20' },
   ]
 
   const STATUS_COLORS: Record<string, string> = {
@@ -358,7 +359,88 @@ export default function AdminDashboard() {
               </div>
             </section>
 
-            {/* Live Visitor Log */}
+            <section className="grid gap-4 lg:grid-cols-[0.8fr_1.2fr]">
+              <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+                <p className="text-sm font-semibold text-gray-900 dark:text-white mb-1">Last 24h Top Pages</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mb-6">Pages with the highest traffic in the last day.</p>
+                <div className="space-y-3">
+                  {!analytics?.last24Hours?.topPages?.length ? (
+                    <div className="rounded-3xl border border-gray-100 bg-gray-50 p-6 text-center text-sm text-gray-500 dark:border-gray-800 dark:bg-gray-950 dark:text-gray-400">
+                      No recent page views recorded.
+                    </div>
+                  ) : (
+                    analytics.last24Hours.topPages.map((page: any) => (
+                      <div key={page.pageUrl} className="flex items-center justify-between rounded-3xl border border-gray-100 bg-gray-50 px-4 py-3 text-sm text-gray-700 dark:border-gray-800 dark:bg-gray-950 dark:text-gray-200">
+                        <span className="font-medium truncate">{page.pageUrl}</span>
+                        <span className="text-xs text-gray-500 dark:text-gray-400">{page.count} views</span>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+
+              <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+                <p className="text-sm font-semibold text-gray-900 dark:text-white mb-1">Live Visitor Log</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mb-6">Real-time visitor logs from the platform (last 50 visits).</p>
+                <div className="overflow-x-auto">
+                  <table className="min-w-full text-left text-sm">
+                    <thead className="bg-gray-50 text-gray-500 dark:bg-gray-800 dark:text-gray-400">
+                      <tr>
+                        <th className="px-4 py-3 font-medium">Time</th>
+                        <th className="px-4 py-3 font-medium">User Status</th>
+                        <th className="px-4 py-3 font-medium">IP Address</th>
+                        <th className="px-4 py-3 font-medium">Country</th>
+                        <th className="px-4 py-3 font-medium">Page Visited</th>
+                        <th className="px-4 py-3 font-medium">Device/Browser</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {!analytics?.recentVisits?.length ? (
+                        <tr>
+                          <td colSpan={6} className="px-4 py-10 text-center text-gray-500">No visitors recorded.</td>
+                        </tr>
+                      ) : (
+                        analytics.recentVisits.map((visit: any) => (
+                          <tr key={visit._id} className="border-t border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-950/40">
+                            <td className="px-4 py-3 text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">
+                              {new Date(visit.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}{' '}
+                              <span className="text-[10px] text-gray-400">({new Date(visit.createdAt).toLocaleDateString()})</span>
+                            </td>
+                            <td className="px-4 py-3">
+                              {visit.user ? (
+                                <div className="flex items-center gap-2">
+                                  {visit.user.avatar ? (
+                                    <img src={visit.user.avatar} className="w-5 h-5 rounded-full object-cover" alt="User avatar" />
+                                  ) : (
+                                    <div className="w-5 h-5 rounded-full bg-safari-700 text-white text-[10px] flex items-center justify-center font-bold">
+                                      {visit.user.firstName[0]}
+                                    </div>
+                                  )}
+                                  <span className="text-xs font-semibold text-gray-900 dark:text-white">
+                                    {visit.user.firstName} {visit.user.lastName}
+                                  </span>
+                                </div>
+                              ) : (
+                                <span className="text-xs text-gray-400 italic font-mono flex items-center gap-1">
+                                  👤 Anonymous Guest
+                                </span>
+                              )}
+                            </td>
+                            <td className="px-4 py-3 text-xs font-mono text-gray-900 dark:text-white">{visit.ip}</td>
+                            <td className="px-4 py-3 text-xs text-gray-850 dark:text-gray-200">
+                              <span className="mr-1">{getCountryFlag(visit.country)}</span>
+                              {visit.country}
+                            </td>
+                            <td className="px-4 py-3 text-xs font-mono text-safari-700 dark:text-safari-400 truncate max-w-xs">{visit.pageUrl}</td>
+                            <td className="px-4 py-3 text-xs text-gray-500 dark:text-gray-400">{getBrowserName(visit.userAgent)}</td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </section>
             <section className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
               <p className="text-sm font-semibold text-gray-900 dark:text-white mb-1">Live Visitor Log</p>
               <p className="text-xs text-gray-500 dark:text-gray-400 mb-6">Real-time visitor logs from the platform (last 50 visits).</p>

@@ -140,7 +140,7 @@ export default function DashboardPage() {
                             {booking.paymentStatus === 'paid' ? '✓ Paid' : '⏳ Unpaid'}
                           </p>
                           {booking.status === 'pending' && (
-                            <Link href="/checkout" className="text-xs text-safari-600 font-medium hover:underline mt-2 block">
+                            <Link href={`/checkout?bookingId=${booking._id}`} className="text-xs text-safari-600 font-medium hover:underline mt-2 block">
                               Complete payment →
                             </Link>
                           )}

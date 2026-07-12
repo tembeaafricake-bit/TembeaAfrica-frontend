@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Trash2, ShoppingCart, CreditCard, Shield, ChevronRight, Loader, Check } from 'lucide-react'
 import Image from 'next/image'
@@ -14,6 +14,8 @@ type Step = 'cart' | 'details' | 'payment' | 'success'
 
 export default function CheckoutPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const bookingId = searchParams.get('bookingId')
   const { items, removeItem, updateQuantity, clearCart, totalPrice } = useCartStore()
   const { isAuthenticated, user, setUser } = useAuthStore()
   const [step, setStep] = useState<Step>('cart')
@@ -25,6 +27,8 @@ export default function CheckoutPage() {
     firstName: user?.firstName || '', lastName: user?.lastName || '',
     email: user?.email || '', phone: '', nationality: '', specialRequests: '',
   })
+  const [existingBooking, setExistingBooking] = useState<any | null>(null)
+  const [loadingBooking, setLoadingBooking] = useState(false)
 
   const USD_TO_KES_RATE = Number(process.env.NEXT_PUBLIC_USD_TO_KES_RATE || 150)
   const usdToKes = (amount: number) => Math.round(amount * USD_TO_KES_RATE)
@@ -35,6 +39,24 @@ export default function CheckoutPage() {
   const subtotalKes = usdToKes(subtotal)
   const serviceFeeKes = usdToKes(serviceFee)
   const totalKes = subtotalKes + serviceFeeKes
+
+  useEffect(() => {
+    if (!bookingId) return
+    const loadBooking = async () => {
+      setLoadingBooking(true)
+      try {
+        const { data } = await bookingsApi.getOne(bookingId)
+        setExistingBooking(data)
+        setStep('payment')
+      } catch (err: any) {
+        console.error('Failed to load booking for payment retry:', err)
+        toast.error('Unable to load booking. Please try again or contact support.')
+      } finally {
+        setLoadingBooking(false)
+      }
+    }
+    loadBooking()
+  }, [bookingId])
 
   useEffect(() => {
     const restoreSession = async () => {
@@ -60,24 +82,36 @@ export default function CheckoutPage() {
     if (!isAuthenticated) { router.push('/auth/login?next=/checkout'); return }
     setLoading(true)
     try {
-      const bookingData = {
-        items: items.map(i => ({ type: i.type, itemId: i.id, name: i.name, quantity: i.quantity, price: usdToKes(i.price), startDate: i.startDate, endDate: i.endDate })),
-        totalAmount: totalKes, currency: 'KES', guests: items[0]?.guests || 2,
-        guestDetails: details, paymentMethod: 'paystack',
-        startDate: items[0]?.startDate, endDate: items[0]?.endDate,
-      }
-      const { data: booking } = await bookingsApi.create(bookingData)
+      let booking: any = null
 
-      const { data: initData } = await paymentsApi.initializePaystack(booking._id)
-      if (initData?.paymentUrl) {
-        clearCart()
-        window.location.href = initData.paymentUrl
-        return
+      if (bookingId) {
+        booking = existingBooking ? existingBooking : (await bookingsApi.getOne(bookingId)).data
+        const { data: initData } = await paymentsApi.initializePaystack(bookingId)
+        if (initData?.paymentUrl) {
+          window.location.href = initData.paymentUrl
+          return
+        }
+      } else {
+        const bookingData = {
+          items: items.map(i => ({ type: i.type, itemId: i.id, name: i.name, quantity: i.quantity, price: usdToKes(i.price), startDate: i.startDate, endDate: i.endDate })),
+          totalAmount: totalKes, currency: 'KES', guests: items[0]?.guests || 2,
+          guestDetails: details, paymentMethod: 'paystack',
+          startDate: items[0]?.startDate, endDate: items[0]?.endDate,
+        }
+        const { data } = await bookingsApi.create(bookingData)
+        booking = data
+
+        const { data: initData } = await paymentsApi.initializePaystack(booking._id)
+        if (initData?.paymentUrl) {
+          window.location.href = initData.paymentUrl
+          return
+        }
       }
 
-      setBookingRef(booking.bookingNumber || 'TA-' + Math.random().toString(36).substring(2, 8).toUpperCase())
-      clearCart()
-      setStep('success')
+      if (booking) {
+        setBookingRef(booking.bookingNumber || 'TA-' + Math.random().toString(36).substring(2, 8).toUpperCase())
+        setStep('success')
+      }
     } catch (err: any) {
       console.error('Payment initiation error:', err)
       toast.error(err?.response?.data?.message || 'Booking or payment failed. Please try again.')
