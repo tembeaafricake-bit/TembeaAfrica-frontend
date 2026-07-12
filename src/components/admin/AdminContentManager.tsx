@@ -35,6 +35,20 @@ export function AdminContentManager({ title, description, type, singular, fields
 
   const rows = useMemo(() => data?.data || [], [data])
 
+  const getItemTitle = (item: Record<string, unknown>) => {
+    if (item.name) return item.name as string
+    if (item.title) return item.title as string
+    const user = item.user as Record<string, unknown> | undefined
+    if (user?.firstName || user?.lastName) {
+      return `${user?.firstName || ''} ${user?.lastName || ''}`.trim()
+    }
+    if (item.category) {
+      const category = String(item.category)
+      return `${category.charAt(0).toUpperCase() + category.slice(1)} ${type === 'guides' ? 'guide' : ''}`.trim()
+    }
+    return 'Untitled'
+  }
+
   const handleCreate = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const form = event.currentTarget
@@ -163,7 +177,7 @@ export function AdminContentManager({ title, description, type, singular, fields
                   <tr><td colSpan={4} className="px-5 py-10 text-center text-gray-500">No items yet. Add one above.</td></tr>
                 ) : rows.map((item: Record<string, unknown>) => (
                   <tr key={item._id as string} className="border-t border-gray-100 dark:border-gray-800">
-                    <td className="px-5 py-4 font-semibold text-gray-900 dark:text-white">{(item.name || item.title || 'Untitled') as string}</td>
+                    <td className="px-5 py-4 font-semibold text-gray-900 dark:text-white">{getItemTitle(item)}</td>
                     <td className="px-5 py-4 text-gray-500">{item.status as string}</td>
                     <td className="px-5 py-4 text-gray-500">{new Date(item.createdAt as string).toLocaleDateString()}</td>
                     <td className="px-5 py-4 flex flex-wrap gap-2">
@@ -224,6 +238,7 @@ export const ADMIN_FIELD_CONFIGS = {
     { name: 'type', type: 'select' as const, options: [
       { value: 'hotel', label: 'Hotel' }, { value: 'lodge', label: 'Lodge' },
       { value: 'bnb', label: 'BnB' }, { value: 'resort', label: 'Resort' }, { value: 'villa', label: 'Villa' },
+      { value: 'camping', label: 'Camping' }, { value: 'restaurant', label: 'Restaurant' },
     ], required: true },
     { name: 'pricePerNight', type: 'number' as const, required: true },
     { name: 'heroImage', label: 'Image URL', placeholder: 'https://...' },

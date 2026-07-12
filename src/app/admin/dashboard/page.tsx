@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
-import { Users, BookOpen, DollarSign, TrendingUp, Check, Trash2, BarChart2, MapPin, Star, Building2, ChevronRight, Eye, UserCheck, UserX, Globe } from 'lucide-react'
+import { Users, BookOpen, DollarSign, TrendingUp, Check, Trash2, BarChart2, MapPin, Star, Building2, ChevronRight, Eye, UserCheck, UserX, Globe, BedDouble, Compass } from 'lucide-react'
 import { useAuthStore } from '@/store'
 import { adminApi } from '@/lib/api'
 import toast from 'react-hot-toast'
@@ -131,6 +131,50 @@ export default function AdminDashboard() {
                   <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">{kpi.sub}</p>
                 </motion.div>
               ))}
+            </section>
+
+            <section className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p className="text-sm font-semibold text-gray-900 dark:text-white">Available inventory</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Quickly see how many guides and accommodations are published, then manage them from the admin panel.</p>
+                </div>
+                <Link href="/admin/listings" className="text-xs font-semibold text-safari-600 hover:underline">Manage listings</Link>
+              </div>
+              <div className="mt-6 grid gap-4 sm:grid-cols-3">
+                <Link href="/admin/guides" className="rounded-3xl border border-gray-200 bg-gray-50 p-5 text-sm text-gray-900 transition hover:border-safari-300 hover:bg-white dark:border-gray-800 dark:bg-gray-950 dark:text-white dark:hover:border-safari-500">
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.24em] text-gray-500 dark:text-gray-400">Guides</p>
+                      <p className="mt-3 text-3xl font-semibold">{stats ? stats.listings?.guides : '—'}</p>
+                    </div>
+                    <UserCheck className="w-6 h-6 text-safari-600" />
+                  </div>
+                  <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">Active guides available for booking and assignment.</p>
+                </Link>
+
+                <Link href="/admin/stays" className="rounded-3xl border border-gray-200 bg-gray-50 p-5 text-sm text-gray-900 transition hover:border-safari-300 hover:bg-white dark:border-gray-800 dark:bg-gray-950 dark:text-white dark:hover:border-safari-500">
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.24em] text-gray-500 dark:text-gray-400">Stays</p>
+                      <p className="mt-3 text-3xl font-semibold">{stats ? stats.listings?.accommodations : '—'}</p>
+                    </div>
+                    <BedDouble className="w-6 h-6 text-safari-600" />
+                  </div>
+                  <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">Hotels, lodges, BnBs, and resorts available for travelers.</p>
+                </Link>
+
+                <Link href="/admin/tours" className="rounded-3xl border border-gray-200 bg-gray-50 p-5 text-sm text-gray-900 transition hover:border-safari-300 hover:bg-white dark:border-gray-800 dark:bg-gray-950 dark:text-white dark:hover:border-safari-500">
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.24em] text-gray-500 dark:text-gray-400">Tours</p>
+                      <p className="mt-3 text-3xl font-semibold">{stats ? stats.listings?.tours : '—'}</p>
+                    </div>
+                    <Compass className="w-6 h-6 text-safari-600" />
+                  </div>
+                  <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">Published safaris and curated trips ready to sell.</p>
+                </Link>
+              </div>
             </section>
 
             {stats?.bookingsByStatus && (

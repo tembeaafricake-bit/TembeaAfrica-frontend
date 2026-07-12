@@ -32,6 +32,16 @@ export default function AdminListingsPage() {
 
   const rows = useMemo(() => data?.data || [], [data])
 
+  const getListingTitle = (item: any) => {
+    if (item.name) return item.name
+    if (item.title) return item.title
+    if (item.user && typeof item.user === 'object') {
+      return `${item.user.firstName || ''} ${item.user.lastName || ''}`.trim() || 'Guide'
+    }
+    if (item.category) return `${item.category.charAt(0).toUpperCase() + item.category.slice(1)} ${type === 'guides' ? 'guide' : ''}`
+    return 'Untitled'
+  }
+
   const handleCreate = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const form = event.currentTarget
@@ -191,7 +201,7 @@ export default function AdminListingsPage() {
                 ) : (
                   rows.map((item: any) => (
                     <tr key={item._id} className="border-t border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-950/50 transition-colors">
-                      <td className="px-5 py-4 text-sm font-semibold text-gray-900 dark:text-white">{item.name || item.title || 'Untitled'}</td>
+                      <td className="px-5 py-4 text-sm font-semibold text-gray-900 dark:text-white">{getListingTitle(item)}</td>
                       <td className="px-5 py-4 text-sm text-gray-500 dark:text-gray-400">{item.status}</td>
                       <td className="px-5 py-4 text-sm text-gray-500 dark:text-gray-400">{new Date(item.createdAt).toLocaleDateString()}</td>
                       <td className="px-5 py-4 flex flex-wrap gap-2">

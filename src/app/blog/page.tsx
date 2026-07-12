@@ -5,8 +5,9 @@ import type { Metadata } from 'next'
 import { BLOG_POSTS } from './posts'
 
 export const metadata: Metadata = {
-  title: 'Travel Blog',
-  description: 'Stories, tips and inspiration for travelling across Kenya and Tanzania.',
+  title: 'Tembea Africa Travel Blog | Kenya & Tanzania Safari Tips',
+  description: 'Read expert Kenya and Tanzania travel guides, safari advice, beach escape tips, and adventure planning from Tembea Africa.',
+  keywords: ['Kenya travel blog', 'Tanzania travel tips', 'safari guide', 'Zanzibar travel', 'Kilimanjaro preparation'],
 }
 
 const POSTS = BLOG_POSTS
@@ -18,7 +19,9 @@ export default function BlogPage() {
       <main className="min-h-screen pt-16 bg-gray-50 dark:bg-gray-950">
         <div className="bg-safari-gradient py-14 px-4 text-center">
           <h1 className="font-display text-4xl font-bold text-white mb-4">Travel Blog</h1>
-          <p className="text-white/70 max-w-xl mx-auto">Stories and tips from across Kenya and Tanzania.</p>
+          <p className="text-white/70 max-w-xl mx-auto">
+            Discover Kenya and Tanzania travel advice, safari planning tips, beach escapes, and insider destination guides designed to help you book a smarter, more memorable trip.
+          </p>
         </div>
         <div className="max-w-3xl mx-auto px-4 py-10 space-y-6">
           {POSTS.map(post => (

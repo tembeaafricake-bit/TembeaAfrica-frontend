@@ -6,7 +6,7 @@ export default function AdminStaysPage() {
   return (
     <AdminContentManager
       title="Stays & Accommodations"
-      description="Manage hotels, lodges, BnBs, resorts and villas across Kenya and Tanzania."
+      description="Manage hotels, lodges, BnBs, resorts, villas, restaurants and other hospitality listings across Kenya and Tanzania."
       type="accommodations"
       singular="Stay"
       fields={ADMIN_FIELD_CONFIGS.accommodations}

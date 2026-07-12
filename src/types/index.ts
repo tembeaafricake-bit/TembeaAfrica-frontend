@@ -74,7 +74,7 @@ export interface Accommodation {
   _id: string
   name: string
   slug: string
-  type: 'hotel' | 'bnb' | 'guesthouse' | 'hostel' | 'lodge' | 'resort' | 'villa' | 'camping'
+  type: 'hotel' | 'bnb' | 'guesthouse' | 'hostel' | 'lodge' | 'resort' | 'villa' | 'camping' | 'restaurant'
   destination: Destination
   description: string
   images: string[]

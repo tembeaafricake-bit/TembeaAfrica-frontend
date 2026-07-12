@@ -13,7 +13,7 @@ const SIDEBAR = [
   { label: 'Destinations', href: '/admin/destinations', icon: MapPin },
   { label: 'Tours & Safaris', href: '/admin/tours', icon: Compass },
   { label: 'Guides', href: '/admin/guides', icon: UserCheck },
-  { label: 'Stays', href: '/admin/stays', icon: BedDouble },
+  { label: 'Stays & Hotels', href: '/admin/stays', icon: BedDouble },
   { label: 'Transport', href: '/admin/transport', icon: Bus },
   { label: 'Reviews', href: '/admin/reviews', icon: Star },
   { label: 'All Listings', href: '/admin/listings', icon: Building2 },
