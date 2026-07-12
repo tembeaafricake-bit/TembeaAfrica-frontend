@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Trash2, ShoppingCart, CreditCard, Shield, ChevronRight, Loader, Check } from 'lucide-react'
 import Image from 'next/image'
@@ -14,8 +14,13 @@ type Step = 'cart' | 'details' | 'payment' | 'success'
 
 export default function CheckoutPage() {
   const router = useRouter()
-  const searchParams = useSearchParams()
-  const bookingId = searchParams.get('bookingId')
+  const [bookingId, setBookingId] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const params = new URLSearchParams(window.location.search)
+    setBookingId(params.get('bookingId'))
+  }, [])
   const { items, removeItem, updateQuantity, clearCart, totalPrice } = useCartStore()
   const { isAuthenticated, user, setUser } = useAuthStore()
   const [step, setStep] = useState<Step>('cart')
