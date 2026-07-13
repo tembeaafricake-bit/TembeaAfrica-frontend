@@ -1,6 +1,8 @@
 import { FALLBACK_STAYS } from '@/lib/fallback-data'
 import StayDetailClient from './StayDetailClient'
 
+export const dynamic = 'force-dynamic'
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.tembeaafrica.com'
 
 export async function generateStaticParams() {
