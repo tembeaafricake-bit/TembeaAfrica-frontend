@@ -12,6 +12,7 @@ const LISTING_TYPES = [
   { label: 'Tours', value: 'tours' },
   { label: 'Guides', value: 'guides' },
   { label: 'Accommodations', value: 'accommodations' },
+  { label: 'Transport', value: 'transport' },
 ]
 
 const defaultForms: Record<string, string[]> = {
@@ -19,6 +20,7 @@ const defaultForms: Record<string, string[]> = {
   tours: ['title', 'description', 'destination', 'operator', 'price', 'duration', 'groupSize', 'category', 'status'],
   guides: ['user', 'bio', 'category', 'primaryDestination', 'experience', 'hourlyRate', 'dailyRate', 'verified', 'status'],
   accommodations: ['name', 'type', 'destination', 'owner', 'pricePerNight', 'description', 'heroImage', 'status'],
+  transport: ['name', 'type', 'route', 'price', 'duration', 'description', 'image', 'status'],
 }
 
 export default function AdminListingsPage() {
@@ -52,15 +54,15 @@ export default function AdminListingsPage() {
 
     Array.from(formData.entries()).forEach(([key, value]) => {
       if (value === null || value === '') return
-      if (key === 'heroImage' && value instanceof File && value.size > 0) {
+      if ((key === 'heroImage' || key === 'image') && value instanceof File && value.size > 0) {
         uploadTasks.push((async () => {
           const response = await adminApi.uploadImage(value)
-          payload.heroImage = response.data.url
+          payload[key] = response.data.url
         })())
         return
       }
-      if (key === 'heroImageUrl' && typeof value === 'string' && value.trim() !== '' && !payload.heroImage) {
-        payload.heroImage = value.trim()
+      if ((key === 'heroImageUrl' || key === 'imageUrl') && typeof value === 'string' && value.trim() !== '' && !payload[key.replace('Url', '')]) {
+        payload[key.replace('Url', '')] = value.trim()
         return
       }
       payload[key] = value

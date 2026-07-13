@@ -373,4 +373,17 @@ export const ADMIN_FIELD_CONFIGS = {
     { name: 'heroImage', type: 'file' as const, label: 'Image', placeholder: 'https://...' },
     { name: 'status', type: 'select' as const, options: [{ value: 'active', label: 'Active' }, { value: 'draft', label: 'Draft' }] },
   ],
+  transport: [
+    { name: 'name', required: true, colSpan: 2 as const },
+    { name: 'type', type: 'select' as const, options: [
+      { value: 'bus', label: 'Bus' }, { value: 'car', label: 'Car' },
+      { value: 'flight', label: 'Flight' }, { value: 'ferry', label: 'Ferry' },
+    ], required: true },
+    { name: 'route', required: true, placeholder: 'e.g. Nairobi - Maasai Mara' },
+    { name: 'price', type: 'number' as const, required: true },
+    { name: 'duration', required: true, placeholder: 'e.g. 5 hours' },
+    { name: 'description', type: 'textarea' as const, required: true, colSpan: 2 as const },
+    { name: 'image', type: 'file' as const, label: 'Image', placeholder: 'https://...' },
+    { name: 'status', type: 'select' as const, options: [{ value: 'active', label: 'Active' }, { value: 'draft', label: 'Draft' }, { value: 'inactive', label: 'Inactive' }] },
+  ],
 }
