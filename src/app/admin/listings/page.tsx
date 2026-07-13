@@ -24,6 +24,7 @@ const defaultForms: Record<string, string[]> = {
 export default function AdminListingsPage() {
   const [type, setType] = useState('destinations')
   const [showForm, setShowForm] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: ['admin-listings', type],
@@ -77,16 +78,28 @@ export default function AdminListingsPage() {
       if (formData.get(field)) payload[field] = String(formData.get(field))
     })
 
-    await Promise.all(uploadTasks)
+    setIsSubmitting(true)
 
     try {
+      await Promise.all(uploadTasks)
       await adminApi.createListing(type, payload)
       toast.success(`${type.slice(0, -1)} created`)
       form.reset()
       setShowForm(false)
       refetch()
-    } catch (error: any) {
-      toast.error(error?.response?.data?.message || `Failed to create ${type.slice(0, -1)}`)
+    } catch (error: unknown) {
+      console.error(`Failed to create ${type.slice(0, -1)}`, error)
+      const err = error as { response?: { data?: { message?: string; error?: string }; status?: number } }
+      const responseMessage = err?.response?.data?.message || err?.response?.data?.error
+      const statusCode = err?.response?.status
+      const errorMessage = responseMessage || (statusCode === 401
+        ? 'You need to be logged in as an admin to create this item.'
+        : statusCode === 403
+          ? 'Your account is not allowed to create this item.'
+          : `Failed to create ${type.slice(0, -1)}`)
+      toast.error(errorMessage)
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -194,8 +207,12 @@ export default function AdminListingsPage() {
                 )
               })}
 
-              <button type="submit" className="md:col-span-2 inline-flex items-center justify-center rounded-2xl bg-safari-700 px-5 py-3 text-sm font-semibold text-white hover:bg-safari-800 transition-colors">
-                Create {type.slice(0, -1)}
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="md:col-span-2 inline-flex items-center justify-center rounded-2xl bg-safari-700 px-5 py-3 text-sm font-semibold text-white hover:bg-safari-800 transition-colors disabled:cursor-not-allowed disabled:opacity-70"
+              >
+                {isSubmitting ? `Creating ${type.slice(0, -1)}...` : `Create ${type.slice(0, -1)}`}
               </button>
             </form>
           )}

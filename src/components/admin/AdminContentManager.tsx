@@ -27,6 +27,7 @@ interface AdminContentManagerProps {
 
 export function AdminContentManager({ title, description, type, singular, fields }: AdminContentManagerProps) {
   const [showForm, setShowForm] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const { data, refetch } = useQuery({
     queryKey: ['admin-listings', type],
@@ -85,17 +86,28 @@ export function AdminContentManager({ title, description, type, singular, fields
       else payload[field.name] = value
     })
 
-    await Promise.all(uploadTasks)
+    setIsSubmitting(true)
 
     try {
+      await Promise.all(uploadTasks)
       await adminApi.createListing(type, payload)
       toast.success(`${singular} created successfully`)
       form.reset()
       setShowForm(false)
       refetch()
     } catch (error: unknown) {
-      const err = error as { response?: { data?: { message?: string } } }
-      toast.error(err?.response?.data?.message || `Failed to create ${singular.toLowerCase()}`)
+      console.error(`Failed to create ${singular.toLowerCase()}`, error)
+      const err = error as { response?: { data?: { message?: string; error?: string }; status?: number } }
+      const responseMessage = err?.response?.data?.message || err?.response?.data?.error
+      const statusCode = err?.response?.status
+      const errorMessage = responseMessage || (statusCode === 401
+        ? 'You need to be logged in as an admin to create this item.'
+        : statusCode === 403
+          ? 'Your account is not allowed to create this item.'
+          : `Failed to create ${singular.toLowerCase()}`)
+      toast.error(errorMessage)
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -191,8 +203,12 @@ export function AdminContentManager({ title, description, type, singular, fields
           {showForm && (
             <form onSubmit={handleCreate} className="mt-6 grid gap-4 md:grid-cols-2">
               {fields.map(renderField)}
-              <button type="submit" className="md:col-span-2 inline-flex items-center justify-center rounded-2xl bg-safari-700 px-5 py-3 text-sm font-semibold text-white hover:bg-safari-800 transition-colors">
-                Create {singular.toLowerCase()}
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="md:col-span-2 inline-flex items-center justify-center rounded-2xl bg-safari-700 px-5 py-3 text-sm font-semibold text-white hover:bg-safari-800 transition-colors disabled:cursor-not-allowed disabled:opacity-70"
+              >
+                {isSubmitting ? `Creating ${singular.toLowerCase()}...` : `Create ${singular.toLowerCase()}`}
               </button>
             </form>
           )}
