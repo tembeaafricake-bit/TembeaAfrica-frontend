@@ -17,7 +17,20 @@ export default function StayDetailClient({ slug }: { slug: string }) {
 
   const { data, isLoading } = useQuery({
     queryKey: ['stay', slug],
-    queryFn: () => accommodationsApi.getOne(slug).then(r => r.data),
+    queryFn: async () => {
+      try {
+        const response = await accommodationsApi.getOne(slug)
+        if (response?.data && (response.data._id || response.data.slug || response.data.name)) {
+          return response.data
+        }
+      } catch {
+        // fall back to search results if the direct lookup fails
+      }
+
+      const searchResponse = await accommodationsApi.getAll({ q: slug.replace(/-/g, ' '), limit: 20 })
+      const list = Array.isArray(searchResponse?.data?.data) ? searchResponse.data.data : []
+      return list.find((item: any) => item.slug === slug || item._id === slug) || null
+    },
     retry: false,
   })
 

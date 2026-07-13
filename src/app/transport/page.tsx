@@ -41,7 +41,14 @@ export default function TransportPage() {
     staleTime: 1000 * 60 * 2,
   })
 
-  const transports = useMemo<TransportItem[]>(() => transportData?.data ?? FALLBACK_TRANSPORT, [transportData])
+  const transports = useMemo<TransportItem[]>(() => {
+    const list = transportData?.data ?? FALLBACK_TRANSPORT
+    return list.map((item: any) => ({
+      ...item,
+      name: typeof item.name === 'string' && item.name.trim() ? item.name.trim() : (typeof item.route === 'string' && item.route.trim() ? item.route.trim() : 'Untitled transport'),
+      image: item.image || 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=800',
+    }))
+  }, [transportData])
 
   const handleCart = (transport: TransportItem) => {
     addItem({

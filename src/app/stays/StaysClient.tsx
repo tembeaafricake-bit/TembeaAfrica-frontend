@@ -16,12 +16,20 @@ const normalizeStay = (stay: any) => {
   const destName = typeof stay.destination === 'object' && stay.destination
     ? (stay.destination as { name?: string }).name
     : (stay.destination as string)
+  const displayName = typeof stay.name === 'string' && stay.name.trim()
+    ? stay.name.trim()
+    : typeof stay.title === 'string' && stay.title.trim()
+      ? stay.title.trim()
+      : 'Untitled stay'
   return {
     ...stay,
+    name: displayName,
     destination: destName || 'Unknown destination',
     images: Array.isArray(stay.images) && stay.images.length > 0
       ? stay.images
-      : ['https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=800'],
+      : stay.heroImage
+        ? [stay.heroImage]
+        : ['https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=800'],
   }
 }
 
