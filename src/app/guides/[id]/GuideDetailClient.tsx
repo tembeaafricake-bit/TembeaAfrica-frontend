@@ -41,7 +41,8 @@ export default function GuideDetailClient({ id }: { id: string }) {
     specializations: apiGuide.specializations || [],
     color: '#1B4332',
     initials: apiGuide.user ? `${apiGuide.user.firstName?.[0] || ''}${apiGuide.user.lastName?.[0] || ''}` : 'G',
-  } : fallback
+    avatar: apiGuide.avatar || apiGuide.user?.avatar || null,
+  } : fallback ? { ...fallback, avatar: fallback.avatar ?? null } : null
 
   if (!isLoading && !guide) {
     return (
@@ -87,9 +88,15 @@ export default function GuideDetailClient({ id }: { id: string }) {
 
           <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 md:p-8">
             <div className="flex flex-col sm:flex-row items-start gap-6">
-              <div className="w-20 h-20 rounded-2xl flex items-center justify-center text-white text-2xl font-bold flex-shrink-0" style={{ background: guide.color }}>
-                {guide.initials}
-              </div>
+              {guide.avatar ? (
+                <div className="w-20 h-20 rounded-2xl overflow-hidden flex items-center justify-center flex-shrink-0 bg-gray-100">
+                  <img src={guide.avatar} alt={guide.name} className="h-full w-full object-cover" />
+                </div>
+              ) : (
+                <div className="w-20 h-20 rounded-2xl flex items-center justify-center text-white text-2xl font-bold flex-shrink-0" style={{ background: guide.color }}>
+                  {guide.initials}
+                </div>
+              )}
               <div className="flex-1">
                 <div className="flex items-center gap-2 flex-wrap">
                   <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{guide.name}</h1>

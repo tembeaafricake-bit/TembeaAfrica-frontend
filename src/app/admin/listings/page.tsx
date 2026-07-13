@@ -18,7 +18,7 @@ const LISTING_TYPES = [
 const defaultForms: Record<string, string[]> = {
   destinations: ['name', 'country', 'description', 'heroImage', 'shortDescription', 'status', 'featured'],
   tours: ['title', 'description', 'destination', 'operator', 'price', 'duration', 'groupSize', 'category', 'status'],
-  guides: ['user', 'bio', 'category', 'primaryDestination', 'experience', 'hourlyRate', 'dailyRate', 'verified', 'status'],
+  guides: ['user', 'bio', 'category', 'primaryDestination', 'avatar', 'experience', 'hourlyRate', 'dailyRate', 'verified', 'status'],
   accommodations: ['name', 'type', 'destination', 'owner', 'pricePerNight', 'description', 'heroImage', 'status'],
   transport: ['name', 'type', 'route', 'price', 'duration', 'description', 'image', 'status'],
 }
@@ -54,14 +54,14 @@ export default function AdminListingsPage() {
 
     Array.from(formData.entries()).forEach(([key, value]) => {
       if (value === null || value === '') return
-      if ((key === 'heroImage' || key === 'image') && value instanceof File && value.size > 0) {
+      if ((key === 'heroImage' || key === 'image' || key === 'avatar') && value instanceof File && value.size > 0) {
         uploadTasks.push((async () => {
           const response = await adminApi.uploadImage(value)
           payload[key] = response.data.url
         })())
         return
       }
-      if ((key === 'heroImageUrl' || key === 'imageUrl') && typeof value === 'string' && value.trim() !== '' && !payload[key.replace('Url', '')]) {
+      if ((key === 'heroImageUrl' || key === 'imageUrl' || key === 'avatarUrl') && typeof value === 'string' && value.trim() !== '' && !payload[key.replace('Url', '')]) {
         payload[key.replace('Url', '')] = value.trim()
         return
       }
@@ -179,12 +179,12 @@ export default function AdminListingsPage() {
                   )
                 }
 
-                if (field === 'heroImage') {
+                if (field === 'heroImage' || field === 'avatar') {
                   return (
                     <label key={field} className="space-y-2 text-sm text-gray-700 dark:text-gray-200">
-                      Image URL or upload
-                      <input name="heroImageUrl" placeholder="https://..." className="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none focus:border-safari-500 dark:border-gray-800 dark:bg-gray-950 dark:text-white" />
-                      <input name="heroImage" type="file" accept="image/*"
+                      {field === 'avatar' ? 'Profile image' : 'Image URL or upload'}
+                      <input name={`${field}Url`} placeholder="https://..." className="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none focus:border-safari-500 dark:border-gray-800 dark:bg-gray-950 dark:text-white" />
+                      <input name={field} type="file" accept="image/*"
                         className="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none focus:border-safari-500 dark:border-gray-800 dark:bg-gray-950 dark:text-white" />
                       <p className="text-xs text-gray-500 dark:text-gray-400">Provide an image URL or upload a file.</p>
                     </label>

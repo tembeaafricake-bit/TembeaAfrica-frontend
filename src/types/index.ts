@@ -112,6 +112,7 @@ export interface Guide {
   reviewCount: number
   portfolio: string[]
   availability: string[]
+  avatar?: string
   category: 'safari' | 'mountain' | 'cultural' | 'city' | 'photography'
   verified: boolean
 }

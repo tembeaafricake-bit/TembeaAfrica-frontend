@@ -33,12 +33,14 @@ const normalizeGuide = (guide: any) => {
   const name = guide.name || `${guide.user?.firstName || ''} ${guide.user?.lastName || ''}`.trim() || 'Guide'
   const initials = guide.initials || name.split(' ').map((part: string) => part[0]).join('').slice(0, 2).toUpperCase()
   const color = guide.color || GUIDE_CATEGORY_COLORS[guide.category] || '#1B4332'
+  const avatar = guide.avatar || guide.user?.avatar || null
 
   return {
     ...guide,
     name,
     initials,
     color,
+    avatar,
     verified: guide.verified ?? !!guide.verified,
   }
 }
@@ -152,9 +154,15 @@ export default function GuidesPage() {
               <motion.div key={guide._id} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06 }}
                 className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5 hover:shadow-lg transition-shadow">
                 <div className="flex items-start gap-4 mb-4">
+                  {guide.avatar ? (
+                  <div className="w-14 h-14 rounded-2xl overflow-hidden flex items-center justify-center flex-shrink-0 bg-gray-100">
+                    <img src={guide.avatar} alt={guide.name} className="h-full w-full object-cover" />
+                  </div>
+                ) : (
                   <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-white text-xl font-bold flex-shrink-0" style={{ background: guide.color }}>
                     {guide.initials}
                   </div>
+                )}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5">
                       <h3 className="font-semibold text-gray-900 dark:text-white">{guide.name}</h3>

@@ -178,10 +178,18 @@ export function AdminContentManager({ title, description, type, singular, fields
       )
     }
     if (field.type === 'file') {
+      const currentImage = editingItem && typeof editingItem[field.name] === 'string'
+        ? (editingItem[field.name] as string)
+        : ''
       return (
         <label key={field.name} className={wrapperClass}>
           {label}
           <div className="space-y-3">
+            {currentImage ? (
+              <div className="overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-700">
+                <img src={currentImage} alt={`Current ${label}`} className="h-32 w-full object-cover" />
+              </div>
+            ) : null}
             <input
               name={`${field.name}Url`}
               type="text"
@@ -353,6 +361,7 @@ export const ADMIN_FIELD_CONFIGS = {
       { value: 'safari', label: 'Safari' }, { value: 'cultural', label: 'Cultural' },
       { value: 'mountain', label: 'Mountain' }, { value: 'photography', label: 'Photography' }, { value: 'city', label: 'City' },
     ], required: true },
+    { name: 'avatar', type: 'file' as const, label: 'Profile Image', placeholder: 'https://...' },
     { name: 'experience', type: 'number' as const, label: 'Years of experience' },
     { name: 'dailyRate', type: 'number' as const, required: true },
     { name: 'hourlyRate', type: 'number' as const },
