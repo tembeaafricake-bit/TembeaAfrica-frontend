@@ -83,6 +83,12 @@ export const guidesApi = {
   checkAvailability: (guideId: string, date: string) => api.post(`/guides/${guideId}/check-availability`, { date }),
 }
 
+// Transport
+export const transportApi = {
+  getAll: (params?: Record<string, unknown>) => api.get('/transport', { params }),
+  getOne: (id: string) => api.get(`/transport/${id}`),
+}
+
 // Bookings
 export const bookingsApi = {
   create: (data: Record<string, unknown>) => api.post('/bookings', data),

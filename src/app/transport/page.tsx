@@ -4,21 +4,46 @@ import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
+import { useQuery } from '@tanstack/react-query'
 import { Star, Bus, Car, Plane, Ship, ShoppingCart } from 'lucide-react'
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
 import { FALLBACK_TRANSPORT } from '@/lib/fallback-data'
+import { transportApi } from '@/lib/api'
 import { useCartStore } from '@/store'
 import toast from 'react-hot-toast'
 
 const TYPE_ICONS: Record<string, typeof Bus> = { bus: Bus, car: Car, flight: Plane, ferry: Ship }
-const TYPES = ['all', 'bus', 'car', 'flight', 'ferry']
+type TransportType = 'all' | 'bus' | 'car' | 'flight' | 'ferry'
+
+type TransportItem = {
+  _id: string
+  name: string
+  type: 'bus' | 'car' | 'flight' | 'ferry'
+  route: string
+  price: number
+  duration: string
+  rating: number
+  description: string
+  image: string
+}
+
+const TYPES: TransportType[] = ['all', 'bus', 'car', 'flight', 'ferry']
 
 export default function TransportPage() {
   const [type, setType] = useState('all')
   const { addItem } = useCartStore()
 
-  const handleCart = (transport: typeof FALLBACK_TRANSPORT[0]) => {
+  const { data: transportData } = useQuery({
+    queryKey: ['transport-listings', type],
+    queryFn: () => transportApi.getAll({ type: type === 'all' ? undefined : type, limit: 50 }).then((res) => res.data),
+    retry: 1,
+    staleTime: 1000 * 60 * 2,
+  })
+
+  const transports = useMemo<TransportItem[]>(() => transportData?.data ?? FALLBACK_TRANSPORT, [transportData])
+
+  const handleCart = (transport: TransportItem) => {
     addItem({
       id: transport._id,
       type: 'transport',
@@ -38,9 +63,9 @@ export default function TransportPage() {
   }
 
   const filtered = useMemo(() => {
-    if (type === 'all') return FALLBACK_TRANSPORT
-    return FALLBACK_TRANSPORT.filter(t => t.type === type)
-  }, [type])
+    if (type === 'all') return transports
+    return transports.filter(t => t.type === type)
+  }, [type, transports])
 
   return (
     <>
@@ -54,7 +79,7 @@ export default function TransportPage() {
 
         <div className="max-w-7xl mx-auto px-4 py-8">
           <div className="flex gap-2 overflow-x-auto pb-3 mb-6 scrollbar-hide">
-            {TYPES.map(t => (
+            {TYPES.map((t) => (
               <button key={t} onClick={() => setType(t)}
                 className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap capitalize border transition-all ${type === t ? 'bg-safari-700 text-white border-safari-700' : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300'}`}>
                 {t === 'all' ? 'All transport' : t === 'car' ? 'Car rental' : t}
