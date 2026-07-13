@@ -139,6 +139,7 @@ export const adminApi = {
     })
   },
   createListing: (type: string, data: Record<string, unknown>) => api.post(`/admin/listings?type=${type}`, data),
+  updateListing: (type: string, id: string, data: Record<string, unknown>) => api.patch(`/admin/listings/${id}?type=${type}`, data),
   banUser: (id: string, banned: boolean) => api.patch(`/admin/users/${id}/ban`, { banned }),
   updateUserRole: (id: string, role: string) => api.patch(`/admin/users/${id}/role`, { role }),
   getReviews: (params?: Record<string, unknown>) => api.get('/admin/reviews', { params }),
