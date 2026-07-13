@@ -5,7 +5,6 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.tembeaafrica.com
 export const api = axios.create({
   baseURL: `${API_URL}/api`,
   timeout: 5000,
-  headers: { 'Content-Type': 'application/json' },
   withCredentials: true,
 })
 
@@ -34,7 +33,6 @@ api.interceptors.response.use(
 const silentAuthClient = axios.create({
   baseURL: `${API_URL}/api`,
   timeout: 5000,
-  headers: { 'Content-Type': 'application/json' },
   withCredentials: true,
 })
 
@@ -133,7 +131,12 @@ export const adminApi = {
   uploadImage: (file: File) => {
     const formData = new FormData()
     formData.append('image', file)
-    return api.post('/admin/upload-image', formData)
+    formData.append('file', file)
+    formData.append('heroImage', file)
+    formData.append('heroImageFile', file)
+    return api.post('/admin/upload-image', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
   },
   createListing: (type: string, data: Record<string, unknown>) => api.post(`/admin/listings?type=${type}`, data),
   banUser: (id: string, banned: boolean) => api.patch(`/admin/users/${id}/ban`, { banned }),
