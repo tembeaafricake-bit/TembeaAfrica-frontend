@@ -1,9 +1,11 @@
 'use client'
 
-import Link from 'next/link'
 import { Ticket } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
+import { useCartStore } from '@/store'
+import toast from 'react-hot-toast'
 
 const TICKETS = [
   { id: 'tk1', name: 'Maasai Mara National Reserve', location: 'Kenya', price: 80, type: 'Park entry' },
@@ -15,6 +17,28 @@ const TICKETS = [
 ]
 
 export default function TicketsPage() {
+  const router = useRouter()
+  const { addItem } = useCartStore()
+
+  const handleBook = (ticket: typeof TICKETS[0]) => {
+    addItem({
+      id: ticket.id,
+      type: 'tour',
+      name: `${ticket.name} — Ticket`,
+      image: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800',
+      price: ticket.price,
+      quantity: 1,
+      startDate: new Date().toISOString().split('T')[0],
+      guests: 1,
+      details: {
+        category: 'ticket',
+        location: ticket.location,
+        type: ticket.type,
+      },
+    })
+    toast.success('Ticket added to cart!')
+  }
+
   return (
     <>
       <Navbar />
@@ -35,9 +59,16 @@ export default function TicketsPage() {
                   <p className="text-xs text-gray-500">{ticket.type} · {ticket.location}</p>
                 </div>
               </div>
-              <div className="text-right flex-shrink-0">
+              <div className="text-right flex-shrink-0 flex flex-col items-end gap-2">
                 <p className="text-lg font-bold text-safari-700">${ticket.price}</p>
-                <Link href="/checkout" className="text-xs text-safari-600 font-medium hover:underline">Buy ticket</Link>
+                <div className="flex gap-2">
+                  <button onClick={() => handleBook(ticket)} className="px-3 py-1.5 text-xs font-medium border border-safari-200 text-safari-700 rounded-xl hover:bg-safari-50 transition-colors">
+                    Add to cart
+                  </button>
+                  <button onClick={() => { handleBook(ticket); router.push('/checkout') }} className="px-3 py-1.5 text-xs font-medium bg-safari-700 text-white rounded-xl hover:bg-safari-800 transition-colors">
+                    Buy now
+                  </button>
+                </div>
               </div>
             </div>
           ))}

@@ -363,6 +363,7 @@ export function Footer() {
         { label: 'Cancellations', href: '/cancellations' },
         { label: 'Refunds', href: '/refunds' },
         { label: 'Partner with us', href: '/partner-with-us' },
+        { label: 'Apply to be a Guide', href: '/partner-with-us' },
       ],
     },
   ]

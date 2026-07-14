@@ -42,7 +42,9 @@ export default function TransportPage() {
   })
 
   const transports = useMemo<TransportItem[]>(() => {
-    const list = transportData?.data ?? FALLBACK_TRANSPORT
+    const list = (transportData?.data && transportData.data.length > 0)
+      ? transportData.data
+      : FALLBACK_TRANSPORT
     return list.map((item: any) => ({
       ...item,
       name: typeof item.name === 'string' && item.name.trim() ? item.name.trim() : (typeof item.route === 'string' && item.route.trim() ? item.route.trim() : 'Untitled transport'),
