@@ -61,7 +61,7 @@ function StaysContent() {
 
   const { data } = useQuery({
     queryKey: ['all-stays'],
-    queryFn: () => accommodationsApi.getAll().then(r => r.data),
+    queryFn: () => accommodationsApi.getAll({ limit: 1000 }).then(r => r.data),
     staleTime: 5 * 60 * 1000,
   })
 

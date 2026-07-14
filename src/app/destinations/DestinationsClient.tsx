@@ -49,7 +49,7 @@ export function DestinationsClient() {
     let list = [...destinations]
     if (search) list = list.filter(d => d.name.toLowerCase().includes(search.toLowerCase()) || d.description.toLowerCase().includes(search.toLowerCase()))
     if (country !== 'all') list = list.filter(d => d.country === country)
-    if (activeTag !== 'All') list = list.filter(d => d.tags.some(t => t.toLowerCase().includes(activeTag.toLowerCase())))
+    if (activeTag !== 'All') list = list.filter(d => (d.tags || []).some(t => t.toLowerCase().includes(activeTag.toLowerCase())))
     if (sort === 'rating') list.sort((a, b) => b.rating - a.rating)
     else if (sort === 'reviews') list.sort((a, b) => b.reviewCount - a.reviewCount)
     else if (sort === 'tours') list.sort((a, b) => b.tourCount - a.tourCount)
@@ -107,7 +107,7 @@ export function DestinationsClient() {
                 <Image src={dest.heroImage} alt={dest.name} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                 <div className="absolute bottom-3 left-3 flex flex-wrap gap-1">
-                  {dest.tags.slice(0, 2).map(t => (
+                  {(dest.tags || []).slice(0, 2).map(t => (
                     <span key={t} className="text-xs bg-white/20 backdrop-blur-sm text-white px-2 py-0.5 rounded-full border border-white/30">{t}</span>
                   ))}
                 </div>
@@ -137,7 +137,7 @@ export function DestinationsClient() {
                 <Link href={`/destinations/${dest.slug}`} className="flex-1 text-center py-2 border border-safari-200 dark:border-safari-700 text-safari-700 dark:text-safari-400 rounded-xl text-xs font-medium hover:bg-safari-50 dark:hover:bg-safari-900/20 transition-colors">
                   Details
                 </Link>
-                <Link href={`/tours?category=safari`} className="flex-1 text-center py-2 bg-safari-700 text-white rounded-xl text-xs font-medium hover:bg-safari-800 transition-colors">
+                <Link href={`/tours?destination=${encodeURIComponent(dest.name)}`} className="flex-1 text-center py-2 bg-safari-700 text-white rounded-xl text-xs font-medium hover:bg-safari-800 transition-colors">
                   Explore tours
                 </Link>
               </div>
