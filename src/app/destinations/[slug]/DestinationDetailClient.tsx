@@ -26,6 +26,21 @@ export default function DestinationDetailClient({ slug }: { slug: string }) {
   const fallback = findDestinationBySlug(slug)
   const dest = data || fallback
 
+  if (isLoading) {
+    return (
+      <>
+        <Navbar />
+        <main className="min-h-screen pt-24 flex items-center justify-center bg-gray-50 dark:bg-gray-950">
+          <div className="flex flex-col items-center gap-3">
+            <div className="w-8 h-8 border-4 border-safari-700 border-t-transparent rounded-full animate-spin"></div>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Loading destination details...</p>
+          </div>
+        </main>
+        <Footer />
+      </>
+    )
+  }
+
   if (!isLoading && !dest) {
     return (
       <>

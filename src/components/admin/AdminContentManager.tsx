@@ -145,6 +145,16 @@ export function AdminContentManager({ title, description, type, singular, fields
     const className = `w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none focus:border-safari-500 dark:border-gray-800 dark:bg-gray-950 dark:text-white`
     const wrapperClass = `space-y-2 text-sm text-gray-700 dark:text-gray-200 ${field.colSpan === 2 ? 'md:col-span-2' : ''}`
 
+    const getFieldDefaultValue = () => {
+      if (!editingItem) return ''
+      const val = editingItem[field.name]
+      if (val === null || val === undefined) return ''
+      if (typeof val === 'object') {
+        return (val.name || val.title || val.slug || val._id || '') as string
+      }
+      return String(val)
+    }
+
     if (field.type === 'textarea') {
       return (
         <label key={field.name} className={wrapperClass}>
@@ -154,7 +164,7 @@ export function AdminContentManager({ title, description, type, singular, fields
             rows={4}
             required={field.required}
             placeholder={field.placeholder}
-            defaultValue={editingItem ? (editingItem[field.name] as string) : ''}
+            defaultValue={getFieldDefaultValue()}
             className={className}
           />
         </label>
@@ -167,7 +177,7 @@ export function AdminContentManager({ title, description, type, singular, fields
           <select
             name={field.name}
             required={field.required}
-            defaultValue={editingItem ? (editingItem[field.name] as string) : field.options?.[0]?.value}
+            defaultValue={editingItem ? getFieldDefaultValue() : field.options?.[0]?.value}
             className={className}
           >
             {field.options?.map((opt) => (
@@ -194,7 +204,7 @@ export function AdminContentManager({ title, description, type, singular, fields
               name={`${field.name}Url`}
               type="text"
               placeholder={field.placeholder ?? 'https://...'}
-              defaultValue={editingItem ? (editingItem[field.name] as string) : ''}
+              defaultValue={getFieldDefaultValue()}
               className={className}
             />
             <input
@@ -229,7 +239,7 @@ export function AdminContentManager({ title, description, type, singular, fields
           type={field.type === 'number' ? 'number' : 'text'}
           required={field.required}
           placeholder={field.placeholder}
-          defaultValue={editingItem ? (editingItem[field.name] as string) : ''}
+          defaultValue={getFieldDefaultValue()}
           min={field.min}
           max={field.max}
           step="any"
@@ -347,6 +357,7 @@ export const ADMIN_FIELD_CONFIGS = {
   tours: [
     { name: 'title', required: true, colSpan: 2 as const },
     { name: 'description', type: 'textarea' as const, required: true, colSpan: 2 as const },
+    { name: 'destination', required: true, placeholder: 'e.g. Maasai Mara, Serengeti, Zanzibar' },
     { name: 'category', type: 'select' as const, options: TOUR_CATEGORIES, required: true },
     { name: 'price', type: 'number' as const, required: true },
     { name: 'rating', type: 'number' as const, label: 'Rating (0-5)', placeholder: 'e.g. 4.8', min: 0, max: 5 },
@@ -372,6 +383,7 @@ export const ADMIN_FIELD_CONFIGS = {
   accommodations: [
     { name: 'name', required: true, colSpan: 2 as const },
     { name: 'description', type: 'textarea' as const, required: true, colSpan: 2 as const },
+    { name: 'destination', required: true, placeholder: 'e.g. Nairobi, Zanzibar, Maasai Mara' },
     { name: 'type', type: 'select' as const, options: [
       { value: 'hotel', label: 'Hotel' }, { value: 'lodge', label: 'Lodge' },
       { value: 'bnb', label: 'BnB' }, { value: 'resort', label: 'Resort' }, { value: 'villa', label: 'Villa' },
