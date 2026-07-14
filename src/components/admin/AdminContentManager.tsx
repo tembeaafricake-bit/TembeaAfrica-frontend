@@ -407,4 +407,14 @@ export const ADMIN_FIELD_CONFIGS = {
     { name: 'image', type: 'file' as const, label: 'Image', placeholder: 'https://...' },
     { name: 'status', type: 'select' as const, options: [{ value: 'active', label: 'Active' }, { value: 'draft', label: 'Draft' }, { value: 'inactive', label: 'Inactive' }] },
   ],
+  destinations: [
+    { name: 'name', required: true, colSpan: 2 as const },
+    { name: 'country', type: 'select' as const, options: [{ value: 'kenya', label: 'Kenya' }, { value: 'tanzania', label: 'Tanzania' }], required: true },
+    { name: 'rating', type: 'number' as const, label: 'Rating (0-5)', placeholder: 'e.g. 4.8', min: 0, max: 5 },
+    { name: 'shortDescription', type: 'textarea' as const, colSpan: 2 as const },
+    { name: 'description', type: 'textarea' as const, required: true, colSpan: 2 as const },
+    { name: 'heroImage', type: 'file' as const, label: 'Image', placeholder: 'https://...' },
+    { name: 'featured', type: 'checkbox' as const, label: 'Mark as featured destination (shows on home page)' },
+    { name: 'status', type: 'select' as const, options: [{ value: 'active', label: 'Active' }, { value: 'inactive', label: 'Inactive' }] },
+  ],
 }
