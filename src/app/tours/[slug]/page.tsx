@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import { FALLBACK_TOURS } from '@/lib/fallback-data'
 import TourDetailClient from './TourDetailClient'
 
@@ -23,5 +24,9 @@ export async function generateStaticParams() {
 
 export default async function TourDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  return <TourDetailClient slug={slug} />
+  return (
+    <Suspense fallback={<div className="min-h-screen pt-24 px-4 text-center text-gray-400">Loading tour...</div>}>
+      <TourDetailClient slug={slug} />
+    </Suspense>
+  )
 }
