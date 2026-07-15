@@ -19,6 +19,40 @@ export interface FormField {
   colSpan?: 1 | 2
 }
 
+const parseArrayFieldValue = (rawValue: FormDataEntryValue | null, fieldName: string) => {
+  if (rawValue === null) return undefined
+  const str = String(rawValue).trim()
+  if (!str) return undefined
+
+  if (fieldName === 'itinerary') {
+    try {
+      const parsed = JSON.parse(str)
+      if (Array.isArray(parsed)) return parsed
+    } catch {
+      // fall back to line-based parsing below
+    }
+
+    return str
+      .split(/\n+/)
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .map((line, index) => {
+        const cleaned = line.replace(/^Day\s*\d+\s*[:.-]\s*/i, '').trim()
+        const [title, ...rest] = cleaned.split('|')
+        return {
+          day: index + 1,
+          title: title?.trim() || `Day ${index + 1}`,
+          description: rest.join('|').trim() || 'Details to be added',
+        }
+      })
+  }
+
+  return str
+    .split(/\n|,/)
+    .map((item) => item.trim())
+    .filter(Boolean)
+}
+
 interface AdminContentManagerProps {
   title: string
   description: string
@@ -94,8 +128,17 @@ export function AdminContentManager({ title, description, type, singular, fields
 
       const value = formData.get(field.name)
       if (value === null || value === '') return
-      if (field.type === 'number') payload[field.name] = Number(value)
-      else payload[field.name] = value
+      if (field.type === 'number') {
+        payload[field.name] = Number(value)
+        return
+      }
+
+      if (field.name === 'includes' || field.name === 'excludes' || field.name === 'highlights' || field.name === 'itinerary') {
+        payload[field.name] = parseArrayFieldValue(value, field.name)
+        return
+      }
+
+      payload[field.name] = value
     })
 
     setIsSubmitting(true)
@@ -149,6 +192,7 @@ export function AdminContentManager({ title, description, type, singular, fields
       if (!editingItem) return ''
       const val = editingItem[field.name]
       if (val === null || val === undefined) return ''
+      if (Array.isArray(val)) return val.join(', ')
       if (typeof val === 'object') {
         return (val.name || val.title || val.slug || val._id || '') as string
       }
@@ -357,13 +401,21 @@ export const ADMIN_FIELD_CONFIGS = {
   tours: [
     { name: 'title', required: true, colSpan: 2 as const },
     { name: 'description', type: 'textarea' as const, required: true, colSpan: 2 as const },
+    { name: 'shortDescription', type: 'textarea' as const, colSpan: 2 as const, placeholder: 'Short summary shown in cards and previews' },
     { name: 'destination', required: true, placeholder: 'e.g. Maasai Mara, Serengeti, Zanzibar' },
     { name: 'category', type: 'select' as const, options: TOUR_CATEGORIES, required: true },
     { name: 'price', type: 'number' as const, required: true },
     { name: 'rating', type: 'number' as const, label: 'Rating (0-5)', placeholder: 'e.g. 4.8', min: 0, max: 5 },
     { name: 'duration', required: true, placeholder: 'e.g. 3 days' },
     { name: 'groupSize', type: 'number' as const, required: true },
+    { name: 'highlights', type: 'textarea' as const, label: 'Highlights (comma or newline separated)', colSpan: 2 as const, placeholder: 'Luxury camp, Big Five, Sunrise game drive' },
+    { name: 'includes', type: 'textarea' as const, label: 'Included items (comma or newline separated)', colSpan: 2 as const, placeholder: 'Park fees, Guide, Accommodation' },
+    { name: 'excludes', type: 'textarea' as const, label: 'Excluded items (comma or newline separated)', colSpan: 2 as const, placeholder: 'Flights, Tips, Travel insurance' },
+    { name: 'itinerary', type: 'textarea' as const, label: 'Itinerary (JSON array or one item per line)', colSpan: 2 as const, placeholder: '[{"day":1,"title":"Arrival","description":"Transfer to camp"}]' },
     { name: 'heroImage', type: 'file' as const, label: 'Image', placeholder: 'https://...' },
+    { name: 'videoUrl', label: 'Video URL', placeholder: 'https://...' },
+    { name: 'featured', type: 'checkbox' as const, label: 'Feature this tour' },
+    { name: 'instantBooking', type: 'checkbox' as const, label: 'Allow instant booking' },
     { name: 'status', type: 'select' as const, options: [{ value: 'active', label: 'Active' }, { value: 'draft', label: 'Draft' }] },
   ],
   guides: [

@@ -69,7 +69,26 @@ export default function TourDetailClient({ slug }: { slug: string }) {
   const operatorName = getOperatorName(tour.operator)
   const destName = getDestinationName(tour.destination)
   const tourTags = Array.isArray(tour.tags) ? tour.tags : []
-  const itinerary = Array.isArray(tour.itinerary) ? tour.itinerary : []
+  const parseList = (value: unknown) => {
+    if (Array.isArray(value)) return value.filter(Boolean).map((item) => String(item))
+    if (typeof value === 'string') {
+      return value
+        .split(/\n|,/) 
+        .map((item) => item.trim())
+        .filter(Boolean)
+    }
+    return []
+  }
+
+  const highlights = parseList(tour.highlights)
+  const includes = parseList(tour.includes)
+  const excludes = parseList(tour.excludes)
+  const itinerary = Array.isArray(tour.itinerary)
+    ? tour.itinerary
+    : typeof tour.itinerary === 'string'
+      ? tour.itinerary.split(/\n/).map((line: string) => line.trim()).filter(Boolean)
+      : []
+  const summary = tour.description || tour.shortDescription || 'More details coming soon.'
 
   const handleBook = () => {
     addItem({
@@ -112,7 +131,7 @@ export default function TourDetailClient({ slug }: { slug: string }) {
           <div className="lg:col-span-2 space-y-6">
             <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6">
               <h2 className="font-semibold text-gray-900 dark:text-white mb-3">About this tour</h2>
-              <p className="text-gray-600 dark:text-gray-300 leading-relaxed">{tour.description}</p>
+              <p className="text-gray-600 dark:text-gray-300 leading-relaxed">{summary}</p>
             </div>
 
             {tourTags.length > 0 && (
@@ -145,11 +164,11 @@ export default function TourDetailClient({ slug }: { slug: string }) {
               </div>
             )}
 
-            {tour.highlights && tour.highlights.length > 0 && (
+            {highlights.length > 0 && (
               <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6">
                 <h2 className="font-semibold text-gray-900 dark:text-white mb-3">Highlights</h2>
                 <ul className="space-y-2">
-                  {tour.highlights.map((h: string) => (
+                  {highlights.map((h: string) => (
                     <li key={h} className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
                       <span className="w-1.5 h-1.5 rounded-full bg-safari-600" />{h}
                     </li>
@@ -158,22 +177,22 @@ export default function TourDetailClient({ slug }: { slug: string }) {
               </div>
             )}
 
-            {tour.includes && tour.includes.length > 0 && (
+            {includes.length > 0 && (
               <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6">
                 <h2 className="font-semibold text-gray-900 dark:text-white mb-3">What&apos;s included</h2>
                 <div className="flex flex-wrap gap-2">
-                  {tour.includes.map((item: string) => (
+                  {includes.map((item: string) => (
                     <span key={item} className="text-xs bg-safari-50 dark:bg-safari-900/20 text-safari-700 px-3 py-1 rounded-full">{item}</span>
                   ))}
                 </div>
               </div>
             )}
 
-            {tour.excludes && tour.excludes.length > 0 && (
+            {excludes.length > 0 && (
               <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6">
                 <h2 className="font-semibold text-gray-900 dark:text-white mb-3">What&apos;s not included</h2>
                 <ul className="list-disc list-inside text-sm text-gray-600 dark:text-gray-300 space-y-2">
-                  {tour.excludes.map((item: string) => (
+                  {excludes.map((item: string) => (
                     <li key={item}>{item}</li>
                   ))}
                 </ul>
