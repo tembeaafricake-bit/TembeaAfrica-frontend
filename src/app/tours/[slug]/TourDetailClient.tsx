@@ -1,6 +1,7 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
+import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Star, Clock, Users, BadgeCheck, ShoppingCart, Heart, ArrowLeft, MapPin } from 'lucide-react'
@@ -27,6 +28,7 @@ const getDestinationName = (destination: unknown) => {
 }
 
 export default function TourDetailClient({ slug }: { slug: string }) {
+  const searchParams = useSearchParams()
   const { addItem } = useCartStore()
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlistStore()
 
@@ -89,6 +91,7 @@ export default function TourDetailClient({ slug }: { slug: string }) {
       ? tour.itinerary.split(/\n/).map((line: string) => line.trim()).filter(Boolean)
       : []
   const summary = tour.description || tour.shortDescription || 'More details coming soon.'
+  const returnHref = searchParams.get('from') ? decodeURIComponent(searchParams.get('from') || '/tours') : '/tours'
 
   const handleBook = () => {
     addItem({
@@ -118,7 +121,7 @@ export default function TourDetailClient({ slug }: { slug: string }) {
           <Image src={image} alt={tour.title} fill className="object-cover" priority />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 max-w-7xl mx-auto">
-            <BackButton fallback="/tours" label="All tours" className="inline-flex items-center gap-1 text-white/80 text-sm mb-3 hover:text-white" />
+            <BackButton fallback={returnHref} label="All tours" className="inline-flex items-center gap-1 text-white/80 text-sm mb-3 hover:text-white" />
             <span className="inline-block bg-white/20 backdrop-blur-sm text-white text-xs px-3 py-1 rounded-full capitalize mb-2">{tour.category}</span>
             <h1 className="font-display text-3xl md:text-4xl font-bold text-white">{tour.title}</h1>
             {destName && (
