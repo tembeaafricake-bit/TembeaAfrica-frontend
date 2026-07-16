@@ -29,7 +29,7 @@ export default function GuideDetailClient({ id }: { id: string }) {
   const apiGuide = data
   const guide = apiGuide ? {
     _id: apiGuide._id,
-    name: apiGuide.user ? `${apiGuide.user.firstName} ${apiGuide.user.lastName}` : 'Guide',
+    name: apiGuide.user ? `${apiGuide.user.firstName} ${apiGuide.user.lastName}` : `${apiGuide.firstName || ''} ${apiGuide.lastName || ''}`.trim() || 'Guide',
     category: apiGuide.category,
     languages: apiGuide.languages || [],
     rating: apiGuide.rating,
@@ -40,7 +40,7 @@ export default function GuideDetailClient({ id }: { id: string }) {
     bio: apiGuide.bio,
     specializations: apiGuide.specializations || [],
     color: '#1B4332',
-    initials: apiGuide.user ? `${apiGuide.user.firstName?.[0] || ''}${apiGuide.user.lastName?.[0] || ''}` : 'G',
+    initials: apiGuide.user ? `${apiGuide.user.firstName?.[0] || ''}${apiGuide.user.lastName?.[0] || ''}` : `${apiGuide.firstName?.[0] || ''}${apiGuide.lastName?.[0] || ''}` || 'G',
     avatar: apiGuide.avatar || apiGuide.user?.avatar || null,
   } : fallback ? { ...fallback, avatar: fallback.avatar ?? null } : null
 

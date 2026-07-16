@@ -30,8 +30,10 @@ const GUIDE_CATEGORY_COLORS: Record<string, string> = {
 }
 
 const normalizeGuide = (guide: any) => {
-  const name = guide.name || `${guide.user?.firstName || ''} ${guide.user?.lastName || ''}`.trim() || 'Guide'
-  const initials = guide.initials || name.split(' ').map((part: string) => part[0]).join('').slice(0, 2).toUpperCase()
+  const firstName = guide.firstName || guide.user?.firstName || ''
+  const lastName = guide.lastName || guide.user?.lastName || ''
+  const name = guide.name || `${firstName} ${lastName}`.trim() || 'Guide'
+  const initials = guide.initials || `${firstName?.[0] || ''}${lastName?.[0] || ''}`.toUpperCase().slice(0, 2)
   const color = guide.color || GUIDE_CATEGORY_COLORS[guide.category] || '#1B4332'
   const avatar = guide.avatar || guide.user?.avatar || null
 
