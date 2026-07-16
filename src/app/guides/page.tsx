@@ -74,7 +74,7 @@ export default function GuidesPage() {
 
   const { data, isError, error } = useQuery({
     queryKey: ['all-guides'],
-    queryFn: () => guidesApi.getAll().then(r => r.data),
+    queryFn: () => guidesApi.getAll({ limit: 100 }).then(r => r.data),
     staleTime: 5 * 60 * 1000,
     retry: 2,
   })
