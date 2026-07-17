@@ -69,10 +69,17 @@ export function AdminContentManager({ title, description, type, singular, fields
 
   const { data, refetch } = useQuery({
     queryKey: ['admin-listings', selectedType],
-    queryFn: () => adminApi.getListings({ type: selectedType, limit: 50 }).then((res) => res.data),
+    queryFn: async () => {
+      const res = await adminApi.getListings({ type: selectedType, limit: 50 })
+      return res.data
+    },
   })
 
-  const rows = useMemo(() => data?.data || [], [data])
+  const rows = useMemo(() => {
+    if (!data) return []
+    if (Array.isArray(data)) return data
+    return data.data || []
+  }, [data])
 
   const toggleForm = () => {
     if (showForm) {
