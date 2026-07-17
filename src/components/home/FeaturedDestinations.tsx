@@ -73,7 +73,7 @@ export function FeaturedDestinations() {
                   <Link href={`/destinations/${dest.slug}`} className="flex-1 text-center py-2 border border-safari-200 dark:border-safari-700 text-safari-700 dark:text-safari-400 rounded-xl text-sm font-medium hover:bg-safari-50 dark:hover:bg-safari-900/20 transition-colors">
                     Details
                   </Link>
-                  <Link href={`/tours?destination=${encodeURIComponent(dest.name)}`} className="flex-1 text-center py-2 bg-safari-700 text-white rounded-xl text-sm font-medium hover:bg-safari-800 transition-colors">
+                  <Link href={`/tours?destination=${encodeURIComponent(dest.slug)}`} className="flex-1 text-center py-2 bg-safari-700 text-white rounded-xl text-sm font-medium hover:bg-safari-800 transition-colors">
                     Explore tours
                   </Link>
                 </div>

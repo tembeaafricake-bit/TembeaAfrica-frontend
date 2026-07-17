@@ -1,6 +1,13 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios'
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.tembeaafrica.com'
+// Use the local Nest API during development unless a deployment explicitly
+// provides its public URL. The former default points at a host that is not
+// available in a fresh local checkout, causing every data query to fail.
+const configuredApiUrl = process.env.NEXT_PUBLIC_API_URL
+const API_URL = process.env.NODE_ENV === 'development'
+  && (!configuredApiUrl || configuredApiUrl === 'https://api.tembeaafrica.com')
+  ? 'http://localhost:3001'
+  : configuredApiUrl || 'https://api.tembeaafrica.com'
 
 export const api = axios.create({
   baseURL: `${API_URL}/api`,
