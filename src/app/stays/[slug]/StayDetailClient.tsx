@@ -16,7 +16,15 @@ import toast from 'react-hot-toast'
 export default function StayDetailClient({ slug }: { slug: string }) {
   const { addItem } = useCartStore()
   const searchParams = useSearchParams()
-  const returnHref = searchParams.get('from') ? decodeURIComponent(searchParams.get('from') || '/stays') : '/stays'
+  const returnHref = (() => {
+    const fromParam = searchParams.get('from')
+    if (!fromParam) return '/stays'
+    try {
+      return decodeURIComponent(fromParam)
+    } catch {
+      return '/stays'
+    }
+  })()
 
   const { data, isLoading } = useQuery({
     queryKey: ['stay', slug],

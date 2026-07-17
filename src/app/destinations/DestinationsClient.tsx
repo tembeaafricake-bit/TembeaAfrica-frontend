@@ -27,15 +27,20 @@ const FALLBACK = [
 const ALL_TAGS = ['All', 'Safari', 'Wildlife', 'Beach', 'Mountain', 'Trekking', 'Culture', 'History', 'Lake', 'City']
 
 export function DestinationsClient() {
-  const [search, setSearch] = useState('')
-  const [country, setCountry] = useState('all')
-  const [activeTag, setActiveTag] = useState('All')
-  const [sort, setSort] = useState('rating')
   const searchParams = useSearchParams()
+  const router = useRouter()
+  const [search, setSearch] = useState(searchParams.get('search') || '')
+  const [country, setCountry] = useState(searchParams.get('country') || 'all')
+  const [activeTag, setActiveTag] = useState(searchParams.get('tag') || 'All')
+  const [sort, setSort] = useState(searchParams.get('sort') || 'rating')
   const currentListUrl = useMemo(() => {
-    const query = searchParams.toString()
-    return query ? `/destinations?${query}` : '/destinations'
-  }, [searchParams])
+    const params = new URLSearchParams()
+    if (search) params.set('search', search)
+    if (country !== 'all') params.set('country', country)
+    if (activeTag !== 'All') params.set('tag', activeTag)
+    if (sort && sort !== 'rating') params.set('sort', sort)
+    return params.toString() ? `/destinations?${params.toString()}` : '/destinations'
+  }, [search, country, activeTag, sort])
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlistStore()
 
   const { data, isError, error } = useQuery({

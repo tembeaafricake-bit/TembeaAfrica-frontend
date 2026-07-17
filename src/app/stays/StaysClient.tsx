@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useMemo, Suspense } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useState, useMemo, useEffect, Suspense } from 'react'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -35,14 +35,33 @@ const normalizeStay = (stay: any) => {
 
 function StaysContent() {
   const searchParams = useSearchParams()
+  const router = useRouter()
   const initialType = searchParams.get('type') || 'all'
+  const initialSearch = searchParams.get('search') || ''
+  const initialSort = searchParams.get('sort') || 'rating'
   const [type, setType] = useState(initialType)
-  const [search, setSearch] = useState('')
-  const [sort, setSort] = useState('rating')
+  const [search, setSearch] = useState(initialSearch)
+  const [sort, setSort] = useState(initialSort)
+
+  useEffect(() => {
+    const params = new URLSearchParams()
+    if (type && type !== 'all') params.set('type', type)
+    if (search) params.set('search', search)
+    if (sort && sort !== 'rating') params.set('sort', sort)
+    const target = params.toString() ? `/stays?${params.toString()}` : '/stays'
+
+    if (typeof window !== 'undefined' && window.location.pathname + window.location.search !== target) {
+      router.replace(target)
+    }
+  }, [type, search, sort, router])
+
   const currentListUrl = useMemo(() => {
-    const query = searchParams.toString()
-    return query ? `/stays?${query}` : '/stays'
-  }, [searchParams])
+    const params = new URLSearchParams()
+    if (type && type !== 'all') params.set('type', type)
+    if (search) params.set('search', search)
+    if (sort && sort !== 'rating') params.set('sort', sort)
+    return params.toString() ? `/stays?${params.toString()}` : '/stays'
+  }, [search, sort, type])
   const { addItem } = useCartStore()
 
   const handleBookStay = (stay: any) => {

@@ -22,7 +22,11 @@ export default function LoginPage() {
   const router = useRouter()
   const { setUser } = useAuthStore()
   const [showPass, setShowPass] = useState(false)
-  const [nextPath, setNextPath] = useState('/dashboard')
+  const [nextPath, setNextPath] = useState(() => {
+    if (typeof window === 'undefined') return '/dashboard'
+    const params = new URLSearchParams(window.location.search)
+    return params.get('next') || '/dashboard'
+  })
   const [loading, setLoading] = useState(false)
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),

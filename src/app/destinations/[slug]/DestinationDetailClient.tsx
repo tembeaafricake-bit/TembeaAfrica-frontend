@@ -13,7 +13,15 @@ import { findDestinationBySlug } from '@/lib/fallback-data'
 
 export default function DestinationDetailClient({ slug }: { slug: string }) {
   const searchParams = useSearchParams()
-  const returnHref = searchParams.get('from') ? decodeURIComponent(searchParams.get('from') || '/destinations') : '/destinations'
+  const returnHref = (() => {
+    const fromParam = searchParams.get('from')
+    if (!fromParam) return '/destinations'
+    try {
+      return decodeURIComponent(fromParam)
+    } catch {
+      return '/destinations'
+    }
+  })()
 
   const { data, isLoading } = useQuery({
     queryKey: ['destination', slug],

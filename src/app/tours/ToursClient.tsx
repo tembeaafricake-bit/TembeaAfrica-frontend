@@ -115,9 +115,15 @@ function ToursContent() {
   }, [data])
 
   const currentListUrl = useMemo(() => {
-    const query = searchParams.toString()
-    return query ? `/tours?${query}` : '/tours'
-  }, [searchParams])
+    const params = new URLSearchParams()
+    if (category !== 'All') params.set('category', category)
+    if (country !== 'all') params.set('country', country)
+    if (destinationFilter) params.set('destination', destinationFilter)
+    if (sort && sort !== 'rating') params.set('sort', sort)
+    if (instantOnly) params.set('instant', 'true')
+    if (verifiedOnly) params.set('verified', 'true')
+    return params.toString() ? `/tours?${params.toString()}` : '/tours'
+  }, [category, country, destinationFilter, sort, instantOnly, verifiedOnly])
 
   const filtered = useMemo(() => {
     let list = [...allTours]

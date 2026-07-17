@@ -20,7 +20,15 @@ const CAT_LABELS: Record<string, string> = {
 export default function GuideDetailClient({ id }: { id: string }) {
   const { addItem } = useCartStore()
   const searchParams = useSearchParams()
-  const returnHref = searchParams.get('from') ? decodeURIComponent(searchParams.get('from') || '/guides') : '/guides'
+  const returnHref = (() => {
+    const fromParam = searchParams.get('from')
+    if (!fromParam) return '/guides'
+    try {
+      return decodeURIComponent(fromParam)
+    } catch {
+      return '/guides'
+    }
+  })()
 
   const { data, isLoading } = useQuery({
     queryKey: ['guide', id],

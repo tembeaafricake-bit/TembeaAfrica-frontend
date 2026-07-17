@@ -50,16 +50,22 @@ const normalizeGuide = (guide: any) => {
 }
 
 export default function GuidesClient() {
-  const [search, setSearch] = useState('')
-  const [category, setCategory] = useState('All')
-  const [maxRate, setMaxRate] = useState(200)
-  const [verifiedOnly, setVerifiedOnly] = useState(false)
-  const [sort, setSort] = useState('rating')
   const searchParams = useSearchParams()
+  const router = useRouter()
+  const [search, setSearch] = useState(searchParams.get('search') || '')
+  const [category, setCategory] = useState(searchParams.get('category') || 'All')
+  const [maxRate, setMaxRate] = useState(Number(searchParams.get('maxRate')) || 200)
+  const [verifiedOnly, setVerifiedOnly] = useState(searchParams.get('verified') === 'true')
+  const [sort, setSort] = useState(searchParams.get('sort') || 'rating')
   const currentListUrl = useMemo(() => {
-    const query = searchParams.toString()
-    return query ? `/guides?${query}` : '/guides'
-  }, [searchParams])
+    const params = new URLSearchParams()
+    if (search) params.set('search', search)
+    if (category !== 'All') params.set('category', category)
+    if (maxRate !== 200) params.set('maxRate', String(maxRate))
+    if (verifiedOnly) params.set('verified', 'true')
+    if (sort && sort !== 'rating') params.set('sort', sort)
+    return params.toString() ? `/guides?${params.toString()}` : '/guides'
+  }, [search, category, maxRate, verifiedOnly, sort])
   const { addItem } = useCartStore()
 
   const handleBookGuide = (guide: any) => {
