@@ -40,6 +40,7 @@ export default function TourDetailClient({ slug }: { slug: string }) {
 
   const fallback = findTourBySlug(slug)
   const tour = data || fallback
+  const returnHref = searchParams.get('from') ? decodeURIComponent(searchParams.get('from') || '/tours') : '/tours'
 
   if (!isLoading && !tour) {
     return (
