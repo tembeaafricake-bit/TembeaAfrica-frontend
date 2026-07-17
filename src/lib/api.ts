@@ -46,6 +46,9 @@ export const authApi = {
   register: (data: { firstName: string; lastName: string; email: string; password: string }) => api.post('/auth/register', data),
   logout: () => api.post('/auth/logout'),
   me: () => api.get('/auth/me'),
+  meWithToken: (token: string) => api.get('/auth/me', {
+    headers: { Authorization: `Bearer ${token}` },
+  }),
   silentMe: () => silentAuthClient.get('/auth/me'),
   forgotPassword: (email: string) => api.post('/auth/forgot-password', { email }),
   resetPassword: (token: string, password: string) => api.post('/auth/reset-password', { token, password }),

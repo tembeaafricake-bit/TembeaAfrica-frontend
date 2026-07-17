@@ -43,7 +43,8 @@ export default function LoginPage() {
     const nextParam = params.get('next') || '/dashboard'
 
     if (error) {
-      toast.error('Google sign-in failed. Please try again.')
+      const errorDescription = params.get('errorDescription')
+      toast.error(errorDescription ? `Google sign-in failed: ${errorDescription}` : 'Google sign-in failed. Please try again.')
       return
     }
 
@@ -59,8 +60,18 @@ export default function LoginPage() {
           Cookies.set('refresh_token', refreshToken, { expires: 30, secure: true, sameSite: 'strict' })
         }
 
-        const { data: user } = await authApi.me()
-        setUser(user)
+        let userResponse
+        try {
+          userResponse = await authApi.me()
+        } catch (fetchError) {
+          if (accessToken) {
+            userResponse = await authApi.meWithToken(accessToken)
+          } else {
+            throw fetchError
+          }
+        }
+
+        setUser(userResponse.data)
         router.replace(nextParam)
       } catch (err) {
         if (accessToken && refreshToken) {
