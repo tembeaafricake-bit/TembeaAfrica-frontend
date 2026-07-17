@@ -13,16 +13,17 @@ export function BackButton({ fallback = '/', label = 'Back', className = '' }: B
   const router = useRouter()
 
   const handleBack = () => {
+    if (typeof window !== 'undefined' && window.history.length > 1) {
+      router.back()
+      return
+    }
+
     if (fallback && fallback !== '/') {
       router.push(fallback)
       return
     }
 
-    if (typeof window !== 'undefined' && window.history.length > 1) {
-      router.back()
-    } else {
-      router.push('/')
-    }
+    router.push('/')
   }
 
   return (

@@ -49,7 +49,7 @@ export const authApi = {
   silentMe: () => silentAuthClient.get('/auth/me'),
   forgotPassword: (email: string) => api.post('/auth/forgot-password', { email }),
   resetPassword: (token: string, password: string) => api.post('/auth/reset-password', { token, password }),
-  googleAuth: () => `${API_URL}/api/auth/google`,
+  googleAuth: (next?: string) => `${API_URL}/api/auth/google${next ? `?next=${encodeURIComponent(next)}` : ''}`,
   logVisit: (pageUrl: string) => api.post('/auth/visit', { pageUrl }),
 }
 
