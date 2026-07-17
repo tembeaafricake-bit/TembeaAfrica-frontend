@@ -67,11 +67,21 @@ export function AdminContentManager({ title, description, type, singular, fields
   const [editingItem, setEditingItem] = useState<Record<string, any> | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const { data, refetch } = useQuery({
+  const { data, refetch, error, isLoading } = useQuery({
     queryKey: ['admin-listings', selectedType],
     queryFn: async () => {
+      console.log(`[AdminContentManager] Fetching ${selectedType} listings...`)
       const res = await adminApi.getListings({ type: selectedType, limit: 50 })
+      console.log(`[AdminContentManager] Response for ${selectedType}:`, res.data)
       return res.data
+    },
+    onError: (err: unknown) => {
+      const axiosErr = err as any
+      console.error(`[AdminContentManager] Error fetching ${selectedType}:`, {
+        status: axiosErr?.response?.status,
+        message: axiosErr?.response?.data?.message || axiosErr?.message,
+        data: axiosErr?.response?.data,
+      })
     },
   })
 
@@ -354,7 +364,7 @@ export function AdminContentManager({ title, description, type, singular, fields
           <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4 dark:border-gray-800">
             <div>
               <p className="text-sm font-semibold text-gray-900 dark:text-white">{rows.length} {title.toLowerCase()}</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">API items: {totalItems} | rows length: {rows.length}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">API items: {totalItems} | rows length: {rows.length} | loading: {isLoading ? 'true' : 'false'} {error ? `| error: ${(error as any)?.message || 'unknown'}` : ''}</p>
             </div>
             <button onClick={() => refetch()} className="inline-flex items-center gap-2 text-xs font-medium text-safari-600 hover:underline">
               <RefreshCcw className="w-4 h-4" /> Refresh

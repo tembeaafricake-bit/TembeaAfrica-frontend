@@ -37,9 +37,12 @@ export function AdminShell({ title, children }: AdminShellProps) {
 
   useEffect(() => {
     if (!mounted) return
+    console.log('[AdminShell] Auth state:', { isAuthenticated, userRole: user?.role, isAdmin: user?.role === 'admin' })
     if (!isAuthenticated) {
+      console.log('[AdminShell] Not authenticated, redirecting to login')
       router.push('/auth/login')
     } else if (user?.role !== 'admin') {
+      console.log('[AdminShell] Not admin role, redirecting to dashboard')
       router.push('/dashboard')
     }
   }, [mounted, isAuthenticated, user, router])

@@ -14,6 +14,13 @@ export const api = axios.create({
 })
 
 api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+  // Log admin API calls for debugging
+  if (config.url?.includes('/admin/')) {
+    console.log(`[API] Admin request to ${config.url}:`, {
+      headers: config.headers,
+      withCredentials: config.withCredentials,
+    })
+  }
   return config
 })
 
