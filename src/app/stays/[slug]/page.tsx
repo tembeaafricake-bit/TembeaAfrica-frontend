@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import { FALLBACK_STAYS } from '@/lib/fallback-data'
 import StayDetailClient from './StayDetailClient'
 
@@ -23,5 +24,9 @@ export async function generateStaticParams() {
 
 export default async function StayDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  return <StayDetailClient slug={slug} />
+  return (
+    <Suspense fallback={<div className="min-h-screen pt-24 px-4 text-center text-gray-400">Loading stay details...</div>}>
+      <StayDetailClient slug={slug} />
+    </Suspense>
+  )
 }
