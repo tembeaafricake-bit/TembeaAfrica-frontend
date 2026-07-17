@@ -36,7 +36,7 @@ export default function TransportPage() {
 
   const { data: transportData } = useQuery({
     queryKey: ['transport-listings', type],
-    queryFn: () => transportApi.getAll({ type: type === 'all' ? undefined : type, limit: 50 }).then((res) => res.data),
+    queryFn: () => transportApi.getAll({ type: type === 'all' ? undefined : type, limit: 1000 }).then((res) => res.data),
     retry: 1,
     staleTime: 1000 * 60 * 2,
   })

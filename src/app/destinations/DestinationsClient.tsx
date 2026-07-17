@@ -34,7 +34,7 @@ export function DestinationsClient() {
 
   const { data, isError, error } = useQuery({
     queryKey: ['all-destinations'],
-    queryFn: () => destinationsApi.getAll().then(r => r.data),
+    queryFn: () => destinationsApi.getAll({ limit: 1000 }).then(r => r.data),
     staleTime: 5 * 60 * 1000,
     retry: 2,
   })
