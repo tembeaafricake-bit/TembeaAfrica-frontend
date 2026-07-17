@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState, FormEvent } from 'react'
+import { useMemo, useState, FormEvent, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Plus, RefreshCcw, CheckCircle, Trash2, Pencil } from 'lucide-react'
 import { AdminShell } from '@/components/admin/AdminShell'
@@ -75,15 +75,18 @@ export function AdminContentManager({ title, description, type, singular, fields
       console.log(`[AdminContentManager] Response for ${selectedType}:`, res.data)
       return res.data
     },
-    onError: (err: unknown) => {
-      const axiosErr = err as any
+  })
+
+  useEffect(() => {
+    if (error) {
+      const axiosErr = error as any
       console.error(`[AdminContentManager] Error fetching ${selectedType}:`, {
         status: axiosErr?.response?.status,
         message: axiosErr?.response?.data?.message || axiosErr?.message,
         data: axiosErr?.response?.data,
       })
-    },
-  })
+    }
+  }, [error, selectedType])
 
   const rows = useMemo(() => {
     if (!data) return []
