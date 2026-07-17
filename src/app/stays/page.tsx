@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
 import { StaysClient } from './StaysClient'
@@ -10,9 +11,10 @@ export const metadata: Metadata = {
 
 export default function StaysPage() {
   return (
-    <>
-      <Navbar />
-      <main className="min-h-screen pt-16 bg-gray-50 dark:bg-gray-950">
+    <Suspense fallback={<div className="text-center py-20 text-gray-400">Loading stays...</div>}>
+      <>
+        <Navbar />
+        <main className="min-h-screen pt-16 bg-gray-50 dark:bg-gray-950">
         <div className="bg-safari-gradient py-16 px-4 text-center">
           <p className="text-golden-400 text-sm uppercase tracking-widest mb-3">Rest in style</p>
           <h1 className="font-display text-4xl md:text-5xl font-bold text-white mb-4">Hotels & Stays</h1>
@@ -22,5 +24,6 @@ export default function StaysPage() {
       </main>
       <Footer />
     </>
+    </Suspense>
   )
 }

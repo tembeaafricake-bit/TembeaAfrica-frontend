@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
 import { DestinationsClient } from './DestinationsClient'
@@ -10,9 +11,10 @@ export const metadata: Metadata = {
 
 export default function DestinationsPage() {
   return (
-    <>
-      <Navbar />
-      <main className="min-h-screen bg-gray-50 dark:bg-gray-950 pt-16">
+    <Suspense fallback={<div className="text-center py-20 text-gray-400">Loading destinations...</div>}>
+      <>
+        <Navbar />
+        <main className="min-h-screen bg-gray-50 dark:bg-gray-950 pt-16">
         <div className="bg-safari-gradient py-16 px-4 text-center">
           <p className="text-golden-400 text-sm uppercase tracking-widest mb-3">Africa awaits</p>
           <h1 className="font-display text-4xl md:text-5xl font-bold text-white mb-4">Explore Destinations</h1>
@@ -24,5 +26,6 @@ export default function DestinationsPage() {
       </main>
       <Footer />
     </>
+    </Suspense>
   )
 }
