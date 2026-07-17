@@ -62,13 +62,14 @@ interface AdminContentManagerProps {
 }
 
 export function AdminContentManager({ title, description, type, singular, fields }: AdminContentManagerProps) {
+  const [selectedType, setSelectedType] = useState(type)
   const [showForm, setShowForm] = useState(false)
   const [editingItem, setEditingItem] = useState<Record<string, any> | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const { data, refetch } = useQuery({
-    queryKey: ['admin-listings', type],
-    queryFn: () => adminApi.getListings({ type, limit: 50 }).then((res) => res.data),
+    queryKey: ['admin-listings', selectedType],
+    queryFn: () => adminApi.getListings({ type: selectedType, limit: 50 }).then((res) => res.data),
   })
 
   const rows = useMemo(() => data?.data || [], [data])
@@ -91,7 +92,7 @@ export function AdminContentManager({ title, description, type, singular, fields
     }
     if (item.category) {
       const category = String(item.category)
-      return `${category.charAt(0).toUpperCase() + category.slice(1)} ${type === 'guides' ? 'guide' : ''}`.trim()
+      return `${category.charAt(0).toUpperCase() + category.slice(1)} ${selectedType === 'guides' ? 'guide' : ''}`.trim()
     }
     return 'Untitled'
   }
@@ -146,11 +147,11 @@ export function AdminContentManager({ title, description, type, singular, fields
     try {
       await Promise.all(uploadTasks)
       if (editingItem) {
-        await adminApi.updateListing(type, editingItem._id as string, payload)
+        await adminApi.updateListing(selectedType, editingItem._id as string, payload)
         toast.success(`${singular} updated successfully`)
         setEditingItem(null)
       } else {
-        await adminApi.createListing(type, payload)
+        await adminApi.createListing(selectedType, payload)
         toast.success(`${singular} created successfully`)
       }
       form.reset()
@@ -175,7 +176,7 @@ export function AdminContentManager({ title, description, type, singular, fields
   const handleDelete = async (id: string) => {
     if (!confirm(`Delete this ${singular.toLowerCase()}?`)) return
     try {
-      await adminApi.deleteListing(type, id)
+      await adminApi.deleteListing(selectedType, id)
       toast.success(`${singular} deleted`)
       refetch()
     } catch {
@@ -370,7 +371,7 @@ export function AdminContentManager({ title, description, type, singular, fields
                         <Pencil className="w-3.5 h-3.5" /> Edit
                       </button>
                       <button onClick={async () => {
-                        await adminApi.updateListingStatus(type, item._id as string, item.status === 'active' ? 'inactive' : 'active')
+                        await adminApi.updateListingStatus(selectedType, item._id as string, item.status === 'active' ? 'inactive' : 'active')
                         refetch()
                         toast.success('Status updated')
                       }} className="inline-flex items-center gap-1 rounded-2xl bg-safari-700 px-3 py-2 text-xs font-semibold text-white">
