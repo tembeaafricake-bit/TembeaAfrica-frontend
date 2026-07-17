@@ -39,6 +39,10 @@ function StaysContent() {
   const [type, setType] = useState(initialType)
   const [search, setSearch] = useState('')
   const [sort, setSort] = useState('rating')
+  const currentListUrl = useMemo(() => {
+    const query = searchParams.toString()
+    return query ? `/stays?${query}` : '/stays'
+  }, [searchParams])
   const { addItem } = useCartStore()
 
   const handleBookStay = (stay: any) => {
@@ -114,7 +118,7 @@ function StaysContent() {
           <motion.div key={stay._id} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
             className="bg-white dark:bg-gray-900 rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800 hover:shadow-md transition-shadow flex flex-col justify-between">
             <div>
-              <Link href={`/stays/${stay.slug}`}>
+              <Link href={`/stays/${stay.slug}?from=${encodeURIComponent(currentListUrl)}`}>
                 <div className="relative h-44">
                   <Image src={stay.images[0]} alt={stay.name} fill className="object-cover" />
                   <span className="absolute top-3 left-3 bg-white/90 text-xs font-medium px-2.5 py-1 rounded-full capitalize">{stay.type}</span>
@@ -135,7 +139,7 @@ function StaysContent() {
               </Link>
             </div>
             <div className="p-4 pt-3 flex gap-2">
-              <Link href={`/stays/${stay.slug}`} className="flex-1 text-center py-2 border border-safari-200 dark:border-safari-700 text-safari-700 dark:text-safari-400 rounded-xl text-xs font-medium hover:bg-safari-50 dark:hover:bg-safari-900/20 transition-colors">
+              <Link href={`/stays/${stay.slug}?from=${encodeURIComponent(currentListUrl)}`} className="flex-1 text-center py-2 border border-safari-200 dark:border-safari-700 text-safari-700 dark:text-safari-400 rounded-xl text-xs font-medium hover:bg-safari-50 dark:hover:bg-safari-900/20 transition-colors">
                 Details
               </Link>
               <button onClick={() => handleBookStay(stay)} className="flex-1 py-2 bg-safari-700 text-white rounded-xl text-xs font-medium hover:bg-safari-800 transition-colors">

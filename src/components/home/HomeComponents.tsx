@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { Facebook, Instagram, Linkedin, Mail, Twitter } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { Sparkles, Star, Shield, RefreshCw, Clock, DollarSign, Award, ShoppingCart } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -115,6 +115,7 @@ const STAYS = [
 
 export function FeaturedStays() {
   const { addItem } = useCartStore()
+  const currentListUrl = usePathname() || '/'
 
   const handleAddStayToCart = (stay: any, e?: React.MouseEvent) => {
     if (e) { e.preventDefault(); e.stopPropagation(); }
@@ -147,7 +148,7 @@ export function FeaturedStays() {
             <motion.div key={stay._id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 }} viewport={{ once: true }}
               className="bg-gray-50 dark:bg-gray-800 rounded-2xl overflow-hidden card-hover">
-              <Link href={`/stays/${stay.slug}`}>
+              <Link href={`/stays/${stay.slug}?from=${encodeURIComponent(currentListUrl)}`}>
                 <div className="relative h-48">
                   <Image src={stay.images[0]} alt={stay.name} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover" />
                   <div className="absolute top-3 left-3 bg-white/90 dark:bg-gray-800/90 text-xs font-medium px-2 py-1 rounded-full capitalize text-gray-700 dark:text-gray-200">
@@ -170,7 +171,7 @@ export function FeaturedStays() {
               </Link>
               <div className="p-4 pt-0">
                 <div className="mt-3 flex gap-2">
-                  <Link href={`/stays/${stay.slug}`} className="flex-1 text-center py-2 border border-safari-200 dark:border-safari-700 text-safari-700 dark:text-safari-400 rounded-xl text-sm font-medium hover:bg-safari-50 dark:hover:bg-safari-900/20 transition-colors">View stay</Link>
+                  <Link href={`/stays/${stay.slug}?from=${encodeURIComponent(currentListUrl)}`} className="flex-1 text-center py-2 border border-safari-200 dark:border-safari-700 text-safari-700 dark:text-safari-400 rounded-xl text-sm font-medium hover:bg-safari-50 dark:hover:bg-safari-900/20 transition-colors">View stay</Link>
                   <button onClick={(e) => handleAddStayToCart(stay, e)} className="flex-1 py-2 bg-safari-700 text-white rounded-xl text-sm font-medium hover:bg-safari-800 transition-colors">Add to cart</button>
                 </div>
               </div>
@@ -192,6 +193,7 @@ const GUIDES = [
 
 export function FeaturedGuides() {
   const { addItem } = useCartStore()
+  const currentListUrl = usePathname() || '/'
 
   const handleBookGuide = (guide: any, e?: React.MouseEvent) => {
     if (e) { e.preventDefault(); e.stopPropagation(); }
@@ -228,7 +230,7 @@ export function FeaturedGuides() {
             <motion.div key={guide._id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 }} viewport={{ once: true }}
               className="bg-white dark:bg-gray-800 rounded-2xl p-5 border border-gray-100 dark:border-gray-700 card-hover flex flex-col justify-between">
-              <Link href={`/guides/${guide._id}`} className="block text-center">
+              <Link href={`/guides/${guide._id}?from=${encodeURIComponent(currentListUrl)}`} className="block text-center">
                 <div className="w-16 h-16 rounded-full mx-auto mb-3 flex items-center justify-center text-white text-xl font-bold" style={{ background: guide.color }}>
                   {guide.initials}
                 </div>
@@ -248,7 +250,7 @@ export function FeaturedGuides() {
                 <p className="text-sm font-bold text-safari-700 mb-3">${guide.dailyRate}/day</p>
               </Link>
               <div className="mt-2 flex gap-2">
-                <Link href={`/guides/${guide._id}`} className="flex-1 text-center py-2 border border-safari-200 dark:border-safari-700 text-safari-700 dark:text-safari-400 rounded-xl text-xs font-medium hover:bg-safari-50 dark:hover:bg-safari-900/20 transition-colors">Profile</Link>
+                <Link href={`/guides/${guide._id}?from=${encodeURIComponent(currentListUrl)}`} className="flex-1 text-center py-2 border border-safari-200 dark:border-safari-700 text-safari-700 dark:text-safari-400 rounded-xl text-xs font-medium hover:bg-safari-50 dark:hover:bg-safari-900/20 transition-colors">Profile</Link>
                 <button onClick={(e) => handleBookGuide(guide, e)} className="flex-1 py-2 bg-safari-700 text-white rounded-xl text-xs font-medium hover:bg-safari-800 transition-colors">Book</button>
               </div>
             </motion.div>

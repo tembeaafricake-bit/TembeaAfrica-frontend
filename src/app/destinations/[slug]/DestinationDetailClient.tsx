@@ -1,6 +1,7 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
+import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Star, ArrowLeft, MapPin, Calendar } from 'lucide-react'
@@ -11,6 +12,9 @@ import { destinationsApi, toursApi } from '@/lib/api'
 import { findDestinationBySlug } from '@/lib/fallback-data'
 
 export default function DestinationDetailClient({ slug }: { slug: string }) {
+  const searchParams = useSearchParams()
+  const returnHref = searchParams.get('from') ? decodeURIComponent(searchParams.get('from') || '/destinations') : '/destinations'
+
   const { data, isLoading } = useQuery({
     queryKey: ['destination', slug],
     queryFn: () => destinationsApi.getOne(slug).then(r => r.data),
@@ -48,7 +52,7 @@ export default function DestinationDetailClient({ slug }: { slug: string }) {
         <main className="min-h-screen pt-24 px-4 text-center">
           <p className="text-4xl mb-4">🌍</p>
           <h1 className="text-2xl font-bold mb-2">Destination not found</h1>
-          <BackButton fallback="/destinations" label="Back to destinations" className="text-safari-600 font-medium" />
+          <BackButton fallback={returnHref} label="Back to destinations" className="text-safari-600 font-medium" />
         </main>
         <Footer />
       </>
@@ -67,7 +71,7 @@ export default function DestinationDetailClient({ slug }: { slug: string }) {
           <Image src={dest.heroImage} alt={dest.name} fill className="object-cover" priority />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 max-w-7xl mx-auto">
-            <BackButton fallback="/destinations" label="All destinations" className="inline-flex items-center gap-1 text-white/80 text-sm mb-3 hover:text-white" />
+            <BackButton fallback={returnHref} label="All destinations" className="inline-flex items-center gap-1 text-white/80 text-sm mb-3 hover:text-white" />
             <span className="inline-block bg-white/20 text-white text-xs px-3 py-1 rounded-full capitalize mb-2">{dest.country}</span>
             <h1 className="font-display text-4xl md:text-5xl font-bold text-white">{dest.name}</h1>
             <div className="flex items-center gap-4 mt-3 text-white/80 text-sm">

@@ -1,5 +1,6 @@
 'use client'
 import { useState, useMemo } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -30,6 +31,11 @@ export function DestinationsClient() {
   const [country, setCountry] = useState('all')
   const [activeTag, setActiveTag] = useState('All')
   const [sort, setSort] = useState('rating')
+  const searchParams = useSearchParams()
+  const currentListUrl = useMemo(() => {
+    const query = searchParams.toString()
+    return query ? `/destinations?${query}` : '/destinations'
+  }, [searchParams])
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlistStore()
 
   const { data, isError, error } = useQuery({
@@ -121,7 +127,7 @@ export function DestinationsClient() {
               </div>
             </div>
             <div className="p-4">
-              <Link href={`/destinations/${dest.slug}`}>
+              <Link href={`/destinations/${dest.slug}?from=${encodeURIComponent(currentListUrl)}`}>
                 <h3 className="font-semibold text-gray-900 dark:text-white mb-1">{dest.name}</h3>
                 <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 mb-3">{dest.description}</p>
               </Link>
@@ -134,7 +140,7 @@ export function DestinationsClient() {
                 <span className="text-safari-600 font-medium">{dest.tourCount} tours</span>
               </div>
               <div className="flex gap-2">
-                <Link href={`/destinations/${dest.slug}`} className="flex-1 text-center py-2 border border-safari-200 dark:border-safari-700 text-safari-700 dark:text-safari-400 rounded-xl text-xs font-medium hover:bg-safari-50 dark:hover:bg-safari-900/20 transition-colors">
+                <Link href={`/destinations/${dest.slug}?from=${encodeURIComponent(currentListUrl)}`} className="flex-1 text-center py-2 border border-safari-200 dark:border-safari-700 text-safari-700 dark:text-safari-400 rounded-xl text-xs font-medium hover:bg-safari-50 dark:hover:bg-safari-900/20 transition-colors">
                   Details
                 </Link>
                   <Link href={`/tours?destination=${encodeURIComponent(dest.slug)}`} className="flex-1 text-center py-2 bg-safari-700 text-white rounded-xl text-xs font-medium hover:bg-safari-800 transition-colors">

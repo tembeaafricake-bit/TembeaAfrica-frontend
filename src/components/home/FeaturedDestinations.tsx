@@ -1,5 +1,6 @@
 'use client'
 import { useQuery } from '@tanstack/react-query'
+import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
@@ -18,6 +19,8 @@ const FALLBACK_DESTINATIONS = [
 ]
 
 export function FeaturedDestinations() {
+  const pathname = usePathname()
+  const currentListUrl = pathname || '/'
   const { data, isLoading } = useQuery({
     queryKey: ['featured-destinations'],
     queryFn: () => destinationsApi.getFeatured().then(r => r.data),
@@ -45,7 +48,7 @@ export function FeaturedDestinations() {
               transition={{ delay: i * 0.1 }} viewport={{ once: true }}
               className="group relative rounded-2xl overflow-hidden bg-gray-100 dark:bg-gray-800 card-hover cursor-pointer">
               <div className="relative h-56 overflow-hidden">
-                <Link href={`/destinations/${dest.slug}`}>
+                <Link href={`/destinations/${dest.slug}?from=${encodeURIComponent(currentListUrl)}`}>
                   <Image src={dest.heroImage} alt={dest.name} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                   <div className="absolute top-3 left-3">
@@ -56,7 +59,7 @@ export function FeaturedDestinations() {
                 </Link>
               </div>
               <div className="p-4">
-                <Link href={`/destinations/${dest.slug}`}>
+                <Link href={`/destinations/${dest.slug}?from=${encodeURIComponent(currentListUrl)}`}>
                   <h3 className="font-display text-xl font-semibold text-gray-900 dark:text-white mb-1">{dest.name}</h3>
                   <p className="text-gray-500 dark:text-gray-400 text-sm line-clamp-2 mb-3">{dest.description}</p>
                 </Link>

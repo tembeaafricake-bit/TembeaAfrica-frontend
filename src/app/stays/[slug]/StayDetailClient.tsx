@@ -1,6 +1,7 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
+import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Star, ArrowLeft, ShoppingCart } from 'lucide-react'
@@ -14,6 +15,8 @@ import toast from 'react-hot-toast'
 
 export default function StayDetailClient({ slug }: { slug: string }) {
   const { addItem } = useCartStore()
+  const searchParams = useSearchParams()
+  const returnHref = searchParams.get('from') ? decodeURIComponent(searchParams.get('from') || '/stays') : '/stays'
 
   const { data, isLoading } = useQuery({
     queryKey: ['stay', slug],
@@ -58,7 +61,7 @@ export default function StayDetailClient({ slug }: { slug: string }) {
         <Navbar />
         <main className="min-h-screen pt-24 px-4 text-center">
           <h1 className="text-2xl font-bold mb-2">Stay not found</h1>
-          <BackButton fallback="/stays" label="Back to stays" className="text-safari-600 font-medium" />
+          <BackButton fallback={returnHref} label="Back to stays" className="text-safari-600 font-medium" />
         </main>
         <Footer />
       </>
@@ -99,7 +102,7 @@ export default function StayDetailClient({ slug }: { slug: string }) {
           <Image src={image} alt={stay.name} fill className="object-cover" priority />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 max-w-7xl mx-auto">
-            <BackButton fallback="/stays" label="All stays" className="inline-flex items-center gap-1 text-white/80 text-sm mb-3 hover:text-white" />
+            <BackButton fallback={returnHref} label="All stays" className="inline-flex items-center gap-1 text-white/80 text-sm mb-3 hover:text-white" />
             <span className="inline-block bg-white/20 text-white text-xs px-3 py-1 rounded-full capitalize mb-2">{stay.type}</span>
             <h1 className="font-display text-3xl md:text-4xl font-bold text-white">{stay.name}</h1>
             {destName && <p className="text-white/70 mt-2">{destName}</p>}

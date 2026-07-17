@@ -48,7 +48,7 @@ export default function TourDetailClient({ slug }: { slug: string }) {
         <main className="min-h-screen pt-24 px-4 text-center">
           <p className="text-4xl mb-4">🦒</p>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Tour not found</h1>
-          <BackButton fallback="/tours" label="Back to tours" className="text-safari-600 font-medium" />
+          <BackButton fallback={returnHref} label="Back to tours" className="text-safari-600 font-medium" />
         </main>
         <Footer />
       </>

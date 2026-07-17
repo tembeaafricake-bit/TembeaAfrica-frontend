@@ -18,6 +18,18 @@ export function BackButton({ fallback = '/', label = 'Back', className = '' }: B
       return
     }
 
+    if (typeof document !== 'undefined' && document.referrer) {
+      try {
+        const referrerUrl = new URL(document.referrer)
+        if (referrerUrl.origin === window.location.origin) {
+          router.push(referrerUrl.pathname + referrerUrl.search + referrerUrl.hash)
+          return
+        }
+      } catch {
+        // ignore invalid referrer URL
+      }
+    }
+
     if (fallback && fallback !== '/') {
       router.push(fallback)
       return

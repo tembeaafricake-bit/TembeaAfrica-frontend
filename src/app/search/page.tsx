@@ -13,6 +13,7 @@ function SearchContent() {
   const [query, setQuery] = useState(searchParams.get('q') || '')
 
   const q = query.toLowerCase().trim()
+  const currentListUrl = `/search${searchParams.toString() ? `?${searchParams.toString()}` : ''}`
   const tours = q ? FALLBACK_TOURS.filter(t => t.title.toLowerCase().includes(q) || t.destination.toLowerCase().includes(q)) : FALLBACK_TOURS.slice(0, 4)
   const destinations = q ? FALLBACK_DESTINATIONS.filter(d => d.name.toLowerCase().includes(q)) : FALLBACK_DESTINATIONS.slice(0, 4)
   const guides = q ? FALLBACK_GUIDES.filter(g => g.name.toLowerCase().includes(q)) : FALLBACK_GUIDES.slice(0, 3)
@@ -34,7 +35,7 @@ function SearchContent() {
           <div className="flex items-center gap-2 mb-4"><Compass className="w-4 h-4 text-safari-600" /><h2 className="font-semibold text-gray-900 dark:text-white">Tours</h2></div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {tours.map(t => (
-              <Link key={t._id} href={`/tours/${t.slug}`} className="p-4 bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 hover:border-safari-300 transition-colors">
+              <Link key={t._id} href={`/tours/${t.slug}?from=${encodeURIComponent(currentListUrl)}`} className="p-4 bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 hover:border-safari-300 transition-colors">
                 <p className="text-sm font-medium text-gray-900 dark:text-white line-clamp-2">{t.title}</p>
                 <p className="text-sm text-safari-700 font-bold mt-1">${t.price}</p>
               </Link>
@@ -48,7 +49,7 @@ function SearchContent() {
           <div className="flex items-center gap-2 mb-4"><MapPin className="w-4 h-4 text-safari-600" /><h2 className="font-semibold text-gray-900 dark:text-white">Destinations</h2></div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {destinations.map(d => (
-              <Link key={d._id} href={`/destinations/${d.slug}`} className="p-4 bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 hover:border-safari-300 transition-colors">
+              <Link key={d._id} href={`/destinations/${d.slug}?from=${encodeURIComponent(currentListUrl)}`} className="p-4 bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 hover:border-safari-300 transition-colors">
                 <p className="text-sm font-medium text-gray-900 dark:text-white">{d.name}</p>
                 <p className="text-xs text-gray-500 mt-1 capitalize">{d.country}</p>
               </Link>
@@ -62,7 +63,7 @@ function SearchContent() {
           <div className="flex items-center gap-2 mb-4"><UserCheck className="w-4 h-4 text-safari-600" /><h2 className="font-semibold text-gray-900 dark:text-white">Guides</h2></div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {guides.map(g => (
-              <Link key={g._id} href={`/guides/${g._id}`} className="p-4 bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 hover:border-safari-300 transition-colors">
+              <Link key={g._id} href={`/guides/${g._id}?from=${encodeURIComponent(currentListUrl)}`} className="p-4 bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 hover:border-safari-300 transition-colors">
                 <p className="text-sm font-medium text-gray-900 dark:text-white">{g.name}</p>
                 <p className="text-sm text-safari-700 font-bold mt-1">${g.dailyRate}/day</p>
               </Link>
@@ -76,7 +77,7 @@ function SearchContent() {
           <div className="flex items-center gap-2 mb-4"><BedDouble className="w-4 h-4 text-safari-600" /><h2 className="font-semibold text-gray-900 dark:text-white">Stays</h2></div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {stays.map(s => (
-              <Link key={s._id} href={`/stays/${s.slug}`} className="p-4 bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 hover:border-safari-300 transition-colors">
+              <Link key={s._id} href={`/stays/${s.slug}?from=${encodeURIComponent(currentListUrl)}`} className="p-4 bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 hover:border-safari-300 transition-colors">
                 <p className="text-sm font-medium text-gray-900 dark:text-white">{s.name}</p>
                 <p className="text-sm text-safari-700 font-bold mt-1">${s.pricePerNight}/night</p>
               </Link>

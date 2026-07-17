@@ -1,5 +1,6 @@
 'use client'
 import { useState, useMemo } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
@@ -53,6 +54,11 @@ export default function GuidesPage() {
   const [maxRate, setMaxRate] = useState(200)
   const [verifiedOnly, setVerifiedOnly] = useState(false)
   const [sort, setSort] = useState('rating')
+  const searchParams = useSearchParams()
+  const currentListUrl = useMemo(() => {
+    const query = searchParams.toString()
+    return query ? `/guides?${query}` : '/guides'
+  }, [searchParams])
   const { addItem } = useCartStore()
 
   const handleBookGuide = (guide: any) => {
@@ -198,7 +204,7 @@ export default function GuidesPage() {
                     <span className="text-xl font-bold text-safari-700">${guide.dailyRate}</span>
                     <span className="text-xs text-gray-400">/day</span>
                   </div>
-                  <Link href={`/guides/${guide._id}`}
+                  <Link href={`/guides/${guide._id}?from=${encodeURIComponent(currentListUrl)}`}
                     className="px-3 py-1.5 border border-safari-200 dark:border-safari-700 text-safari-700 dark:text-safari-400 rounded-xl text-xs font-medium hover:bg-safari-50 dark:hover:bg-safari-900/20 transition-colors">
                     Profile
                   </Link>

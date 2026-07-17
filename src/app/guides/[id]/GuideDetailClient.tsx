@@ -1,6 +1,7 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
+import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Star, Award, ArrowLeft, Languages, ShoppingCart } from 'lucide-react'
 import { Navbar } from '@/components/layout/Navbar'
@@ -18,6 +19,8 @@ const CAT_LABELS: Record<string, string> = {
 
 export default function GuideDetailClient({ id }: { id: string }) {
   const { addItem } = useCartStore()
+  const searchParams = useSearchParams()
+  const returnHref = searchParams.get('from') ? decodeURIComponent(searchParams.get('from') || '/guides') : '/guides'
 
   const { data, isLoading } = useQuery({
     queryKey: ['guide', id],
@@ -66,7 +69,7 @@ export default function GuideDetailClient({ id }: { id: string }) {
         <main className="min-h-screen pt-24 px-4 text-center">
           <p className="text-4xl mb-4">🦉</p>
           <h1 className="text-2xl font-bold mb-2">Guide not found</h1>
-          <BackButton fallback="/guides" label="Back to guides" className="text-safari-600 font-medium" />
+          <BackButton fallback={returnHref} label="Back to guides" className="text-safari-600 font-medium" />
         </main>
         <Footer />
       </>
@@ -99,7 +102,7 @@ export default function GuideDetailClient({ id }: { id: string }) {
       <Navbar />
       <main className="min-h-screen pt-16 bg-gray-50 dark:bg-gray-950">
         <div className="max-w-4xl mx-auto px-4 py-10">
-          <BackButton fallback="/guides" label="All guides" className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-safari-600 mb-6" />
+          <BackButton fallback={returnHref} label="All guides" className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-safari-600 mb-6" />
 
           <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 md:p-8">
             <div className="flex flex-col sm:flex-row items-start gap-6">
