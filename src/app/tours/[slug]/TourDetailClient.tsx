@@ -92,7 +92,6 @@ export default function TourDetailClient({ slug }: { slug: string }) {
       ? tour.itinerary.split(/\n/).map((line: string) => line.trim()).filter(Boolean)
       : []
   const summary = tour.description || tour.shortDescription || 'More details coming soon.'
-  const returnHref = searchParams.get('from') ? decodeURIComponent(searchParams.get('from') || '/tours') : '/tours'
 
   const handleBook = () => {
     addItem({
