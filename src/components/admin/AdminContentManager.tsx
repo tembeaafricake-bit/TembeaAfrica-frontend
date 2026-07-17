@@ -81,6 +81,12 @@ export function AdminContentManager({ title, description, type, singular, fields
     return data.data || []
   }, [data])
 
+  const totalItems = useMemo(() => {
+    if (!data) return 0
+    if (Array.isArray(data)) return data.length
+    return Number(data.total || rows.length || 0)
+  }, [data, rows.length])
+
   const toggleForm = () => {
     if (showForm) {
       setEditingItem(null)
@@ -346,7 +352,10 @@ export function AdminContentManager({ title, description, type, singular, fields
 
         <section className="overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
           <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4 dark:border-gray-800">
-            <p className="text-sm font-semibold text-gray-900 dark:text-white">{rows.length} {title.toLowerCase()}</p>
+            <div>
+              <p className="text-sm font-semibold text-gray-900 dark:text-white">{rows.length} {title.toLowerCase()}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">API items: {totalItems} | rows length: {rows.length}</p>
+            </div>
             <button onClick={() => refetch()} className="inline-flex items-center gap-2 text-xs font-medium text-safari-600 hover:underline">
               <RefreshCcw className="w-4 h-4" /> Refresh
             </button>
