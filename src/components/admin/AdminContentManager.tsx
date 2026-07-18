@@ -68,6 +68,7 @@ export function AdminContentManager({ title, description, type, singular, fields
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [lastScroll, setLastScroll] = useState<number | null>(null)
   const [lastEditedId, setLastEditedId] = useState<string | null>(null)
+  const [searchTerm, setSearchTerm] = useState('')
 
   const { data, refetch, error, isLoading } = useQuery({
     queryKey: ['admin-listings', selectedType],
@@ -101,6 +102,26 @@ export function AdminContentManager({ title, description, type, singular, fields
     if (Array.isArray(data)) return data.length
     return Number(data.total || rows.length || 0)
   }, [data, rows.length])
+
+  const filteredRows = useMemo(() => {
+    if (!searchTerm.trim()) return rows
+    const query = searchTerm.toLowerCase()
+    return rows.filter((item: any) => {
+      const itemName = String(item.name || item.title || '')
+      const itemDestination = typeof item.destination === 'string'
+        ? item.destination
+        : typeof item.destination === 'object' && item.destination
+          ? String((item.destination as any).name || (item.destination as any).slug || '')
+          : ''
+      const itemOwner = typeof item.owner === 'string'
+        ? item.owner
+        : typeof item.owner === 'object' && item.owner
+          ? `${(item.owner as any).firstName || ''} ${(item.owner as any).lastName || ''}`.trim() || String((item.owner as any).email || '')
+          : ''
+      return [itemName, itemDestination, itemOwner, String(item._id), String(item.slug || '')]
+        .some((value) => value.toLowerCase().includes(query))
+    })
+  }, [rows, searchTerm])
 
   const toggleForm = () => {
     if (showForm) {
@@ -387,11 +408,19 @@ export function AdminContentManager({ title, description, type, singular, fields
 
         <section className="overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
           <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4 dark:border-gray-800">
-            <div>
+            <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold text-gray-900 dark:text-white">{title}</p>
               <p className="text-xs text-gray-500 dark:text-gray-400">
-                Showing {rows.length} of {totalItems} {title.toLowerCase()} • loading: {isLoading ? 'true' : 'false'}{error ? ` • error: ${(error as any)?.message || 'unknown'}` : ''}
+                Showing {filteredRows.length} of {totalItems} {title.toLowerCase()} • loading: {isLoading ? 'true' : 'false'}{error ? ` • error: ${(error as any)?.message || 'unknown'}` : ''}
               </p>
+            </div>
+            <div className="flex-1 min-w-0">
+              <input
+                value={searchTerm}
+                onChange={(event) => setSearchTerm(event.target.value)}
+                placeholder={selectedType === 'accommodations' ? 'Search stays by name...' : `Search ${selectedType}...`}
+                className="w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-2 text-sm text-gray-900 outline-none focus:border-safari-500 dark:border-gray-700 dark:bg-gray-950 dark:text-white"
+              />
             </div>
             <button onClick={() => refetch()} className="inline-flex items-center gap-2 text-xs font-medium text-safari-600 hover:underline">
               <RefreshCcw className="w-4 h-4" /> Refresh
@@ -408,9 +437,9 @@ export function AdminContentManager({ title, description, type, singular, fields
                 </tr>
               </thead>
               <tbody>
-                {!rows.length ? (
-                  <tr><td colSpan={4} className="px-5 py-10 text-center text-gray-500">No items yet. Add one above.</td></tr>
-                ) : rows.map((item: Record<string, unknown>) => (
+                {!filteredRows.length ? (
+                  <tr><td colSpan={4} className="px-5 py-10 text-center text-gray-500">No items match your search.</td></tr>
+                ) : filteredRows.map((item: Record<string, unknown>) => (
                   <tr key={item._id as string} data-admin-row={item._id as string} className="border-t border-gray-100 dark:border-gray-800">
                     <td className="px-5 py-4 font-semibold text-gray-900 dark:text-white">{getItemTitle(item)}</td>
                     <td className="px-5 py-4 text-gray-500">{item.status as string}</td>

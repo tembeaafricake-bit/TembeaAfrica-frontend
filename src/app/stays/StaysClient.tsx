@@ -164,7 +164,7 @@ function StaysContent() {
           <motion.div key={stay._id} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
             className="bg-white dark:bg-gray-900 rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800 hover:shadow-md transition-shadow flex flex-col justify-between">
             <div>
-                <Link href={`/stays/${stay.slug}?from=${encodeURIComponent(currentListUrl)}`} onClick={() => {
+                <Link href={`/stays/${stay.slug || stay._id}?from=${encodeURIComponent(currentListUrl)}`} onClick={() => {
                   try { sessionStorage.setItem(`stays-scroll:${currentListUrl}`, String(window.scrollY)) } catch {}
                 }}>
                 <div className="relative h-44">
