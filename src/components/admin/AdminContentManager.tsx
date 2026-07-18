@@ -66,6 +66,8 @@ export function AdminContentManager({ title, description, type, singular, fields
   const [showForm, setShowForm] = useState(false)
   const [editingItem, setEditingItem] = useState<Record<string, any> | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [lastScroll, setLastScroll] = useState<number | null>(null)
+  const [lastEditedId, setLastEditedId] = useState<string | null>(null)
 
   const { data, refetch, error, isLoading } = useQuery({
     queryKey: ['admin-listings', selectedType],
@@ -173,16 +175,27 @@ export function AdminContentManager({ title, description, type, singular, fields
     try {
       await Promise.all(uploadTasks)
       if (editingItem) {
-        await adminApi.updateListing(selectedType, editingItem._id as string, payload)
+        const editedId = editingItem._id as string
+        await adminApi.updateListing(selectedType, editedId, payload)
         toast.success(`${singular} updated successfully`)
+        // refresh and then restore scroll to the edited row if possible
+        await refetch()
+        setShowForm(false)
         setEditingItem(null)
+        try {
+          const el = document.querySelector(`[data-admin-row="${editedId}"]`)
+          if (el) (el as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'center' })
+          else if (lastScroll) window.scrollTo({ top: lastScroll, behavior: 'smooth' })
+        } catch {}
+        setLastEditedId(null)
+        setLastScroll(null)
       } else {
         await adminApi.createListing(selectedType, payload)
         toast.success(`${singular} created successfully`)
+        form.reset()
+        setShowForm(false)
+        await refetch()
       }
-      form.reset()
-      setShowForm(false)
-      refetch()
     } catch (error: unknown) {
       console.error(`Failed to save ${singular.toLowerCase()}`, error)
       const err = error as { response?: { data?: { message?: string; error?: string }; status?: number } }
@@ -398,12 +411,14 @@ export function AdminContentManager({ title, description, type, singular, fields
                 {!rows.length ? (
                   <tr><td colSpan={4} className="px-5 py-10 text-center text-gray-500">No items yet. Add one above.</td></tr>
                 ) : rows.map((item: Record<string, unknown>) => (
-                  <tr key={item._id as string} className="border-t border-gray-100 dark:border-gray-800">
+                  <tr key={item._id as string} data-admin-row={item._id as string} className="border-t border-gray-100 dark:border-gray-800">
                     <td className="px-5 py-4 font-semibold text-gray-900 dark:text-white">{getItemTitle(item)}</td>
                     <td className="px-5 py-4 text-gray-500">{item.status as string}</td>
                     <td className="px-5 py-4 text-gray-500">{new Date(item.createdAt as string).toLocaleDateString()}</td>
                     <td className="px-5 py-4 flex flex-wrap gap-2">
                       <button onClick={() => {
+                        try { setLastScroll(window.scrollY) } catch {}
+                        setLastEditedId(item._id as string)
                         setEditingItem(item)
                         setShowForm(true)
                         window.scrollTo({ top: 0, behavior: 'smooth' })

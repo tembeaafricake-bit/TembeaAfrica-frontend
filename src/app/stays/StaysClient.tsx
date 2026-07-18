@@ -101,6 +101,20 @@ function StaysContent() {
     staleTime: 5 * 60 * 1000,
   })
 
+  // Restore scroll position when returning to a previously-saved list URL
+  useEffect(() => {
+    try {
+      const key = `stays-scroll:${currentListUrl}`
+      const v = typeof window !== 'undefined' ? sessionStorage.getItem(key) : null
+      if (v) {
+        window.scrollTo({ top: Number(v), behavior: 'auto' })
+        sessionStorage.removeItem(key)
+      }
+    } catch (e) {
+      // ignore storage errors
+    }
+  }, [currentListUrl])
+
   const allStays = useMemo(() => {
     const list = data?.data?.length ? data.data : FALLBACK_STAYS
     return list.map(normalizeStay)
@@ -150,7 +164,9 @@ function StaysContent() {
           <motion.div key={stay._id} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
             className="bg-white dark:bg-gray-900 rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800 hover:shadow-md transition-shadow flex flex-col justify-between">
             <div>
-              <Link href={`/stays/${stay.slug}?from=${encodeURIComponent(currentListUrl)}`}>
+                <Link href={`/stays/${stay.slug}?from=${encodeURIComponent(currentListUrl)}`} onClick={() => {
+                  try { sessionStorage.setItem(`stays-scroll:${currentListUrl}`, String(window.scrollY)) } catch {}
+                }}>
                 <div className="relative h-44">
                   <Image src={stay.images[0]} alt={stay.name} fill className="object-cover" />
                   <span className="absolute top-3 left-3 bg-white/90 text-xs font-medium px-2.5 py-1 rounded-full capitalize">{stay.type}</span>
