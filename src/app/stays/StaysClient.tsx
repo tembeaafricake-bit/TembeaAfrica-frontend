@@ -12,10 +12,23 @@ import { FALLBACK_STAYS } from '@/lib/fallback-data'
 import { useCartStore } from '@/store'
 import toast from 'react-hot-toast'
 
+const getDestinationName = (destination: unknown) => {
+  if (!destination) return 'Unknown destination'
+  if (typeof destination === 'string') return destination
+  if (typeof destination === 'object') {
+    const maybe = destination as { name?: string; slug?: string; toString?: () => string }
+    if (typeof maybe.name === 'string' && maybe.name.trim()) return maybe.name
+    if (typeof maybe.slug === 'string' && maybe.slug.trim()) return maybe.slug
+    if (typeof maybe.toString === 'function') {
+      const str = maybe.toString()
+      if (str !== '[object Object]') return str
+    }
+  }
+  return 'Unknown destination'
+}
+
 const normalizeStay = (stay: any) => {
-  const destName = typeof stay.destination === 'object' && stay.destination
-    ? (stay.destination as { name?: string }).name
-    : (stay.destination as string)
+  const destName = getDestinationName(stay.destination)
   const displayName = typeof stay.name === 'string' && stay.name.trim()
     ? stay.name.trim()
     : typeof stay.title === 'string' && stay.title.trim()
@@ -24,7 +37,7 @@ const normalizeStay = (stay: any) => {
   return {
     ...stay,
     name: displayName,
-    destination: destName || 'Unknown destination',
+    destination: destName,
     images: Array.isArray(stay.images) && stay.images.length > 0
       ? stay.images
       : stay.heroImage

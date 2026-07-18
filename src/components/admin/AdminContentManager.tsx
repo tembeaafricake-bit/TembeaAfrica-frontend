@@ -221,7 +221,16 @@ export function AdminContentManager({ title, description, type, singular, fields
       if (val === null || val === undefined) return ''
       if (Array.isArray(val)) return val.join(', ')
       if (typeof val === 'object') {
-        return (val.name || val.title || val.slug || val._id || '') as string
+        const asObject = val as Record<string, unknown>
+        if (field.name === 'destination') {
+          return (asObject.name || asObject.slug || asObject._id || '') as string
+        }
+        if (field.name === 'owner') {
+          const firstName = typeof asObject.firstName === 'string' ? asObject.firstName : ''
+          const lastName = typeof asObject.lastName === 'string' ? asObject.lastName : ''
+          return `${firstName} ${lastName}`.trim() || (asObject.email as string) || (asObject._id as string) || ''
+        }
+        return (asObject.name || asObject.title || asObject.slug || asObject._id || '') as string
       }
       return String(val)
     }
