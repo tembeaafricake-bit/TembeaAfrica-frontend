@@ -30,7 +30,7 @@ export default function AdminListingsPage() {
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: ['admin-listings', type],
-    queryFn: () => adminApi.getListings({ type, limit: 50 }).then((res) => res.data),
+    queryFn: () => adminApi.getListings({ type, limit: 1000 }).then((res) => res.data),
   })
 
   const rows = useMemo(() => data?.data || [], [data])

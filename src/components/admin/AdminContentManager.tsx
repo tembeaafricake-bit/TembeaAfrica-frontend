@@ -71,7 +71,7 @@ export function AdminContentManager({ title, description, type, singular, fields
     queryKey: ['admin-listings', selectedType],
     queryFn: async () => {
       console.log(`[AdminContentManager] Fetching ${selectedType} listings...`)
-      const res = await adminApi.getListings({ type: selectedType, limit: 50 })
+      const res = await adminApi.getListings({ type: selectedType, limit: 1000 })
       console.log(`[AdminContentManager] Response for ${selectedType}:`, res.data)
       return res.data
     },
@@ -375,8 +375,10 @@ export function AdminContentManager({ title, description, type, singular, fields
         <section className="overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
           <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4 dark:border-gray-800">
             <div>
-              <p className="text-sm font-semibold text-gray-900 dark:text-white">{rows.length} {title.toLowerCase()}</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">API items: {totalItems} | rows length: {rows.length} | loading: {isLoading ? 'true' : 'false'} {error ? `| error: ${(error as any)?.message || 'unknown'}` : ''}</p>
+              <p className="text-sm font-semibold text-gray-900 dark:text-white">{title}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                Showing {rows.length} of {totalItems} {title.toLowerCase()} • loading: {isLoading ? 'true' : 'false'}{error ? ` • error: ${(error as any)?.message || 'unknown'}` : ''}
+              </p>
             </div>
             <button onClick={() => refetch()} className="inline-flex items-center gap-2 text-xs font-medium text-safari-600 hover:underline">
               <RefreshCcw className="w-4 h-4" /> Refresh
