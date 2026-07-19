@@ -98,7 +98,7 @@ function ToursContent() {
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['all-tours'],
-    queryFn: () => toursApi.getAll({ limit: 1000 }).then(r => r.data),
+    queryFn: () => toursApi.getAll({ limit: 1000, status: 'all' }).then(r => r.data),
     staleTime: 5 * 60 * 1000,
     retry: 2,
   })
