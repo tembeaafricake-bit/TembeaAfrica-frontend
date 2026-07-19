@@ -77,7 +77,7 @@ function SearchContent() {
           <div className="flex items-center gap-2 mb-4"><BedDouble className="w-4 h-4 text-safari-600" /><h2 className="font-semibold text-gray-900 dark:text-white">Stays</h2></div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {stays.map(s => (
-              <Link key={s._id} href={`/stays/${s.slug}?from=${encodeURIComponent(currentListUrl)}`} className="p-4 bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 hover:border-safari-300 transition-colors">
+              <Link key={s._id} href={`/stays/${s.slug || s._id}?from=${encodeURIComponent(currentListUrl)}`} className="p-4 bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 hover:border-safari-300 transition-colors">
                 <p className="text-sm font-medium text-gray-900 dark:text-white">{s.name}</p>
                 <p className="text-sm text-safari-700 font-bold mt-1">${s.pricePerNight}/night</p>
               </Link>

@@ -148,7 +148,7 @@ export function FeaturedStays() {
             <motion.div key={stay._id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 }} viewport={{ once: true }}
               className="bg-gray-50 dark:bg-gray-800 rounded-2xl overflow-hidden card-hover">
-              <Link href={`/stays/${stay.slug}?from=${encodeURIComponent(currentListUrl)}`}>
+              <Link href={`/stays/${stay.slug || stay._id}?from=${encodeURIComponent(currentListUrl)}`}>
                 <div className="relative h-48">
                   <Image src={stay.images[0]} alt={stay.name} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover" />
                   <div className="absolute top-3 left-3 bg-white/90 dark:bg-gray-800/90 text-xs font-medium px-2 py-1 rounded-full capitalize text-gray-700 dark:text-gray-200">
@@ -171,7 +171,7 @@ export function FeaturedStays() {
               </Link>
               <div className="p-4 pt-0">
                 <div className="mt-3 flex gap-2">
-                  <Link href={`/stays/${stay.slug}?from=${encodeURIComponent(currentListUrl)}`} className="flex-1 text-center py-2 border border-safari-200 dark:border-safari-700 text-safari-700 dark:text-safari-400 rounded-xl text-sm font-medium hover:bg-safari-50 dark:hover:bg-safari-900/20 transition-colors">View stay</Link>
+                  <Link href={`/stays/${stay.slug || stay._id}?from=${encodeURIComponent(currentListUrl)}`} className="flex-1 text-center py-2 border border-safari-200 dark:border-safari-700 text-safari-700 dark:text-safari-400 rounded-xl text-sm font-medium hover:bg-safari-50 dark:hover:bg-safari-900/20 transition-colors">View stay</Link>
                   <button onClick={(e) => handleAddStayToCart(stay, e)} className="flex-1 py-2 bg-safari-700 text-white rounded-xl text-sm font-medium hover:bg-safari-800 transition-colors">Add to cart</button>
                 </div>
               </div>
