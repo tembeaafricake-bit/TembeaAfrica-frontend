@@ -7,7 +7,6 @@ import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { Star, Clock, Users, BadgeCheck, Heart, ShoppingCart, SlidersHorizontal, X } from 'lucide-react'
 import { toursApi } from '@/lib/api'
-import { FALLBACK_TOURS } from '@/lib/fallback-data'
 import { useCartStore, useWishlistStore } from '@/store'
 import toast from 'react-hot-toast'
 
@@ -110,8 +109,7 @@ function ToursContent() {
   }
   
   const allTours = useMemo(() => {
-    if (data?.data?.length) return data.data.map(normalizeTour)
-    return FALLBACK_TOURS
+    return data?.data?.length ? data.data.map(normalizeTour) : []
   }, [data])
 
   const currentListUrl = useMemo(() => {
@@ -142,7 +140,7 @@ function ToursContent() {
     return list
   }, [allTours, category, destinationFilter, country, maxPrice, sort, instantOnly, verifiedOnly])
 
-  const handleCart = (tour: typeof FALLBACK_TOURS[0]) => {
+  const handleCart = (tour: any) => {
     addItem({
       id: tour._id,
       type: 'tour',
