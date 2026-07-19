@@ -2,7 +2,6 @@
 
 import { useQuery } from '@tanstack/react-query'
 import { useSearchParams } from 'next/navigation'
-import Link from 'next/link'
 import { Star, Award, ArrowLeft, Languages, ShoppingCart } from 'lucide-react'
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
@@ -32,7 +31,24 @@ export default function GuideDetailClient({ id }: { id: string }) {
 
   const { data, isLoading } = useQuery({
     queryKey: ['guide', id],
-    queryFn: () => guidesApi.getOne(id).then(r => r.data),
+    queryFn: async () => {
+      try {
+        const response = await guidesApi.getOne(id)
+        if (response?.data && (response.data._id || response.data.name)) {
+          return response.data
+        }
+      } catch (error) {
+        console.warn('Guide lookup failed for id:', id, error)
+      }
+
+      try {
+        const searchResponse = await guidesApi.getAll({ limit: 1000 })
+        const list = Array.isArray(searchResponse?.data?.data) ? searchResponse.data.data : []
+        return list.find((item: any) => item._id === id) || null
+      } catch {
+        return null
+      }
+    },
     retry: false,
   })
 
