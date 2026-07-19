@@ -26,6 +26,28 @@ export function Providers({ children }: { children: React.ReactNode }) {
     logPageVisit()
   }, [pathname])
 
+  useEffect(() => {
+    if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then((registrations) => {
+        registrations.forEach((registration) => {
+          registration.unregister().catch((error) => {
+            console.warn('Failed to unregister service worker:', error)
+          })
+        })
+      }).catch((error) => {
+        console.warn('Unable to query service worker registrations:', error)
+      })
+
+      if ('caches' in window) {
+        caches.keys().then((cacheNames) => {
+          return Promise.all(cacheNames.map((cacheName) => caches.delete(cacheName)))
+        }).catch((error) => {
+          console.warn('Unable to clear caches:', error)
+        })
+      }
+    }
+  }, [])
+
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
