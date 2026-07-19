@@ -119,12 +119,6 @@ export default function GuidesClient() {
     <>
       <Navbar />
       <main className="min-h-screen pt-16 bg-gray-50 dark:bg-gray-950">
-        <div className="bg-safari-gradient py-14 px-4 text-center">
-          <p className="text-golden-400 text-sm uppercase tracking-widest mb-3">Local expertise</p>
-          <h1 className="font-display text-4xl md:text-5xl font-bold text-white mb-4">Expert Local Guides</h1>
-          <p className="text-white/70 text-lg max-w-xl mx-auto">Connect with certified, experienced guides who know Africa's wild places better than anyone.</p>
-        </div>
-
         <div className="max-w-7xl mx-auto px-4 py-8">
           {isError && (
             <div className="mb-6 p-4 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-900 rounded-xl">
