@@ -71,7 +71,7 @@ function TransportContent() {
   })
 
   const transports = useMemo<TransportItem[]>(() => {
-    const list = transportData?.data?.length ? transportData.data : FALLBACK_TRANSPORT
+    const list = transportData?.data || []
     return list.map((item: any) => ({
       ...item,
       type: typeof item.type === 'string' ? item.type.toLowerCase() : item.type,
@@ -123,6 +123,8 @@ function TransportContent() {
               </button>
             ))}
           </div>
+
+          <p className="text-sm text-gray-500 mb-5">{filtered.length} transport listings found</p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {filtered.length > 0 ? filtered.map((item, i) => {
