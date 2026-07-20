@@ -74,7 +74,15 @@ function TransportContent() {
     const list = transportData?.data || []
     return list.map((item: any) => ({
       ...item,
-      type: typeof item.type === 'string' ? item.type.toLowerCase() : item.type,
+      type: (() => {
+        if (typeof item.type !== 'string') return item.type
+        const lower = item.type.toLowerCase()
+        if (lower.includes('car')) return 'car'
+        if (lower.includes('bus')) return 'bus'
+        if (lower.includes('flight') || lower.includes('plane')) return 'flight'
+        if (lower.includes('ferry') || lower.includes('ship')) return 'ferry'
+        return lower
+      })(),
       name: typeof item.name === 'string' && item.name.trim() ? item.name.trim() : (typeof item.route === 'string' && item.route.trim() ? item.route.trim() : 'Untitled transport'),
       image: item.image || 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=800',
     }))
