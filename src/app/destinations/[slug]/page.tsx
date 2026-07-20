@@ -2,7 +2,23 @@ import { Suspense } from 'react'
 import { FALLBACK_DESTINATIONS } from '@/lib/fallback-data'
 import DestinationDetailClient from './DestinationDetailClient'
 
-export function generateStaticParams() {
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.tembeaafrica.com'
+
+export async function generateStaticParams() {
+  try {
+    const response = await fetch(`${API_URL}/api/destinations?limit=1000`, { cache: 'no-store' })
+    const result = await response.json()
+    const slugs = Array.isArray(result?.data)
+      ? result.data.map((item: any) => item.slug).filter((slug: unknown): slug is string => typeof slug === 'string')
+      : []
+
+    if (slugs.length > 0) {
+      return slugs.map((slug: string) => ({ slug }))
+    }
+  } catch (error) {
+    console.warn('Unable to fetch destination slugs for static generation:', error)
+  }
+
   return FALLBACK_DESTINATIONS.map(({ slug }) => ({ slug }))
 }
 
