@@ -107,7 +107,7 @@ export default function DestinationDetailClient({ slug }: { slug: string }) {
                 <h2 className="font-semibold text-gray-900 dark:text-white mb-4">Tours in {dest.name}</h2>
                 <div className="grid sm:grid-cols-2 gap-4">
                   {relatedTours.map((tour: { _id: string; slug: string; title: string; price: number; images?: string[] }) => (
-                    <Link key={tour._id} href={`/tours/${tour.slug}`} className="flex gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                    <Link key={tour._id} href={`/tours/${tour.slug}?from=${encodeURIComponent(`/destinations/${slug}`)}`} className="flex gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                       <div className="relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
                         <Image src={tour.images?.[0] || dest.heroImage} alt={tour.title} fill className="object-cover" />
                       </div>

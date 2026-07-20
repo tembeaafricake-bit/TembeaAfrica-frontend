@@ -69,4 +69,3 @@ export function BackButton({ fallback = '/', label = 'Back', className = '' }: B
     </button>
   )
 }
-}

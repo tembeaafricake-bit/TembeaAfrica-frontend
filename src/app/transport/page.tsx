@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
@@ -30,6 +30,14 @@ type TransportItem = {
 const TYPES: TransportType[] = ['all', 'bus', 'car', 'flight', 'ferry']
 
 export default function TransportPage() {
+  return (
+    <Suspense fallback={<div className="text-center py-20 text-gray-400">Loading transport...</div>}>
+      <TransportContent />
+    </Suspense>
+  )
+}
+
+function TransportContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [type, setType] = useState('all')
