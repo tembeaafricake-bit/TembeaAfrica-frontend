@@ -48,8 +48,8 @@ export function FeaturedDestinations() {
               transition={{ delay: i * 0.1 }} viewport={{ once: true }}
               className="group relative rounded-2xl overflow-hidden bg-gray-100 dark:bg-gray-800 card-hover cursor-pointer">
               <div className="relative h-56 overflow-hidden">
-                <Link href={`/destinations/${dest.slug}?from=${encodeURIComponent(currentListUrl)}`}>
-                  <Image src={dest.heroImage} alt={dest.name} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                <Link href={`/destinations/${dest.slug || dest._id}?from=${encodeURIComponent(currentListUrl)}`}>
+                  <Image src={dest.heroImage || 'https://images.unsplash.com/photo-1547970810-dc1eac37d174?w=800'} alt={dest.name || 'Destination'} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                   <div className="absolute top-3 left-3">
                     <span className="bg-white/20 backdrop-blur-sm text-white text-xs px-3 py-1 rounded-full border border-white/30 capitalize">
@@ -59,24 +59,24 @@ export function FeaturedDestinations() {
                 </Link>
               </div>
               <div className="p-4">
-                <Link href={`/destinations/${dest.slug}?from=${encodeURIComponent(currentListUrl)}`}>
-                  <h3 className="font-display text-xl font-semibold text-gray-900 dark:text-white mb-1">{dest.name}</h3>
-                  <p className="text-gray-500 dark:text-gray-400 text-sm line-clamp-2 mb-3">{dest.description}</p>
+                <Link href={`/destinations/${dest.slug || dest._id}?from=${encodeURIComponent(currentListUrl)}`}>
+                  <h3 className="font-display text-xl font-semibold text-gray-900 dark:text-white mb-1">{dest.name || 'Unnamed Destination'}</h3>
+                  <p className="text-gray-500 dark:text-gray-400 text-sm line-clamp-2 mb-3">{dest.description || 'No description available.'}</p>
                 </Link>
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-300">
                     <Star className="w-4 h-4 fill-golden-400 text-golden-400" />
-                    <span className="font-medium">{dest.rating}</span>
+                    <span className="font-medium">{dest.rating ?? 0}</span>
                     <span className="text-gray-400">·</span>
-                    <span>{dest.reviewCount.toLocaleString()} reviews</span>
+                    <span>{(dest.reviewCount ?? 0).toLocaleString()} reviews</span>
                   </div>
-                  <span className="text-safari-600 text-sm font-medium">{dest.tourCount} tours</span>
+                  <span className="text-safari-600 text-sm font-medium">{dest.tourCount ?? 0} tours</span>
                 </div>
                 <div className="flex gap-2">
-                  <Link href={`/destinations/${dest.slug}`} className="flex-1 text-center py-2 border border-safari-200 dark:border-safari-700 text-safari-700 dark:text-safari-400 rounded-xl text-sm font-medium hover:bg-safari-50 dark:hover:bg-safari-900/20 transition-colors">
+                  <Link href={`/destinations/${dest.slug || dest._id}`} className="flex-1 text-center py-2 border border-safari-200 dark:border-safari-700 text-safari-700 dark:text-safari-400 rounded-xl text-sm font-medium hover:bg-safari-50 dark:hover:bg-safari-900/20 transition-colors">
                     Details
                   </Link>
-                  <Link href={`/tours?destination=${encodeURIComponent(dest.slug)}`} className="flex-1 text-center py-2 bg-safari-700 text-white rounded-xl text-sm font-medium hover:bg-safari-800 transition-colors">
+                  <Link href={`/tours?destination=${encodeURIComponent(dest.slug || dest._id)}`} className="flex-1 text-center py-2 bg-safari-700 text-white rounded-xl text-sm font-medium hover:bg-safari-800 transition-colors">
                     Explore tours
                   </Link>
                 </div>
