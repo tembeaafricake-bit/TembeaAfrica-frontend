@@ -9,6 +9,7 @@ import { Star, Bus, Car, Plane, Ship, ShoppingCart } from 'lucide-react'
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
 import { transportApi } from '@/lib/api'
+import { FALLBACK_TRANSPORT } from '@/lib/fallback-data'
 import { useCartStore } from '@/store'
 import toast from 'react-hot-toast'
 
@@ -70,8 +71,10 @@ function TransportContent() {
   })
 
   const transports = useMemo<TransportItem[]>(() => {
-    return (transportData?.data || []).map((item: any) => ({
+    const list = transportData?.data?.length ? transportData.data : FALLBACK_TRANSPORT
+    return list.map((item: any) => ({
       ...item,
+      type: typeof item.type === 'string' ? item.type.toLowerCase() : item.type,
       name: typeof item.name === 'string' && item.name.trim() ? item.name.trim() : (typeof item.route === 'string' && item.route.trim() ? item.route.trim() : 'Untitled transport'),
       image: item.image || 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=800',
     }))

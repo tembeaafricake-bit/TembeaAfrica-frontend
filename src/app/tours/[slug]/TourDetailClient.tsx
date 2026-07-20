@@ -9,6 +9,7 @@ import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
 import { BackButton } from '@/components/ui/BackButton'
 import { toursApi } from '@/lib/api'
+import { findTourBySlug } from '@/lib/fallback-data'
 import { useCartStore, useWishlistStore } from '@/store'
 import toast from 'react-hot-toast'
 
@@ -37,7 +38,8 @@ export default function TourDetailClient({ slug }: { slug: string }) {
     retry: false,
   })
 
-  const tour = data || null
+  const fallback = findTourBySlug(slug)
+  const tour = data || fallback
   const returnHref = (() => {
     const fromParam = searchParams.get('from')
     if (!fromParam) return '/tours'
