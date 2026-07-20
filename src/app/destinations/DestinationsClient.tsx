@@ -114,8 +114,8 @@ export function DestinationsClient() {
           <motion.div key={dest._id} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
             className="bg-white dark:bg-gray-900 rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800 card-hover">
             <div className="relative h-44">
-              <Link href={`/destinations/${dest.slug}`}>
-                <Image src={dest.heroImage} alt={dest.name} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover" />
+              <Link href={`/destinations/${dest.slug || dest._id}`}>
+                <Image src={dest.heroImage || 'https://images.unsplash.com/photo-1547970810-dc1eac37d174?w=600'} alt={dest.name || 'Destination'} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                 <div className="absolute bottom-3 left-3 flex flex-wrap gap-1">
                   {(dest.tags || []).slice(0, 2).map(t => (
@@ -132,23 +132,23 @@ export function DestinationsClient() {
               </div>
             </div>
             <div className="p-4">
-              <Link href={`/destinations/${dest.slug}?from=${encodeURIComponent(currentListUrl)}`}>
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-1">{dest.name}</h3>
-                <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 mb-3">{dest.description}</p>
+              <Link href={`/destinations/${dest.slug || dest._id}?from=${encodeURIComponent(currentListUrl)}`}>
+                <h3 className="font-semibold text-gray-900 dark:text-white mb-1">{dest.name || 'Unnamed Destination'}</h3>
+                <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 mb-3">{dest.description || 'No description available.'}</p>
               </Link>
               <div className="flex items-center justify-between text-xs text-gray-500 mb-4">
                 <div className="flex items-center gap-1">
                   <Star className="w-3.5 h-3.5 fill-golden-400 text-golden-400" />
-                  <span className="font-semibold text-gray-900 dark:text-white">{dest.rating}</span>
-                  <span>({dest.reviewCount.toLocaleString()})</span>
+                  <span className="font-semibold text-gray-900 dark:text-white">{dest.rating ?? 0}</span>
+                  <span>({(dest.reviewCount ?? 0).toLocaleString()})</span>
                 </div>
-                <span className="text-safari-600 font-medium">{dest.tourCount} tours</span>
+                <span className="text-safari-600 font-medium">{dest.tourCount ?? 0} tours</span>
               </div>
               <div className="flex gap-2">
-                <Link href={`/destinations/${dest.slug}?from=${encodeURIComponent(currentListUrl)}`} className="flex-1 text-center py-2 border border-safari-200 dark:border-safari-700 text-safari-700 dark:text-safari-400 rounded-xl text-xs font-medium hover:bg-safari-50 dark:hover:bg-safari-900/20 transition-colors">
+                <Link href={`/destinations/${dest.slug || dest._id}?from=${encodeURIComponent(currentListUrl)}`} className="flex-1 text-center py-2 border border-safari-200 dark:border-safari-700 text-safari-700 dark:text-safari-400 rounded-xl text-xs font-medium hover:bg-safari-50 dark:hover:bg-safari-900/20 transition-colors">
                   Details
                 </Link>
-                  <Link href={`/tours?destination=${encodeURIComponent(dest.slug)}`} className="flex-1 text-center py-2 bg-safari-700 text-white rounded-xl text-xs font-medium hover:bg-safari-800 transition-colors">
+                  <Link href={`/tours?destination=${encodeURIComponent(dest.slug || dest._id)}`} className="flex-1 text-center py-2 bg-safari-700 text-white rounded-xl text-xs font-medium hover:bg-safari-800 transition-colors">
                   Explore tours
                 </Link>
               </div>
