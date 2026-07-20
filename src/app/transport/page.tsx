@@ -1,14 +1,13 @@
 'use client'
 
-import { useState, useMemo } from 'react'
-import Link from 'next/link'
+import { useEffect, useMemo, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { useQuery } from '@tanstack/react-query'
 import { Star, Bus, Car, Plane, Ship, ShoppingCart } from 'lucide-react'
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
-import { FALLBACK_TRANSPORT } from '@/lib/fallback-data'
 import { transportApi } from '@/lib/api'
 import { useCartStore } from '@/store'
 import toast from 'react-hot-toast'
@@ -31,8 +30,29 @@ type TransportItem = {
 const TYPES: TransportType[] = ['all', 'bus', 'car', 'flight', 'ferry']
 
 export default function TransportPage() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
   const [type, setType] = useState('all')
   const { addItem } = useCartStore()
+
+  useEffect(() => {
+    const paramType = searchParams.get('type') || 'all'
+    if (paramType === 'all' || ['bus', 'car', 'flight', 'ferry'].includes(paramType)) {
+      setType(paramType)
+    }
+  }, [searchParams])
+
+  const updateType = (newType: string) => {
+    setType(newType)
+    const params = new URLSearchParams(searchParams.toString())
+    if (newType === 'all') {
+      params.delete('type')
+    } else {
+      params.set('type', newType)
+    }
+    const queryString = params.toString()
+    router.replace(`/transport${queryString ? `?${queryString}` : ''}`)
+  }
 
   const { data: transportData } = useQuery({
     queryKey: ['transport-listings', type],
@@ -42,10 +62,7 @@ export default function TransportPage() {
   })
 
   const transports = useMemo<TransportItem[]>(() => {
-    const list = (transportData?.data && transportData.data.length > 0)
-      ? transportData.data
-      : FALLBACK_TRANSPORT
-    return list.map((item: any) => ({
+    return (transportData?.data || []).map((item: any) => ({
       ...item,
       name: typeof item.name === 'string' && item.name.trim() ? item.name.trim() : (typeof item.route === 'string' && item.route.trim() ? item.route.trim() : 'Untitled transport'),
       image: item.image || 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=800',
@@ -89,7 +106,7 @@ export default function TransportPage() {
         <div className="max-w-7xl mx-auto px-4 py-8">
           <div className="flex gap-2 overflow-x-auto pb-3 mb-6 scrollbar-hide">
             {TYPES.map((t) => (
-              <button key={t} onClick={() => setType(t)}
+              <button key={t} onClick={() => updateType(t)}
                 className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap capitalize border transition-all ${type === t ? 'bg-safari-700 text-white border-safari-700' : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300'}`}>
                 {t === 'all' ? 'All transport' : t === 'car' ? 'Car rental' : t}
               </button>
@@ -97,7 +114,7 @@ export default function TransportPage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {filtered.map((item, i) => {
+            {filtered.length > 0 ? filtered.map((item, i) => {
               const Icon = TYPE_ICONS[item.type] || Bus
               return (
                 <motion.div key={item._id} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
@@ -122,7 +139,12 @@ export default function TransportPage() {
                   </div>
                 </motion.div>
               )
-            })}
+            }) : (
+              <div className="col-span-full text-center py-20">
+                <p className="text-4xl mb-4">🚍</p>
+                <p className="text-gray-500 dark:text-gray-400">No transport listings found for this filter.</p>
+              </div>
+            )}
           </div>
         </div>
       </main>

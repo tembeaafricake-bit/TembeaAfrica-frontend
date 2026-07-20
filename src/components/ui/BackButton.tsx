@@ -1,6 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
 import { ArrowLeft } from 'lucide-react'
 
 interface BackButtonProps {
@@ -11,14 +12,32 @@ interface BackButtonProps {
 
 export function BackButton({ fallback = '/', label = 'Back', className = '' }: BackButtonProps) {
   const router = useRouter()
+  const [isMounted, setIsMounted] = useState(false)
+  const [canGoBack, setCanGoBack] = useState(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+    // Check if we can go back using browser history
+    if (typeof window !== 'undefined' && window.history.length > 1) {
+      setCanGoBack(true)
+    }
+  }, [])
 
   const handleBack = () => {
-    if (typeof window !== 'undefined' && window.history.length > 1) {
+    // Prefer explicit fallback (from parameter) over browser back
+    if (fallback && fallback !== '/' && fallback !== window.location.pathname) {
+      router.push(fallback)
+      return
+    }
+
+    // Try to use browser back if history is available
+    if (canGoBack && typeof window !== 'undefined' && window.history.length > 1) {
       router.back()
       return
     }
 
-    if (typeof document !== 'undefined' && document.referrer) {
+    // Fall back to referrer if same origin
+    if (typeof document !== 'undefined' && document.referrer && isMounted) {
       try {
         const referrerUrl = new URL(document.referrer)
         if (referrerUrl.origin === window.location.origin) {
@@ -30,6 +49,7 @@ export function BackButton({ fallback = '/', label = 'Back', className = '' }: B
       }
     }
 
+    // Final fallback
     if (fallback && fallback !== '/') {
       router.push(fallback)
       return
@@ -48,4 +68,5 @@ export function BackButton({ fallback = '/', label = 'Back', className = '' }: B
       {label}
     </button>
   )
+}
 }
