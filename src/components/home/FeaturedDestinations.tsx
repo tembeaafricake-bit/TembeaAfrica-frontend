@@ -49,7 +49,7 @@ export function FeaturedDestinations() {
               className="group relative rounded-2xl overflow-hidden bg-gray-100 dark:bg-gray-800 card-hover cursor-pointer">
               <div className="relative h-56 overflow-hidden">
                 <Link href={`/destinations/${dest.slug || dest._id}?from=${encodeURIComponent(currentListUrl)}`}>
-                  <Image src={dest.heroImage || 'https://images.unsplash.com/photo-1547970810-dc1eac37d174?w=800'} alt={dest.name || 'Destination'} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <Image src={dest.heroImage || (dest as any).image || 'https://images.unsplash.com/photo-1547970810-dc1eac37d174?w=800'} alt={dest.name || 'Destination'} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                   <div className="absolute top-3 left-3">
                     <span className="bg-white/20 backdrop-blur-sm text-white text-xs px-3 py-1 rounded-full border border-white/30 capitalize">

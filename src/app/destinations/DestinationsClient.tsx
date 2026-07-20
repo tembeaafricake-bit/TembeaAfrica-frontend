@@ -64,12 +64,17 @@ export function DestinationsClient() {
       const searchTag = activeTag.toLowerCase().trim()
       list = list.filter(d => {
         const rawTags = d.tags as any
-        if (!rawTags) return false
         const tagsArray = Array.isArray(rawTags)
-          ? rawTags
+          ? [...rawTags]
           : typeof rawTags === 'string'
             ? rawTags.split(',').map((t: string) => t.trim())
             : []
+        const categoryVal = (d as any).category
+        if (typeof categoryVal === 'string' && categoryVal) {
+          tagsArray.push(categoryVal)
+        } else if (Array.isArray(categoryVal)) {
+          tagsArray.push(...categoryVal)
+        }
         return tagsArray.some((t: any) => String(t).toLowerCase().includes(searchTag))
       })
     }
@@ -127,16 +132,20 @@ export function DestinationsClient() {
             className="bg-white dark:bg-gray-900 rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800 card-hover">
             <div className="relative h-44">
               <Link href={`/destinations/${dest.slug || dest._id}`}>
-                <Image src={dest.heroImage || 'https://images.unsplash.com/photo-1547970810-dc1eac37d174?w=600'} alt={dest.name || 'Destination'} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover" />
+                <Image src={dest.heroImage || (dest as any).image || 'https://images.unsplash.com/photo-1547970810-dc1eac37d174?w=600'} alt={dest.name || 'Destination'} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                 <div className="absolute bottom-3 left-3 flex flex-wrap gap-1">
                   {(() => {
                     const rawTags = dest.tags as any
                     const tagsArray = Array.isArray(rawTags)
-                      ? rawTags
+                      ? [...rawTags]
                       : typeof rawTags === 'string'
                         ? rawTags.split(',').map((t: string) => t.trim())
                         : []
+                    const categoryVal = (dest as any).category
+                    if (typeof categoryVal === 'string' && categoryVal && !tagsArray.includes(categoryVal)) {
+                      tagsArray.push(categoryVal)
+                    }
                     return tagsArray.slice(0, 2).map((t: any) => (
                       <span key={t} className="text-xs bg-white/20 backdrop-blur-sm text-white px-2 py-0.5 rounded-full border border-white/30">{t}</span>
                     ))

@@ -70,7 +70,7 @@ export default function DestinationDetailClient({ slug }: { slug: string }) {
   if (!dest) return null
 
   const relatedTours = toursData?.data?.slice(0, 4) || []
-  const heroImg = dest.heroImage || 'https://images.unsplash.com/photo-1547970810-dc1eac37d174?w=1200'
+  const heroImg = dest.heroImage || (dest as any).image || 'https://images.unsplash.com/photo-1547970810-dc1eac37d174?w=1200'
 
   return (
     <>
@@ -95,15 +95,19 @@ export default function DestinationDetailClient({ slug }: { slug: string }) {
             <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6">
               <h2 className="font-semibold text-gray-900 dark:text-white mb-3">Overview</h2>
               <p className="text-gray-600 dark:text-gray-300 leading-relaxed">{dest.description || 'No description available.'}</p>
-              {dest.tags && (
+              {(dest.tags || (dest as any).category) && (
                 <div className="flex flex-wrap gap-2 mt-4">
                   {(() => {
                     const rawTags = dest.tags as any
                     const tagsArray = Array.isArray(rawTags)
-                      ? rawTags
+                      ? [...rawTags]
                       : typeof rawTags === 'string'
                         ? rawTags.split(',').map((t: string) => t.trim())
                         : []
+                    const categoryVal = (dest as any).category
+                    if (typeof categoryVal === 'string' && categoryVal && !tagsArray.includes(categoryVal)) {
+                      tagsArray.push(categoryVal)
+                    }
                     return tagsArray.map((t: any) => (
                       <span key={t} className="text-xs bg-safari-50 dark:bg-safari-900/20 text-safari-700 px-3 py-1 rounded-full">{t}</span>
                     ))
