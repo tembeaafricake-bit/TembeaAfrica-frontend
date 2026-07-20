@@ -60,7 +60,19 @@ export function DestinationsClient() {
     let list = [...destinations]
     if (search) list = list.filter(d => (d.name || '').toLowerCase().includes(search.toLowerCase()) || (d.description || '').toLowerCase().includes(search.toLowerCase()))
     if (country !== 'all') list = list.filter(d => d.country?.toLowerCase() === country.toLowerCase())
-    if (activeTag !== 'All') list = list.filter(d => (d.tags || []).some(t => t.toLowerCase().includes(activeTag.toLowerCase())))
+    if (activeTag !== 'All') {
+      const searchTag = activeTag.toLowerCase().trim()
+      list = list.filter(d => {
+        const rawTags = d.tags as any
+        if (!rawTags) return false
+        const tagsArray = Array.isArray(rawTags)
+          ? rawTags
+          : typeof rawTags === 'string'
+            ? rawTags.split(',').map((t: string) => t.trim())
+            : []
+        return tagsArray.some((t: any) => String(t).toLowerCase().includes(searchTag))
+      })
+    }
     if (sort === 'rating') list.sort((a, b) => b.rating - a.rating)
     else if (sort === 'reviews') list.sort((a, b) => b.reviewCount - a.reviewCount)
     else if (sort === 'tours') list.sort((a, b) => b.tourCount - a.tourCount)
@@ -118,9 +130,17 @@ export function DestinationsClient() {
                 <Image src={dest.heroImage || 'https://images.unsplash.com/photo-1547970810-dc1eac37d174?w=600'} alt={dest.name || 'Destination'} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                 <div className="absolute bottom-3 left-3 flex flex-wrap gap-1">
-                  {(dest.tags || []).slice(0, 2).map(t => (
-                    <span key={t} className="text-xs bg-white/20 backdrop-blur-sm text-white px-2 py-0.5 rounded-full border border-white/30">{t}</span>
-                  ))}
+                  {(() => {
+                    const rawTags = dest.tags as any
+                    const tagsArray = Array.isArray(rawTags)
+                      ? rawTags
+                      : typeof rawTags === 'string'
+                        ? rawTags.split(',').map((t: string) => t.trim())
+                        : []
+                    return tagsArray.slice(0, 2).map((t: any) => (
+                      <span key={t} className="text-xs bg-white/20 backdrop-blur-sm text-white px-2 py-0.5 rounded-full border border-white/30">{t}</span>
+                    ))
+                  })()}
                 </div>
               </Link>
               <button onClick={() => isInWishlist(dest._id) ? removeFromWishlist(dest._id) : addToWishlist(dest._id)}

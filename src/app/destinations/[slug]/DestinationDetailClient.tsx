@@ -97,9 +97,17 @@ export default function DestinationDetailClient({ slug }: { slug: string }) {
               <p className="text-gray-600 dark:text-gray-300 leading-relaxed">{dest.description || 'No description available.'}</p>
               {dest.tags && (
                 <div className="flex flex-wrap gap-2 mt-4">
-                  {(dest.tags || []).map((t: string) => (
-                    <span key={t} className="text-xs bg-safari-50 dark:bg-safari-900/20 text-safari-700 px-3 py-1 rounded-full">{t}</span>
-                  ))}
+                  {(() => {
+                    const rawTags = dest.tags as any
+                    const tagsArray = Array.isArray(rawTags)
+                      ? rawTags
+                      : typeof rawTags === 'string'
+                        ? rawTags.split(',').map((t: string) => t.trim())
+                        : []
+                    return tagsArray.map((t: any) => (
+                      <span key={t} className="text-xs bg-safari-50 dark:bg-safari-900/20 text-safari-700 px-3 py-1 rounded-full">{t}</span>
+                    ))
+                  })()}
                 </div>
               )}
             </div>
