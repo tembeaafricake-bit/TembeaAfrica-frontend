@@ -253,6 +253,16 @@ export function AdminContentManager({ title, description, type, singular, fields
       if (!editingItem) return ''
       const val = editingItem[field.name]
       if (val === null || val === undefined) return ''
+
+      if (field.options) {
+        const lowerVal = String(val).toLowerCase().trim()
+        if (selectedType === 'transport' && field.name === 'type' && lowerVal.includes('car')) {
+          return 'car'
+        }
+        const match = field.options.find(opt => opt.value.toLowerCase() === lowerVal)
+        if (match) return match.value
+      }
+
       if (Array.isArray(val)) return val.join(', ')
       if (typeof val === 'object') {
         const asObject = val as Record<string, unknown>
