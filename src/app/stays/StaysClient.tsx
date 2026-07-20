@@ -123,7 +123,7 @@ function StaysContent() {
   const filtered = useMemo(() => {
     let list = [...allStays]
     if (type !== 'all') list = list.filter(s => s.type === type)
-    if (search) list = list.filter(s => s.name.toLowerCase().includes(search.toLowerCase()) || s.destination.toLowerCase().includes(search.toLowerCase()))
+    if (search) list = list.filter(s => (s.name || '').toLowerCase().includes(search.toLowerCase()) || (s.destination || '').toLowerCase().includes(search.toLowerCase()))
     if (sort === 'rating') list.sort((a, b) => b.rating - a.rating)
     else if (sort === 'price-asc') list.sort((a, b) => a.pricePerNight - b.pricePerNight)
     else if (sort === 'price-desc') list.sort((a, b) => b.pricePerNight - a.pricePerNight)

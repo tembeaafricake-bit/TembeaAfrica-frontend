@@ -58,7 +58,7 @@ export function DestinationsClient() {
 
   const filtered = useMemo(() => {
     let list = [...destinations]
-    if (search) list = list.filter(d => d.name.toLowerCase().includes(search.toLowerCase()) || d.description.toLowerCase().includes(search.toLowerCase()))
+    if (search) list = list.filter(d => (d.name || '').toLowerCase().includes(search.toLowerCase()) || (d.description || '').toLowerCase().includes(search.toLowerCase()))
     if (country !== 'all') list = list.filter(d => d.country?.toLowerCase() === country.toLowerCase())
     if (activeTag !== 'All') list = list.filter(d => (d.tags || []).some(t => t.toLowerCase().includes(activeTag.toLowerCase())))
     if (sort === 'rating') list.sort((a, b) => b.rating - a.rating)
