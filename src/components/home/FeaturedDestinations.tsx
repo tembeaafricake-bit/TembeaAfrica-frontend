@@ -27,7 +27,7 @@ export function FeaturedDestinations() {
     staleTime: 5 * 60 * 1000,
   })
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlistStore()
-  const destinations: Destination[] = (data?.data?.length ? data.data : FALLBACK_DESTINATIONS) as Destination[]
+  const destinations: Destination[] = (data?.data || []) as Destination[]
 
   return (
     <section className="py-16 bg-white dark:bg-gray-950">

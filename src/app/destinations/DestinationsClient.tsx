@@ -54,7 +54,7 @@ export function DestinationsClient() {
     console.error('Destinations query error:', error)
   }
 
-  const destinations = (data?.data?.length ? data.data : FALLBACK) as typeof FALLBACK
+  const destinations = (data?.data || []) as typeof FALLBACK
 
   const filtered = useMemo(() => {
     let list = [...destinations]
