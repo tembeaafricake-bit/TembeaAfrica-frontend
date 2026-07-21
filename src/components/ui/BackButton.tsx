@@ -24,19 +24,16 @@ export function BackButton({ fallback = '/', label = 'Back', className = '' }: B
   }, [])
 
   const handleBack = () => {
-    // Prefer explicit fallback (from parameter) over browser back
-    if (fallback && fallback !== '/' && fallback !== window.location.pathname) {
+    if (fallback && typeof window !== 'undefined' && fallback !== window.location.pathname) {
       router.push(fallback)
       return
     }
 
-    // Try to use browser back if history is available
     if (canGoBack && typeof window !== 'undefined' && window.history.length > 1) {
       router.back()
       return
     }
 
-    // Fall back to referrer if same origin
     if (typeof document !== 'undefined' && document.referrer && isMounted) {
       try {
         const referrerUrl = new URL(document.referrer)
@@ -45,14 +42,8 @@ export function BackButton({ fallback = '/', label = 'Back', className = '' }: B
           return
         }
       } catch {
-        // ignore invalid referrer URL
+        // ignore
       }
-    }
-
-    // Final fallback
-    if (fallback && fallback !== '/') {
-      router.push(fallback)
-      return
     }
 
     router.push('/')

@@ -73,7 +73,7 @@ export function FeaturedDestinations() {
                   <span className="text-safari-600 text-sm font-medium">{dest.tourCount ?? 0} tours</span>
                 </div>
                 <div className="flex gap-2">
-                  <Link href={`/destinations/${dest.slug || dest._id}`} className="flex-1 text-center py-2 border border-safari-200 dark:border-safari-700 text-safari-700 dark:text-safari-400 rounded-xl text-sm font-medium hover:bg-safari-50 dark:hover:bg-safari-900/20 transition-colors">
+                  <Link href={`/destinations/${dest.slug || dest._id}?from=${encodeURIComponent(currentListUrl)}`} className="flex-1 text-center py-2 border border-safari-200 dark:border-safari-700 text-safari-700 dark:text-safari-400 rounded-xl text-sm font-medium hover:bg-safari-50 dark:hover:bg-safari-900/20 transition-colors">
                     Details
                   </Link>
                   {dest.tourCount && dest.tourCount > 0 ? (

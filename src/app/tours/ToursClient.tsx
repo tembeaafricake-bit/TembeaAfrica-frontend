@@ -38,6 +38,7 @@ const normalizeTour = (tour: any) => ({
   destination: typeof tour.destination === 'string'
     ? tour.destination
     : tour.destination?.name || 'Unknown destination',
+  destinationObj: typeof tour.destination === 'object' ? tour.destination : null,
 })
 
 const getDestinationName = (destination: unknown) => {
@@ -128,22 +129,21 @@ function ToursContent() {
     if (category !== 'All') list = list.filter(t => t.category === category)
     if (country !== 'all') list = list.filter(t => t.country === country)
     if (destinationFilter) {
-      const filterTerm = destinationFilter.toLowerCase().replace(/[-_]/g, ' ').trim()
-      const filterWords = filterTerm.split(/\s+/).filter(w => w.length > 2)
+      const filterLower = destinationFilter.toLowerCase().trim()
+      const filterWords = filterLower.split(/\s+/).filter(w => w.length > 2)
 
       list = list.filter(t => {
-        const destStr = (typeof t.destination === 'string'
-          ? t.destination
-          : (t.destination as any)?.name || (t.destination as any)?.slug || ''
-        ).toLowerCase().replace(/[-_]/g, ' ').trim()
-        const destId = String((t.destination as any)?._id || (typeof t.destination === 'string' ? t.destination : '')).toLowerCase()
+        const destObj = t.destinationObj
+        const destStr = (destObj?.name || t.destination || '').toLowerCase().replace(/[-_]/g, ' ').trim()
+        const destSlug = (destObj?.slug || '').toLowerCase().trim()
+        const destId = String(destObj?._id || '').toLowerCase()
 
-        if (destStr.includes(filterTerm) || filterTerm.includes(destStr) || destId === destinationFilter.toLowerCase()) {
+        if (destId === filterLower || destSlug === filterLower || destStr.includes(filterLower) || filterLower.includes(destStr)) {
           return true
         }
 
         if (filterWords.length > 0) {
-          return filterWords.some(w => destStr.includes(w))
+          return filterWords.some(w => destStr.includes(w) || destSlug.includes(w))
         }
 
         return false
@@ -278,7 +278,7 @@ function ToursContent() {
               <motion.div key={tour._id} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
                 className="bg-white dark:bg-gray-900 rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800 hover:shadow-lg transition-shadow">
                 <div className="relative h-48 overflow-hidden">
-                  <Link href={`/tours/${tour.slug}?from=${encodeURIComponent(currentListUrl)}`}>
+                  <Link href={`/tours/${tour.slug || tour._id}?from=${encodeURIComponent(currentListUrl)}`}>
                     <Image src={tour.images[0]} alt={tour.title} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover hover:scale-105 transition-transform duration-500" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                   </Link>
@@ -298,7 +298,7 @@ function ToursContent() {
                   )}
                 </div>
                 <div className="p-4">
-                  <Link href={`/tours/${tour.slug}?from=${encodeURIComponent(currentListUrl)}`}>
+                  <Link href={`/tours/${tour.slug || tour._id}?from=${encodeURIComponent(currentListUrl)}`}>
                     <h3 className="font-semibold text-gray-900 dark:text-white text-sm line-clamp-2 hover:text-safari-700 mb-2">{tour.title}</h3>
                   </Link>
                   <div className="flex items-center gap-2 text-xs text-gray-500 mb-3">
@@ -314,7 +314,7 @@ function ToursContent() {
                     <div className="flex items-center gap-1 text-xs"><Star className="w-3.5 h-3.5 fill-golden-400 text-golden-400" /><span className="font-semibold">{tour.rating}</span><span className="text-gray-400">({tour.reviewCount})</span></div>
                   </div>
                   <div className="flex gap-2">
-                    <Link href={`/tours/${tour.slug}?from=${encodeURIComponent(currentListUrl)}`} className="flex-1 text-center py-2 text-xs font-medium border border-gray-200 dark:border-gray-700 rounded-xl text-gray-700 dark:text-gray-300 hover:border-safari-400 transition-colors">
+                    <Link href={`/tours/${tour.slug || tour._id}?from=${encodeURIComponent(currentListUrl)}`} className="flex-1 text-center py-2 text-xs font-medium border border-gray-200 dark:border-gray-700 rounded-xl text-gray-700 dark:text-gray-300 hover:border-safari-400 transition-colors">
                       Details
                     </Link>
                     <button onClick={() => handleCart(tour)} className="flex-1 flex items-center justify-center gap-1 py-2 text-xs font-medium bg-safari-700 text-white rounded-xl hover:bg-safari-800 transition-colors">

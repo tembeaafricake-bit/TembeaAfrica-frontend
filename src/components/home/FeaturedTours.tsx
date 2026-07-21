@@ -79,7 +79,7 @@ export function FeaturedTours() {
               transition={{ delay: i * 0.08 }} viewport={{ once: true }}
               className="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow card-hover">
               <div className="relative h-52 overflow-hidden">
-                <Link href={`/tours/${tour.slug}?from=${encodeURIComponent(currentListUrl)}`}>
+                <Link href={`/tours/${tour.slug || tour._id}?from=${encodeURIComponent(currentListUrl)}`}>
                   <Image src={tour.images[0]} alt={tour.title} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover hover:scale-105 transition-transform duration-500" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                 </Link>
@@ -100,7 +100,7 @@ export function FeaturedTours() {
               </div>
 
               <div className="p-4">
-                <Link href={`/tours/${tour.slug}?from=${encodeURIComponent(currentListUrl)}`}>
+                <Link href={`/tours/${tour.slug || tour._id}?from=${encodeURIComponent(currentListUrl)}`}>
                   <h3 className="font-semibold text-gray-900 dark:text-white mb-1 line-clamp-2 hover:text-safari-700 transition-colors">
                     {tour.title}
                   </h3>
@@ -127,7 +127,7 @@ export function FeaturedTours() {
                 </div>
 
                 <div className="mt-3 flex gap-2">
-                  <Link href={`/tours/${tour.slug}?from=${encodeURIComponent(currentListUrl)}`}
+                  <Link href={`/tours/${tour.slug || tour._id}?from=${encodeURIComponent(currentListUrl)}`}
                     className="flex-1 text-center py-2 border border-safari-200 dark:border-safari-700 text-safari-700 dark:text-safari-400 rounded-xl text-sm font-medium hover:bg-safari-50 dark:hover:bg-safari-900/20 transition-colors">
                     View details
                   </Link>
