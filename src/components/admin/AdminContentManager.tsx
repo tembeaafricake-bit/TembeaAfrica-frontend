@@ -92,6 +92,31 @@ export function AdminContentManager({ title, description, type, singular, fields
     },
   })
 
+  const { data: attachedToursData } = useQuery({
+    queryKey: ['admin-attached-tours', editingItem?._id, editingItem?.name],
+    queryFn: async () => {
+      if (!editingItem || selectedType !== 'destinations') return []
+      const res = await adminApi.getListings({ type: 'tours', limit: 1000 })
+      const allTours = Array.isArray(res.data) ? res.data : (res.data?.data || [])
+      const destName = (editingItem.name || '').toLowerCase().trim()
+      const destSlug = (editingItem.slug || '').toLowerCase().trim()
+      const destId = String(editingItem._id || '').toLowerCase()
+
+      return allTours.filter((t: any) => {
+        if (!t.destination) return false
+        const tDest = typeof t.destination === 'object'
+          ? (t.destination.name || t.destination.slug || t.destination._id || '')
+          : String(t.destination)
+        const tDestLower = String(tDest).toLowerCase().trim()
+        return tDestLower === destId ||
+               (destSlug && tDestLower.includes(destSlug)) ||
+               (destName && tDestLower.includes(destName)) ||
+               (destName && destName.includes(tDestLower))
+      })
+    },
+    enabled: !!editingItem && selectedType === 'destinations',
+  })
+
   useEffect(() => {
     if (error) {
       const axiosErr = error as any
@@ -459,6 +484,41 @@ export function AdminContentManager({ title, description, type, singular, fields
           {showForm && (
             <form key={editingItem?._id || 'new'} onSubmit={handleCreate} className="mt-6 grid gap-4 md:grid-cols-2">
               {fields.map(renderField)}
+              {selectedType === 'destinations' && editingItem && (
+                <div className="md:col-span-2 mt-2 rounded-2xl border border-safari-200 bg-safari-50/60 p-4 dark:border-safari-800/50 dark:bg-safari-950/40">
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-sm font-semibold text-safari-900 dark:text-safari-300">
+                      🦁 Attached Tours & Safaris ({attachedToursData?.length || 0})
+                    </p>
+                    <span className="text-xs text-safari-600 dark:text-safari-400 font-medium">
+                      Auto-linked to this destination
+                    </span>
+                  </div>
+                  {!attachedToursData?.length ? (
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      No tours are currently attached to this destination. When you create or edit a tour under <strong>Tours</strong>, select this destination from the dropdown list to attach it.
+                    </p>
+                  ) : (
+                    <div className="grid gap-2 sm:grid-cols-2 mt-3">
+                      {attachedToursData.map((tour: any) => (
+                        <div key={tour._id} className="flex items-center justify-between rounded-xl bg-white p-3 text-xs shadow-sm border border-gray-100 dark:bg-gray-800 dark:border-gray-700">
+                          <div className="min-w-0 pr-2">
+                            <p className="font-semibold text-gray-900 dark:text-white truncate">
+                              {tour.title || tour.name}
+                            </p>
+                            <p className="text-[11px] text-gray-400 capitalize">
+                              Category: {tour.category || 'Safari'} • Duration: {tour.duration || 'N/A'}
+                            </p>
+                          </div>
+                          <span className="font-bold text-safari-700 dark:text-safari-400 shrink-0">
+                            ${tour.price}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
               <div className="md:col-span-2 flex gap-3">
                 <button
                   type="submit"
