@@ -577,12 +577,19 @@ export function AdminContentManager({ title, description, type, singular, fields
               <tbody>
                 {!filteredRows.length ? (
                   <tr><td colSpan={4} className="px-5 py-10 text-center text-gray-500">No items match your search.</td></tr>
-                ) : filteredRows.map((item: Record<string, unknown>) => (
-                  <tr key={item._id as string} data-admin-row={item._id as string} className="border-t border-gray-100 dark:border-gray-800">
-                    <td className="px-5 py-4 font-semibold text-gray-900 dark:text-white">{getItemTitle(item)}</td>
-                    <td className="px-5 py-4 text-gray-500">{item.status as string}</td>
-                    <td className="px-5 py-4 text-gray-500">{new Date(item.createdAt as string).toLocaleDateString()}</td>
-                    <td className="px-5 py-4 flex flex-wrap gap-2">
+                ) : filteredRows.map((item: Record<string, unknown>) => {
+                  const tourCountVal = Number((item as any).tourCount || 0)
+                  return (
+                    <tr key={item._id as string} data-admin-row={item._id as string} className="border-t border-gray-100 dark:border-gray-800">
+                      <td className="px-5 py-4 font-semibold text-gray-900 dark:text-white">{getItemTitle(item)}</td>
+                      <td className="px-5 py-4 text-gray-500">{item.status as string}</td>
+                      <td className="px-5 py-4 text-gray-500">{new Date(item.createdAt as string).toLocaleDateString()}</td>
+                      <td className="px-5 py-4 flex flex-wrap items-center gap-2">
+                        {selectedType === 'destinations' && (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-semibold bg-safari-50 dark:bg-safari-900/20 text-safari-800 dark:text-safari-300 border border-safari-200 dark:border-safari-800/50">
+                            🦁 {tourCountVal} tour{tourCountVal !== 1 ? 's' : ''}
+                          </span>
+                        )}
                       <button onClick={() => {
                         try { setLastScroll(window.scrollY) } catch {}
                         setLastEditedId(item._id as string)
@@ -604,7 +611,8 @@ export function AdminContentManager({ title, description, type, singular, fields
                       </button>
                     </td>
                   </tr>
-                ))}
+                )
+              })}
               </tbody>
             </table>
           </div>
