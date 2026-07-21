@@ -80,6 +80,18 @@ export function AdminContentManager({ title, description, type, singular, fields
     },
   })
 
+  const { data: destinationsList } = useQuery({
+    queryKey: ['admin-destinations-options'],
+    queryFn: async () => {
+      const res = await adminApi.getListings({ type: 'destinations', limit: 1000 })
+      const raw = Array.isArray(res.data) ? res.data : (res.data?.data || [])
+      return raw.map((d: any) => ({
+        value: d.name || d.slug || d._id,
+        label: `${d.name || 'Unnamed Destination'} (${d.country || 'Kenya'})`
+      }))
+    },
+  })
+
   useEffect(() => {
     if (error) {
       const axiosErr = error as any
@@ -172,6 +184,17 @@ export function AdminContentManager({ title, description, type, singular, fields
 
         if (typeof urlValue === 'string' && urlValue.trim() !== '') {
           payload[field.name] = urlValue.trim()
+        }
+        return
+      }
+
+      if (field.name === 'destination') {
+        const selectedValue = formData.get(field.name)
+        const customValue = formData.get(`${field.name}_custom`)
+        if (selectedValue === '__custom__' && typeof customValue === 'string' && customValue.trim()) {
+          payload[field.name] = customValue.trim()
+        } else if (selectedValue && selectedValue !== '__custom__') {
+          payload[field.name] = selectedValue
         }
         return
       }
@@ -277,6 +300,51 @@ export function AdminContentManager({ title, description, type, singular, fields
         return (asObject.name || asObject.title || asObject.slug || asObject._id || '') as string
       }
       return String(val)
+    }
+
+    if (field.name === 'destination') {
+      const defaultValue = getFieldDefaultValue()
+      const destOptions = destinationsList || []
+      const isCustomDefault = defaultValue && !destOptions.some((opt: any) => opt.value.toLowerCase() === defaultValue.toLowerCase())
+      return (
+        <label key={field.name} className={wrapperClass}>
+          {label}
+          <div className="space-y-2">
+            <select
+              name={field.name}
+              required={field.required}
+              defaultValue={isCustomDefault ? '__custom__' : defaultValue}
+              className={className}
+              onChange={(e) => {
+                const customInput = document.getElementById(`custom-destination-input-${field.name}`)
+                if (customInput) {
+                  if (e.target.value === '__custom__') {
+                    customInput.classList.remove('hidden')
+                    ;(customInput as HTMLInputElement).focus()
+                  } else {
+                    customInput.classList.add('hidden')
+                  }
+                }
+              }}
+            >
+              <option value="">-- Select Destination from Database --</option>
+              {destOptions.map((opt: { value: string; label: string }) => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+              <option value="__custom__">+ Custom / Type manually...</option>
+            </select>
+            <input
+              id={`custom-destination-input-${field.name}`}
+              name={`${field.name}_custom`}
+              type="text"
+              placeholder="Type custom destination name..."
+              defaultValue={isCustomDefault ? defaultValue : ''}
+              className={`${className} ${isCustomDefault ? '' : 'hidden'}`}
+            />
+            <p className="text-xs text-gray-500 dark:text-gray-400">Select a destination from your database, or choose custom to type a new one.</p>
+          </div>
+        </label>
+      )
     }
 
     if (field.type === 'textarea') {
