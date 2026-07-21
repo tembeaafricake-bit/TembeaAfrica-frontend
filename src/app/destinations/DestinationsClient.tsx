@@ -177,9 +177,15 @@ export function DestinationsClient() {
                 <Link href={`/destinations/${dest.slug || dest._id}?from=${encodeURIComponent(currentListUrl)}`} className="flex-1 text-center py-2 border border-safari-200 dark:border-safari-700 text-safari-700 dark:text-safari-400 rounded-xl text-xs font-medium hover:bg-safari-50 dark:hover:bg-safari-900/20 transition-colors">
                   Details
                 </Link>
+                {dest.tourCount && dest.tourCount > 0 ? (
                   <Link href={`/tours?destination=${encodeURIComponent(dest.slug || dest._id)}`} className="flex-1 text-center py-2 bg-safari-700 text-white rounded-xl text-xs font-medium hover:bg-safari-800 transition-colors">
-                  Explore tours
-                </Link>
+                    Explore tours
+                  </Link>
+                ) : (
+                  <span className="flex-1 text-center py-2 bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 rounded-xl text-xs font-medium cursor-not-allowed select-none">
+                    No tours yet
+                  </span>
+                )}
               </div>
             </div>
           </motion.div>
