@@ -1,13 +1,28 @@
 import { Suspense } from 'react'
+import { FALLBACK_TOURS } from '@/lib/fallback-data'
 import TourDetailClient from './TourDetailClient'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.tembeaafrica.com'
 
-export function generateStaticParams() {
-  return [{ slug: 'maasai-mara-big-five-5day' }]
-}
+export async function generateStaticParams() {
+  try {
+    const response = await fetch(`${API_URL}/api/tours?limit=1000`, { cache: 'no-store' })
+    const result = await response.json()
+    const slugs = Array.isArray(result?.data)
+      ? result.data
+          .map((item: any) => item.slug)
+          .filter((slug: unknown): slug is string => typeof slug === 'string')
+      : []
 
-export const dynamicParams = false
+    if (slugs.length > 0) {
+      return slugs.map((slug: string) => ({ slug }))
+    }
+  } catch (error) {
+    console.warn('Unable to fetch tour slugs for static generation:', error)
+  }
+
+  return FALLBACK_TOURS.map(({ slug }) => ({ slug }))
+}
 
 export default async function TourDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params

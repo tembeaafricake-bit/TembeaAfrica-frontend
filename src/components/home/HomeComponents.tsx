@@ -1,5 +1,6 @@
 'use client'
 import { useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { Facebook, Instagram, Linkedin, Mail, Twitter } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
 import { Sparkles, Star, Shield, RefreshCw, Clock, DollarSign, Award, ShoppingCart } from 'lucide-react'
@@ -7,6 +8,8 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { useCartStore } from '@/store'
+import { accommodationsApi } from '@/lib/api'
+import { FALLBACK_STAYS } from '@/lib/fallback-data'
 import toast from 'react-hot-toast'
 
 // ─── AI Banner ──────────────────────────────────────────────────────────────
@@ -107,15 +110,15 @@ export function AIBanner() {
 }
 
 // ─── Featured Stays ──────────────────────────────────────────────────────────
-const STAYS = [
-  { _id: 's1', name: 'Mara Serena Safari Lodge', type: 'lodge', slug: 'mara-serena-safari-lodge', destination: 'Maasai Mara', pricePerNight: 320, currency: 'USD', rating: 4.9, reviewCount: 420, images: ['https://images.unsplash.com/photo-1547970810-dc1eac37d174?w=600'], amenities: ['Pool', 'Spa', 'WiFi', 'Restaurant'] },
-  { _id: 's2', name: 'Zanzibar Beach Resort', type: 'resort', slug: 'zanzibar-beach-resort', destination: 'Zanzibar', pricePerNight: 180, currency: 'USD', rating: 4.8, reviewCount: 310, images: ['https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=600'], amenities: ['Beachfront', 'Pool', 'Spa', 'Snorkeling'] },
-  { _id: 's3', name: 'Nairobi City Boutique Hotel', type: 'hotel', slug: 'nairobi-city-boutique', destination: 'Nairobi', pricePerNight: 95, currency: 'USD', rating: 4.7, reviewCount: 280, images: ['https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=600'], amenities: ['WiFi', 'Gym', 'Restaurant', 'Bar'] },
-]
-
 export function FeaturedStays() {
   const { addItem } = useCartStore()
   const currentListUrl = usePathname() || '/'
+  const { data } = useQuery({
+    queryKey: ['featured-stays'],
+    queryFn: () => accommodationsApi.getFeatured().then(r => r.data),
+    staleTime: 5 * 60 * 1000,
+  })
+  const stays = (data?.data?.length ? data.data : FALLBACK_STAYS) as any[]
 
   const handleAddStayToCart = (stay: any, e?: React.MouseEvent) => {
     if (e) { e.preventDefault(); e.stopPropagation(); }
@@ -144,39 +147,47 @@ export function FeaturedStays() {
           <Link href="/stays" className="text-safari-600 text-sm font-medium">View all →</Link>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {STAYS.map((stay, i) => (
-            <motion.div key={stay._id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }} viewport={{ once: true }}
-              className="bg-gray-50 dark:bg-gray-800 rounded-2xl overflow-hidden card-hover">
-              <Link href={`/stays/${stay.slug || stay._id}?from=${encodeURIComponent(currentListUrl)}`}>
-                <div className="relative h-48">
-                  <Image src={stay.images[0]} alt={stay.name} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover" />
-                  <div className="absolute top-3 left-3 bg-white/90 dark:bg-gray-800/90 text-xs font-medium px-2 py-1 rounded-full capitalize text-gray-700 dark:text-gray-200">
-                    {stay.type}
+          {stays.slice(0, 3).map((stay, i) => {
+            const image = stay.images?.[0] || 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=600'
+            const destinationName = typeof stay.destination === 'string'
+              ? stay.destination
+              : stay.destination?.name || stay.location || 'Africa'
+            const amenities = Array.isArray(stay.amenities) ? stay.amenities : []
+
+            return (
+              <motion.div key={stay._id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1 }} viewport={{ once: true }}
+                className="bg-gray-50 dark:bg-gray-800 rounded-2xl overflow-hidden card-hover">
+                <Link href={`/stays/${stay.slug || stay._id}?from=${encodeURIComponent(currentListUrl)}`}>
+                  <div className="relative h-48">
+                    <Image src={image} alt={stay.name} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover" />
+                    <div className="absolute top-3 left-3 bg-white/90 dark:bg-gray-800/90 text-xs font-medium px-2 py-1 rounded-full capitalize text-gray-700 dark:text-gray-200">
+                      {stay.type}
+                    </div>
+                  </div>
+                  <div className="p-4">
+                    <h3 className="font-semibold text-gray-900 dark:text-white mb-1">{stay.name}</h3>
+                    <p className="text-sm text-gray-500 mb-2">{destinationName}</p>
+                    <div className="flex flex-wrap gap-1 mb-3">
+                      {amenities.slice(0, 3).map((a: string) => (
+                        <span key={a} className="text-xs bg-safari-50 dark:bg-safari-900/20 text-safari-700 dark:text-safari-400 px-2 py-0.5 rounded-full">{a}</span>
+                      ))}
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div><span className="text-xl font-bold text-safari-700">${stay.pricePerNight}</span><span className="text-xs text-gray-400">/night</span></div>
+                      <div className="flex items-center gap-1 text-sm"><Star className="w-4 h-4 fill-golden-400 text-golden-400" /><span className="font-medium">{stay.rating}</span></div>
+                    </div>
+                  </div>
+                </Link>
+                <div className="p-4 pt-0">
+                  <div className="mt-3 flex gap-2">
+                    <Link href={`/stays/${stay.slug || stay._id}?from=${encodeURIComponent(currentListUrl)}`} className="flex-1 text-center py-2 border border-safari-200 dark:border-safari-700 text-safari-700 dark:text-safari-400 rounded-xl text-sm font-medium hover:bg-safari-50 dark:hover:bg-safari-900/20 transition-colors">View stay</Link>
+                    <button onClick={(e) => handleAddStayToCart(stay, e)} className="flex-1 py-2 bg-safari-700 text-white rounded-xl text-sm font-medium hover:bg-safari-800 transition-colors">Add to cart</button>
                   </div>
                 </div>
-                <div className="p-4">
-                  <h3 className="font-semibold text-gray-900 dark:text-white mb-1">{stay.name}</h3>
-                  <p className="text-sm text-gray-500 mb-2">{stay.destination}</p>
-                  <div className="flex flex-wrap gap-1 mb-3">
-                    {stay.amenities.slice(0, 3).map(a => (
-                      <span key={a} className="text-xs bg-safari-50 dark:bg-safari-900/20 text-safari-700 dark:text-safari-400 px-2 py-0.5 rounded-full">{a}</span>
-                    ))}
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div><span className="text-xl font-bold text-safari-700">${stay.pricePerNight}</span><span className="text-xs text-gray-400">/night</span></div>
-                    <div className="flex items-center gap-1 text-sm"><Star className="w-4 h-4 fill-golden-400 text-golden-400" /><span className="font-medium">{stay.rating}</span></div>
-                  </div>
-                </div>
-              </Link>
-              <div className="p-4 pt-0">
-                <div className="mt-3 flex gap-2">
-                  <Link href={`/stays/${stay.slug || stay._id}?from=${encodeURIComponent(currentListUrl)}`} className="flex-1 text-center py-2 border border-safari-200 dark:border-safari-700 text-safari-700 dark:text-safari-400 rounded-xl text-sm font-medium hover:bg-safari-50 dark:hover:bg-safari-900/20 transition-colors">View stay</Link>
-                  <button onClick={(e) => handleAddStayToCart(stay, e)} className="flex-1 py-2 bg-safari-700 text-white rounded-xl text-sm font-medium hover:bg-safari-800 transition-colors">Add to cart</button>
-                </div>
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            )
+          })}
         </div>
       </div>
     </section>
