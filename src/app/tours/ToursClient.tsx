@@ -128,7 +128,26 @@ function ToursContent() {
     if (category !== 'All') list = list.filter(t => t.category === category)
     if (country !== 'all') list = list.filter(t => t.country === country)
     if (destinationFilter) {
-      list = list.filter(t => t.destination.toLowerCase().includes(destinationFilter.toLowerCase()))
+      const filterTerm = destinationFilter.toLowerCase().replace(/[-_]/g, ' ').trim()
+      const filterWords = filterTerm.split(/\s+/).filter(w => w.length > 2)
+
+      list = list.filter(t => {
+        const destStr = (typeof t.destination === 'string'
+          ? t.destination
+          : (t.destination as any)?.name || (t.destination as any)?.slug || ''
+        ).toLowerCase().replace(/[-_]/g, ' ').trim()
+        const destId = String((t.destination as any)?._id || (typeof t.destination === 'string' ? t.destination : '')).toLowerCase()
+
+        if (destStr.includes(filterTerm) || filterTerm.includes(destStr) || destId === destinationFilter.toLowerCase()) {
+          return true
+        }
+
+        if (filterWords.length > 0) {
+          return filterWords.some(w => destStr.includes(w))
+        }
+
+        return false
+      })
     }
     list = list.filter(t => t.price <= maxPrice)
     if (instantOnly) list = list.filter(t => t.instantBooking)

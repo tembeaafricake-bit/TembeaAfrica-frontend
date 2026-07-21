@@ -160,17 +160,30 @@ export default function TourDetailClient({ slug }: { slug: string }) {
               <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6">
                 <h2 className="font-semibold text-gray-900 dark:text-white mb-3">Sample itinerary</h2>
                 <div className="space-y-4">
-                  {itinerary.map((item: any) => (
-                    <div key={item.day} className="rounded-2xl bg-safari-50 dark:bg-safari-900/20 p-4">
-                      <p className="text-sm font-semibold text-safari-700">Day {item.day}: {item.title}</p>
-                      <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">{item.description}</p>
-                      {item.activities?.length > 0 && (
-                        <div className="mt-3 text-sm text-gray-500 dark:text-gray-400">
-                          <span className="font-semibold">Activities:</span> {item.activities.join(', ')}
+                  {itinerary.map((item: any, idx: number) => {
+                    if (typeof item === 'string') {
+                      return (
+                        <div key={idx} className="rounded-2xl bg-safari-50 dark:bg-safari-900/20 p-4">
+                          <p className="text-sm text-gray-700 dark:text-gray-200 font-medium">{item}</p>
                         </div>
-                      )}
-                    </div>
-                  ))}
+                      )
+                    }
+                    return (
+                      <div key={item.day || idx} className="rounded-2xl bg-safari-50 dark:bg-safari-900/20 p-4">
+                        <p className="text-sm font-semibold text-safari-700 dark:text-safari-400">
+                          Day {item.day || idx + 1}: {item.title || 'Itinerary Item'}
+                        </p>
+                        {item.description && (
+                          <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">{item.description}</p>
+                        )}
+                        {item.activities?.length > 0 && (
+                          <div className="mt-3 text-sm text-gray-500 dark:text-gray-400">
+                            <span className="font-semibold">Activities:</span> {item.activities.join(', ')}
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })}
                 </div>
               </div>
             )}
