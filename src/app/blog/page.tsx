@@ -2,12 +2,14 @@ import Link from 'next/link'
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
 import type { Metadata } from 'next'
+import { JsonLd } from '@/components/seo/JsonLd'
 import { BLOG_POSTS } from './posts'
 
 export const metadata: Metadata = {
-  title: 'Tembea Africa Travel Blog | Kenya & Tanzania Safari Tips',
-  description: 'Read expert Kenya and Tanzania travel guides, safari advice, beach escape tips, and adventure planning from Tembea Africa.',
-  keywords: ['Kenya travel blog', 'Tanzania travel tips', 'safari guide', 'Zanzibar travel', 'Kilimanjaro preparation'],
+  title: 'Kenya & Tanzania Travel Blog | Tembea Africa',
+  description: 'Read expert Kenya and Tanzania travel guides, safari tips, Zanzibar advice, Kilimanjaro preparation guides, and destination planning help.',
+  keywords: ['Kenya travel blog', 'Tanzania travel tips', 'safari guide', 'Zanzibar travel', 'Kilimanjaro preparation', 'travel planning'],
+  alternates: { canonical: '/blog' },
 }
 
 const POSTS = BLOG_POSTS
@@ -15,6 +17,13 @@ const POSTS = BLOG_POSTS
 export default function BlogPage() {
   return (
     <>
+      <JsonLd data={{
+        '@context': 'https://schema.org',
+        '@type': 'Blog',
+        name: 'Tembea Africa Travel Blog',
+        description: 'Travel guides and safari tips for Kenya and Tanzania.',
+        url: 'https://www.tembeaafrica.com/blog',
+      }} />
       <Navbar />
       <main className="min-h-screen pt-16 bg-gray-50 dark:bg-gray-950">
         <div className="bg-safari-gradient py-14 px-4 text-center">

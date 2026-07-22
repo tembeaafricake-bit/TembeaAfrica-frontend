@@ -2,16 +2,26 @@ import { Suspense } from 'react'
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
 import GuidesClient from './GuidesClient'
+import { JsonLd } from '@/components/seo/JsonLd'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Local Guides — Kenya & Tanzania',
-  description: 'Connect with certified local guides for safaris, cultural tours, mountain treks and more.',
+  title: 'Local Safari Guides in Kenya & Tanzania | Tembea Africa',
+  description: 'Book certified local guides for safaris, cultural tours, mountain treks, and city experiences across Kenya and Tanzania.',
+  keywords: ['Kenya safari guide', 'Tanzania guide', 'local tour guide', 'Maasai Mara guide', 'Kilimanjaro guide'],
+  alternates: { canonical: '/guides' },
 }
 
 export default function GuidesPage() {
   return (
     <>
+      <JsonLd data={{
+        '@context': 'https://schema.org',
+        '@type': 'CollectionPage',
+        name: 'Local Guides in Kenya & Tanzania',
+        description: 'Book certified local guides for safaris, cultural tours, mountain treks, and city experiences.',
+        url: 'https://www.tembeaafrica.com/guides',
+      }} />
       <Navbar />
       <main className="min-h-screen pt-16 bg-gray-50 dark:bg-gray-950">
         <div className="bg-safari-gradient py-16 px-4 text-center">
