@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Inter, Playfair_Display } from 'next/font/google'
 import './globals.css'
 import { Providers } from '@/components/layout/Providers'
+import { WelcomeOverlay } from '@/components/layout/WelcomeOverlay'
 import { Toaster } from 'react-hot-toast'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
@@ -41,6 +42,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={`${inter.variable} ${playfair.variable} font-sans antialiased bg-white dark:bg-gray-950`}>
         <Providers>
           {children}
+          <WelcomeOverlay />
           <Toaster position="top-right" toastOptions={{ duration: 1500, style: { borderRadius: '12px', background: '#1B4332', color: '#fff' } }} />
         </Providers>
       </body>
