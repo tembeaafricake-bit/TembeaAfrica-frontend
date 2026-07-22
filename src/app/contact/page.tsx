@@ -14,7 +14,7 @@ export default function ContactPage() {
         'Email: tembeaafricake@gmail.com',
         'Inquiries: tembeaafricake@gmail.com',
         'Phone: +254 700 000 000',
-        'Nairobi, Kenya',
+        'Physical office: 1st Floor, Runda Mall, Along Kiambu Road, Nairobi, Kenya',
       ]}
       sections={[
         {
