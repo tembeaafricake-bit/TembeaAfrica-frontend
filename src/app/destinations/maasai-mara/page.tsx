@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import DestinationDetailClient from '../[slug]/DestinationDetailClient'
 import type { Metadata } from 'next'
 
@@ -9,5 +10,9 @@ export const metadata: Metadata = {
 }
 
 export default function MaasaiMaraPage() {
-  return <DestinationDetailClient slug="maasai-mara-national-reserve" />
+  return (
+    <Suspense fallback={<div className="min-h-screen pt-24 px-4 text-center text-gray-400">Loading Maasai Mara details...</div>}>
+      <DestinationDetailClient slug="maasai-mara-national-reserve" />
+    </Suspense>
+  )
 }
