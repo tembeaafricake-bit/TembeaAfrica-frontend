@@ -46,11 +46,11 @@ const normalizeStay = (stay: any) => {
   }
 }
 
-function StaysContent() {
+function StaysContent({ overrideSearch }: { overrideSearch?: string } = {}) {
   const searchParams = useSearchParams()
   const router = useRouter()
   const initialType = searchParams.get('type') || 'all'
-  const initialSearch = searchParams.get('search') || ''
+  const initialSearch = overrideSearch || searchParams.get('search') || ''
   const initialSort = searchParams.get('sort') || 'rating'
   const [type, setType] = useState(initialType)
   const [search, setSearch] = useState(initialSearch)
@@ -204,10 +204,10 @@ function StaysContent() {
   )
 }
 
-export function StaysClient() {
+export function StaysClient({ overrideSearch }: { overrideSearch?: string } = {}) {
   return (
     <Suspense fallback={<div className="max-w-7xl mx-auto px-4 py-8 text-center text-gray-400">Loading stays...</div>}>
-      <StaysContent />
+      <StaysContent overrideSearch={overrideSearch} />
     </Suspense>
   )
 }

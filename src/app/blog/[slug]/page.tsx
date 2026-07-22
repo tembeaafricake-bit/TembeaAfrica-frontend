@@ -5,6 +5,8 @@ import { Footer } from '@/components/layout/Footer'
 import { BackButton } from '@/components/ui/BackButton'
 import { BLOG_POSTS } from '../posts'
 
+import { JsonLd } from '@/components/seo/JsonLd'
+
 export function generateStaticParams() {
   return BLOG_POSTS.map(({ slug }) => ({ slug }))
 }
@@ -38,6 +40,49 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
   return (
     <>
+      <JsonLd data={{
+        '@context': 'https://schema.org',
+        '@type': 'BlogPosting',
+        headline: post.title,
+        description: post.excerpt,
+        datePublished: post.date,
+        author: {
+          '@type': 'Organization',
+          name: 'Tembea Africa',
+        },
+        publisher: {
+          '@type': 'Organization',
+          name: 'Tembea Africa',
+          logo: {
+            '@type': 'ImageObject',
+            url: 'https://www.tembeaafrica.com/favicon-192.png',
+          },
+        },
+      }} />
+      <JsonLd data={{
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Home',
+            item: 'https://www.tembeaafrica.com',
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: 'Blog',
+            item: 'https://www.tembeaafrica.com/blog',
+          },
+          {
+            '@type': 'ListItem',
+            position: 3,
+            name: post.title,
+            item: `https://www.tembeaafrica.com/blog/${post.slug}`,
+          },
+        ],
+      }} />
       <Navbar />
       <main className="min-h-screen pt-16 bg-gray-50 dark:bg-gray-950">
         <div className="bg-safari-gradient py-14 px-4">

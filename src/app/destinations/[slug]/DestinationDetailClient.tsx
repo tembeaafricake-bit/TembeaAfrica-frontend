@@ -10,6 +10,7 @@ import { Footer } from '@/components/layout/Footer'
 import { BackButton } from '@/components/ui/BackButton'
 import { destinationsApi, toursApi } from '@/lib/api'
 import { findDestinationBySlug } from '@/lib/fallback-data'
+import { JsonLd } from '@/components/seo/JsonLd'
 
 export default function DestinationDetailClient({ slug }: { slug: string }) {
   const searchParams = useSearchParams()
@@ -74,6 +75,43 @@ export default function DestinationDetailClient({ slug }: { slug: string }) {
 
   return (
     <>
+      <JsonLd data={{
+        '@context': 'https://schema.org',
+        '@type': 'TouristDestination',
+        name: dest.name,
+        description: dest.description,
+        image: heroImg,
+        geo: dest.coordinates ? {
+          '@type': 'GeoCoordinates',
+          latitude: dest.coordinates.lat,
+          longitude: dest.coordinates.lng,
+        } : undefined,
+        touristType: dest.tags || ['Safari', 'Wildlife'],
+      }} />
+      <JsonLd data={{
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Home',
+            item: 'https://www.tembeaafrica.com',
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: 'Destinations',
+            item: 'https://www.tembeaafrica.com/destinations',
+          },
+          {
+            '@type': 'ListItem',
+            position: 3,
+            name: dest.name,
+            item: `https://www.tembeaafrica.com/destinations/${dest.slug || dest._id}`,
+          },
+        ],
+      }} />
       <Navbar />
       <main className="min-h-screen pt-16 bg-gray-50 dark:bg-gray-950">
         <div className="relative h-72 md:h-[420px]">

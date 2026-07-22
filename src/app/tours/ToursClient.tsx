@@ -53,11 +53,11 @@ const getOperatorName = (operator: unknown) => {
   return (operator as { name?: string }).name || ''
 }
 
-function ToursContent() {
+function ToursContent({ overrideCategory, overrideDestination }: { overrideCategory?: string, overrideDestination?: string } = {}) {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const [category, setCategory] = useState(() => normalizeCategory(searchParams.get('category')))
-  const [destinationFilter, setDestinationFilter] = useState(() => searchParams.get('destination') || '')
+  const [category, setCategory] = useState(() => overrideCategory || normalizeCategory(searchParams.get('category')))
+  const [destinationFilter, setDestinationFilter] = useState(() => overrideDestination || searchParams.get('destination') || '')
   const [country, setCountry] = useState('all')
   const [maxPrice, setMaxPrice] = useState(5000)
   const [sort, setSort] = useState('rating')
@@ -337,10 +337,10 @@ function ToursContent() {
   )
 }
 
-export function ToursClient() {
+export function ToursClient({ overrideCategory, overrideDestination }: { overrideCategory?: string, overrideDestination?: string } = {}) {
   return (
     <Suspense fallback={<div className="max-w-7xl mx-auto px-4 py-8 text-center text-gray-400">Loading tours...</div>}>
-      <ToursContent />
+      <ToursContent overrideCategory={overrideCategory} overrideDestination={overrideDestination} />
     </Suspense>
   )
 }

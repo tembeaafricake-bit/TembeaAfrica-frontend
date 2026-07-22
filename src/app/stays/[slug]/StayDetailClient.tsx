@@ -12,6 +12,7 @@ import { accommodationsApi } from '@/lib/api'
 import { findStayBySlug } from '@/lib/fallback-data'
 import { useCartStore } from '@/store'
 import toast from 'react-hot-toast'
+import { JsonLd } from '@/components/seo/JsonLd'
 
 export default function StayDetailClient({ slug }: { slug: string }) {
   const { addItem } = useCartStore()
@@ -104,6 +105,42 @@ export default function StayDetailClient({ slug }: { slug: string }) {
 
   return (
     <>
+      <JsonLd data={{
+        '@context': 'https://schema.org',
+        '@type': 'Hotel',
+        name: stay.name,
+        description: stay.description,
+        image: image,
+        priceRange: `$$$`,
+        starRating: stay.rating ? {
+          '@type': 'Rating',
+          ratingValue: stay.rating,
+        } : undefined,
+      }} />
+      <JsonLd data={{
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Home',
+            item: 'https://www.tembeaafrica.com',
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: 'Stays',
+            item: 'https://www.tembeaafrica.com/stays',
+          },
+          {
+            '@type': 'ListItem',
+            position: 3,
+            name: stay.name,
+            item: `https://www.tembeaafrica.com/stays/${stay.slug || stay._id}`,
+          },
+        ],
+      }} />
       <Navbar />
       <main className="min-h-screen pt-16 bg-gray-50 dark:bg-gray-950">
         <div className="relative h-72 md:h-96">

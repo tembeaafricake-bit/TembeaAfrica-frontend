@@ -12,6 +12,7 @@ import { toursApi } from '@/lib/api'
 import { findTourBySlug } from '@/lib/fallback-data'
 import { useCartStore, useWishlistStore } from '@/store'
 import toast from 'react-hot-toast'
+import { JsonLd } from '@/components/seo/JsonLd'
 
 const getOperatorName = (operator: unknown) => {
   if (!operator) return 'Verified operator'
@@ -123,6 +124,48 @@ export default function TourDetailClient({ slug }: { slug: string }) {
 
   return (
     <>
+      <JsonLd data={{
+        '@context': 'https://schema.org',
+        '@type': 'Product',
+        name: tour.title,
+        description: tour.description || tour.shortDescription,
+        image: image,
+        offers: {
+          '@type': 'Offer',
+          price: tour.price,
+          priceCurrency: tour.currency || 'USD',
+          availability: 'https://schema.org/InStock',
+        },
+        aggregateRating: tour.rating ? {
+          '@type': 'AggregateRating',
+          ratingValue: tour.rating,
+          reviewCount: tour.reviewCount || 10,
+        } : undefined,
+      }} />
+      <JsonLd data={{
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Home',
+            item: 'https://www.tembeaafrica.com',
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: 'Tours',
+            item: 'https://www.tembeaafrica.com/tours',
+          },
+          {
+            '@type': 'ListItem',
+            position: 3,
+            name: tour.title,
+            item: `https://www.tembeaafrica.com/tours/${tour.slug || tour._id}`,
+          },
+        ],
+      }} />
       <Navbar />
       <main className="min-h-screen pt-16 bg-gray-50 dark:bg-gray-950">
         <div className="relative h-72 md:h-96">
