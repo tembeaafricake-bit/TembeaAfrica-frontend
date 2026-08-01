@@ -54,7 +54,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     description: stay.description || `Book your stay at ${name}${suffix}. Browse rooms, amenities, prices, and reviews.`,
     keywords: [name, destName, 'African hotels', 'luxury lodge bnb', stay.type, 'Tembea Africa'].filter(Boolean),
     alternates: {
-      canonical: `/stays/${slug}`,
+      canonical: `https://www.tembeaafrica.com/stays/${slug}/`,
     },
   }
 }

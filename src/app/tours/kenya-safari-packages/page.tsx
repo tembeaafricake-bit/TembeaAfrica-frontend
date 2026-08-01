@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title: 'Best Kenya Safari Packages & Tours | Tembea Africa',
   description: 'Browse top-rated Kenya safari tour packages. Book Maasai Mara migration safaris, Amboseli elephant tours, and budget game drives.',
   keywords: ['Kenya safari packages', 'Kenya tours', 'safari packages Kenya', 'book Kenya safari', 'Tembea Africa'],
-  alternates: { canonical: '/tours/kenya-safari-packages/' },
+  alternates: { canonical: 'https://www.tembeaafrica.com/tours/kenya-safari-packages/' },
 }
 
 export default function KenyaSafariPackagesPage() {

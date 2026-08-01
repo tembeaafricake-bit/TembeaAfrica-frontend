@@ -10,18 +10,19 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-playfair' })
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://www.tembeaafrica.com'),
   title: { default: 'Tembea Africa — Discover. Book. Explore Africa.', template: '%s | Tembea Africa' },
   manifest: '/manifest.webmanifest',
   icons: {
     icon: '/favicon.ico',
     shortcut: '/favicon.ico',
   },
-  description: "Africa's leading travel marketplace. Book safaris, hotels, local guides, tours, and transport across Kenya and Tanzania.",
+  description: "Africa's leading travel marketplace. Book safaris, hotels, Airbnb-style stays, local guides, tours, and transport across Kenya and Tanzania.",
   keywords: ['Africa travel', 'Kenya safari', 'Tanzania tours', 'Maasai Mara', 'Zanzibar', 'Kilimanjaro', 'African tourism'],
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://tembeaafrica.com',
+    url: 'https://www.tembeaafrica.com',
     siteName: 'Tembea Africa',
     title: 'Tembea Africa — Discover. Book. Explore Africa.',
     description: "Africa's leading travel marketplace",

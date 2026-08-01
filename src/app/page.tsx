@@ -14,9 +14,9 @@ import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'Tembea Africa | Kenya & Tanzania Safaris, Tours, Hotels & Guides',
-  description: 'Book unforgettable Kenya and Tanzania safaris, beach tours, luxury stays, local guides, and transport with Tembea Africa.',
+  description: 'Book unforgettable Kenya and Tanzania safaris, beach tours, luxury stays, Airbnb-style rentals, local guides, and transport with Tembea Africa.',
   keywords: ['Kenya safari', 'Tanzania safari', 'Maasai Mara safari', 'Zanzibar tours', 'Kilimanjaro trek', 'African travel'],
-  alternates: { canonical: '/' },
+  alternates: { canonical: 'https://www.tembeaafrica.com/' },
 }
 
 export default function HomePage() {

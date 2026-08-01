@@ -53,7 +53,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     description: dest.description || `Plan your trip to ${name}. Discover available tours, accommodations, and guides.`,
     keywords: [name, dest.country, 'Africa travel', 'safari destination', 'tourism Africa'].filter(Boolean),
     alternates: {
-      canonical: `/destinations/${slug}`,
+      canonical: `https://www.tembeaafrica.com/destinations/${slug}/`,
     },
   }
 }

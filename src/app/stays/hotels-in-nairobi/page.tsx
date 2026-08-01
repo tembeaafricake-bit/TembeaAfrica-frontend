@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title: 'Hotels & Boutique Stays in Nairobi | Tembea Africa',
   description: 'Book the best hotels, luxury serviced apartments, and boutique BnBs in Nairobi. Browse listings in Karen, Westlands, and city center.',
   keywords: ['hotels in Nairobi', 'Nairobi hotels', 'BnB Nairobi', 'accommodation Nairobi', 'Tembea Africa'],
-  alternates: { canonical: '/stays/hotels-in-nairobi/' },
+  alternates: { canonical: 'https://www.tembeaafrica.com/stays/hotels-in-nairobi/' },
 }
 
 export default function HotelsInNairobiPage() {

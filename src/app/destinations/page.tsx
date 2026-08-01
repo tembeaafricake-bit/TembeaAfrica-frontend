@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   title: 'Top Destinations in Kenya & Tanzania | Tembea Africa',
   description: 'Discover top travel destinations in Kenya and Tanzania, including Maasai Mara, Zanzibar, Kilimanjaro, Serengeti, Diani Beach, and more.',
   keywords: ['Kenya destinations', 'Tanzania destinations', 'Maasai Mara', 'Zanzibar travel', 'Serengeti safari', 'Diani Beach'],
-  alternates: { canonical: '/destinations' },
+  alternates: { canonical: 'https://www.tembeaafrica.com/destinations/' },
 }
 
 export default function DestinationsPage() {

@@ -56,7 +56,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     description: tour.description || `Book the ${title}${suffix}. Check pricing, reviews, itinerary, and operator details.`,
     keywords: [title, destName, 'African safari tours', tour.category, 'Tembea Africa'].filter(Boolean),
     alternates: {
-      canonical: `/tours/${slug}`,
+      canonical: `https://www.tembeaafrica.com/tours/${slug}/`,
     },
   }
 }

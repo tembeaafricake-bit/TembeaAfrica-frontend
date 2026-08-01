@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     description: post.metaDescription || post.excerpt,
     keywords: post.keywords,
     alternates: {
-      canonical: `/blog/${post.slug}`,
+      canonical: `https://www.tembeaafrica.com/blog/${post.slug}/`,
     },
   }
 }

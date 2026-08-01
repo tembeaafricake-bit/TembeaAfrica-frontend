@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   title: 'Local Safari Guides in Kenya & Tanzania | Tembea Africa',
   description: 'Book certified local guides for safaris, cultural tours, mountain treks, and city experiences across Kenya and Tanzania.',
   keywords: ['Kenya safari guide', 'Tanzania guide', 'local tour guide', 'Maasai Mara guide', 'Kilimanjaro guide'],
-  alternates: { canonical: '/guides' },
+  alternates: { canonical: 'https://www.tembeaafrica.com/guides/' },
 }
 
 export default function GuidesPage() {

@@ -6,10 +6,10 @@ import { JsonLd } from '@/components/seo/JsonLd'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Car Rentals, Shuttles & Transport in Kenya & Tanzania | Tembea Africa',
-  description: 'Book private car rentals, intercity shuttles, safari land cruisers, charter flights, and ferry transfers across Kenya and Tanzania.',
-  keywords: ['Kenya car rental', 'Tanzania airport shuttle', 'safari land cruiser hire', 'Mombasa ferry transfer', 'Nairobi private driver'],
-  alternates: { canonical: '/transport' },
+  title: 'Transport, Car Rentals & Airport Transfers in Kenya & Tanzania | Tembea Africa',
+  description: 'Book transport in Kenya and Tanzania with private drivers, airport transfers, car rentals, shuttles, safari land cruisers, charter flights, and ferry transfers.',
+  keywords: ['Kenya transport', 'Tanzania transport', 'airport transfer Kenya', 'private driver Kenya', 'car rental Kenya', 'safari land cruiser hire', 'Mombasa ferry transfer', 'Nairobi private driver'],
+  alternates: { canonical: 'https://www.tembeaafrica.com/transport/' },
 }
 
 export default function TransportPage() {
@@ -28,7 +28,7 @@ export default function TransportPage() {
           <div className="bg-safari-gradient py-14 px-4 text-center">
             <p className="text-golden-400 text-sm uppercase tracking-widest mb-3">Get around Africa</p>
             <h1 className="font-display text-4xl md:text-5xl font-bold text-white mb-4">Transport & Car Rentals</h1>
-            <p className="text-white/70 text-lg max-w-xl mx-auto">Shuttles, private rentals, charter flights, and ferries across Kenya and Tanzania.</p>
+            <p className="text-white/70 text-lg max-w-xl mx-auto">Airport transfers, private drivers, shuttles, car rentals, charter flights, and ferries across Kenya and Tanzania.</p>
           </div>
           <TransportClient />
         </main>

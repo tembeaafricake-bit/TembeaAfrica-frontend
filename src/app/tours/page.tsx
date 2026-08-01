@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   title: 'Best Kenya & Tanzania Tours & Safaris | Tembea Africa',
   description: 'Browse top-rated safari packages, beach tours, mountain treks, and cultural experiences in Kenya and Tanzania with Tembea Africa.',
   keywords: ['Kenya safari tours', 'Tanzania safari packages', 'book safari online', 'Maasai Mara tours', 'Zanzibar tours'],
-  alternates: { canonical: '/tours' },
+  alternates: { canonical: 'https://www.tembeaafrica.com/tours/' },
 }
 
 export default function ToursPage() {

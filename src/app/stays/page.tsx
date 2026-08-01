@@ -6,10 +6,10 @@ import { JsonLd } from '@/components/seo/JsonLd'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Hotels, Lodges & Stays in Kenya & Tanzania | Tembea Africa',
-  description: 'Find luxury safari lodges, beach resorts, boutique hotels, and comfortable stays in Kenya and Tanzania.',
-  keywords: ['Kenya hotels', 'Tanzania lodges', 'safari lodge', 'beach resort', 'boutique hotel Kenya'],
-  alternates: { canonical: '/stays' },
+  title: 'Airbnb-Style Stays, Hotels & Lodges in Kenya & Tanzania | Tembea Africa',
+  description: 'Find Airbnb-style stays, vacation rentals, luxury safari lodges, beach resorts, boutique hotels, and comfortable homes in Kenya and Tanzania.',
+  keywords: ['Airbnb Kenya', 'Airbnb-style stays', 'Kenya hotels', 'Tanzania lodges', 'safari lodge', 'beach resort', 'boutique hotel Kenya'],
+  alternates: { canonical: 'https://www.tembeaafrica.com/stays/' },
 }
 
 export default function StaysPage() {

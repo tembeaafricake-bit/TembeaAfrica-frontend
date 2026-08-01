@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   title: 'Kenya & Tanzania Travel Blog | Tembea Africa',
   description: 'Read expert Kenya and Tanzania travel guides, safari tips, Zanzibar advice, Kilimanjaro preparation guides, and destination planning help.',
   keywords: ['Kenya travel blog', 'Tanzania travel tips', 'safari guide', 'Zanzibar travel', 'Kilimanjaro preparation', 'travel planning'],
-  alternates: { canonical: '/blog' },
+  alternates: { canonical: 'https://www.tembeaafrica.com/blog/' },
 }
 
 const POSTS = BLOG_POSTS
