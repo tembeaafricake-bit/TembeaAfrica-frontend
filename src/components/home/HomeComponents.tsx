@@ -356,6 +356,8 @@ export function Footer() {
         { label: 'Hotels & Stays', href: '/stays' },
         { label: 'Local Guides', href: '/guides' },
         { label: 'Transport', href: '/transport' },
+  { label: 'Airbnb Kenya', href: '/airbnb-kenya' },
+  { label: 'Airport Transfers', href: '/airport-transfer-kenya' },
       ],
     },
     {

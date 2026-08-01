@@ -11,6 +11,8 @@ const CATEGORIES = [
   { label: 'Beach Escapes', href: '/tours?category=beach' },
   { label: 'Local Guides', href: '/guides/' },
   { label: 'Transport', href: '/transport/' },
+  { label: 'Airbnb Kenya', href: '/airbnb-kenya/' },
+  { label: 'Airport Transfers', href: '/airport-transfer-kenya/' },
   { label: 'Attraction Tickets', href: '/tickets/' },
 ]
 
