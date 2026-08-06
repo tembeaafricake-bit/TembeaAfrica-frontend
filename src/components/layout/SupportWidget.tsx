@@ -58,6 +58,7 @@ export function SupportWidget() {
   const [agentTypingName, setAgentTypingName] = useState('')
   const [isOnline, setIsOnline] = useState(true)
   const [isUploading, setIsUploading] = useState(false)
+  const [showQuickActions, setShowQuickActions] = useState(true)
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -194,6 +195,7 @@ export function SupportWidget() {
 
   // 4. Start Chat
   const handleStartChat = async (initialTopic = 'Travel Inquiry') => {
+    setShowQuickActions(false)
     let currentVisitorId = visitorId
     
     // Self-healing: if visitorId isn't initialized yet, try to initialize it immediately
@@ -314,6 +316,7 @@ export function SupportWidget() {
 
   // 6. Handle Quick Actions
   const handleQuickAction = async (action: string) => {
+    setShowQuickActions(false)
     let topic = 'Trip Planning'
     if (action.includes('Quote')) topic = 'Request Quotation'
     if (action.includes('Transfer')) topic = 'Airport Transfers'
@@ -342,6 +345,15 @@ export function SupportWidget() {
       userId: visitorId,
       isTyping,
     })
+  }
+
+  const handleBackToOptions = () => {
+    setConversation(null)
+    setMessages([])
+    setInputMessage('')
+    setIsAgentTyping(false)
+    setAgentTypingName('')
+    setShowQuickActions(true)
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -421,17 +433,27 @@ export function SupportWidget() {
                   </div>
                 </div>
               </div>
-              <button
-                onClick={() => setIsOpen(false)}
-                className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all"
-              >
-                <X className="w-4 h-4" />
-              </button>
+              <div className="flex items-center gap-2">
+                {conversation && (
+                  <button
+                    onClick={handleBackToOptions}
+                    className="px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-xs font-medium transition-all"
+                  >
+                    Back to options
+                  </button>
+                )}
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
             </div>
 
             {/* Content Drawer */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50/50 dark:bg-gray-950/20">
-              {!conversation ? (
+              {!conversation && showQuickActions ? (
                 // Greeting & Quick Actions
                 <div className="space-y-6 pt-4">
                   <div className="text-center space-y-2">
@@ -460,6 +482,32 @@ export function SupportWidget() {
                         </button>
                       ))}
                     </div>
+                  </div>
+                </div>
+              ) : !conversation ? (
+                <div className="space-y-4 pt-4">
+                  <div className="rounded-2xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-800 p-4 text-sm text-gray-600 dark:text-gray-300">
+                    <p className="font-medium text-gray-900 dark:text-white mb-2">Choose another option</p>
+                    <p>Pick a new quick action or continue chatting with us.</p>
+                  </div>
+                  <div className="grid grid-cols-1 gap-2">
+                    {[
+                      { label: '🏨 Find Accommodation', action: 'Find Accommodation' },
+                      { label: '🦁 Plan a Safari', action: 'Plan a Safari' },
+                      { label: '🚗 Airport Transfers', action: 'Airport Transfers' },
+                      { label: '🏝️ Beach Holidays', action: 'Beach Holidays' },
+                      { label: '📅 Request a Quote', action: 'Request a Quote' },
+                      { label: '💬 Talk to an Agent', action: 'Talk to an Agent' },
+                    ].map((btn) => (
+                      <button
+                        key={btn.action}
+                        onClick={() => handleQuickAction(btn.action)}
+                        className="w-full text-left p-3.5 bg-white dark:bg-gray-800 hover:bg-safari-50 dark:hover:bg-safari-900/30 text-gray-700 dark:text-gray-200 text-sm font-medium rounded-2xl border border-gray-100 dark:border-gray-800 hover:border-safari-200 dark:hover:border-safari-800 transition-all flex items-center justify-between group shadow-sm"
+                      >
+                        <span>{btn.label}</span>
+                        <span className="text-gray-300 group-hover:text-safari-600 transition-colors">→</span>
+                      </button>
+                    ))}
                   </div>
                 </div>
               ) : (
