@@ -58,7 +58,6 @@ export function SupportWidget() {
   const [agentTypingName, setAgentTypingName] = useState('')
   const [isOnline, setIsOnline] = useState(true)
   const [isUploading, setIsUploading] = useState(false)
-  const [showQuickActions, setShowQuickActions] = useState(true)
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -195,7 +194,6 @@ export function SupportWidget() {
 
   // 4. Start Chat
   const handleStartChat = async (initialTopic = 'Travel Inquiry') => {
-    setShowQuickActions(false)
     let currentVisitorId = visitorId
     
     // Self-healing: if visitorId isn't initialized yet, try to initialize it immediately
@@ -281,24 +279,6 @@ export function SupportWidget() {
     if (!text.trim() && attachmentUrls.length === 0) return
     if (!conversation || !visitorId) return
 
-    const optimisticMessage: ChatMessage = {
-      _id: `local-${Date.now()}`,
-      conversationId: conversation._id,
-      senderId: visitorId,
-      senderType: 'visitor',
-      content: text,
-      attachments: attachmentUrls.length > 0 ? attachmentUrls.map((url, index) => ({
-        url,
-        filename: `attachment-${index + 1}`,
-        fileType: 'file',
-        size: 0,
-      })) : undefined,
-      readBy: [visitorId],
-      createdAt: new Date().toISOString(),
-    }
-
-    setMessages((prev) => [...prev, optimisticMessage])
-
     try {
       const socket = getSupportSocket()
       if (socket && socket.connected) {
@@ -317,7 +297,7 @@ export function SupportWidget() {
           content: text,
           attachments: attachmentUrls,
         })
-        setMessages((prev) => prev.filter((m) => m._id !== optimisticMessage._id).concat(saved))
+        setMessages((prev) => [...prev, saved])
       }
 
       if (textToSend === undefined) {
@@ -327,7 +307,6 @@ export function SupportWidget() {
       // Stop typing emitter
       emitTyping(false)
     } catch (err) {
-      setMessages((prev) => prev.filter((m) => m._id !== optimisticMessage._id))
       toast.error('Failed to send message.')
       console.error(err)
     }
@@ -335,7 +314,6 @@ export function SupportWidget() {
 
   // 6. Handle Quick Actions
   const handleQuickAction = async (action: string) => {
-    setShowQuickActions(false)
     let topic = 'Trip Planning'
     if (action.includes('Quote')) topic = 'Request Quotation'
     if (action.includes('Transfer')) topic = 'Airport Transfers'
@@ -364,15 +342,6 @@ export function SupportWidget() {
       userId: visitorId,
       isTyping,
     })
-  }
-
-  const handleBackToOptions = () => {
-    setConversation(null)
-    setMessages([])
-    setInputMessage('')
-    setIsAgentTyping(false)
-    setAgentTypingName('')
-    setShowQuickActions(true)
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -417,147 +386,6 @@ export function SupportWidget() {
       conversationId: conversation._id,
     })
   }
-  // Render inline AI questions assistant suggestions
-  const renderAiSuggestions = () => {
-    if (!messages || messages.length === 0) return null
-    const lastMsg = messages[messages.length - 1]
-    if (!lastMsg || lastMsg.senderType !== 'ai') return null
-
-    const content = lastMsg.content.toLowerCase()
-
-    const renderChoiceGroup = (
-      title: string,
-      options: Array<{ label: string; value: string }>,
-      showDatePicker = false,
-    ) => (
-      <div className="rounded-2xl border border-safari-100 dark:border-gray-800 bg-white/95 dark:bg-gray-900/90 p-3 shadow-sm">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-safari-700 dark:text-safari-400 mb-2">
-          {title}
-        </p>
-        <div className="flex flex-wrap gap-2">
-          {options.map((item) => (
-            <button
-              key={item.value}
-              onClick={() => handleSendMessage(item.value)}
-              className="px-3 py-1.5 bg-safari-50 dark:bg-gray-800 hover:bg-safari-100 dark:hover:bg-safari-900/40 text-gray-700 dark:text-gray-200 text-xs font-semibold rounded-xl border border-safari-100 dark:border-gray-700 hover:border-safari-300 transition-all shadow-sm"
-            >
-              {item.label}
-            </button>
-          ))}
-        </div>
-        {showDatePicker && (
-          <div className="mt-2.5 flex flex-col gap-2 border-t border-gray-100 dark:border-gray-800 pt-2">
-            <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-gray-400">
-              Or pick an exact date
-            </span>
-            <input
-              type="date"
-              className="w-full text-xs bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-2 py-1.5 outline-none text-gray-700 dark:text-gray-200"
-              onChange={(e) => {
-                if (e.target.value) {
-                  handleSendMessage(e.target.value)
-                }
-              }}
-            />
-          </div>
-        )}
-      </div>
-    )
-
-    if (
-      content.includes('destination') ||
-      content.includes('visit') ||
-      content.includes('country') ||
-      content.includes('safari') ||
-      content.includes('beach') ||
-      content.includes('travel style')
-    ) {
-      return renderChoiceGroup('Destination', [
-        { label: '🇰🇪 Kenya Safaris', value: 'Kenya Safaris' },
-        { label: '🇹🇿 Tanzania Adventure', value: 'Tanzania Adventure' },
-        { label: '🏝️ Zanzibar Beaches', value: 'Zanzibar Beaches' },
-      ])
-    }
-
-    if (
-      content.includes('date') ||
-      content.includes('month') ||
-      content.includes('travel') ||
-      content.includes('when') ||
-      content.includes('season')
-    ) {
-      return renderChoiceGroup('Travel dates', [
-        { label: 'Next month', value: 'Next month' },
-        { label: 'In 3 months', value: 'In 3 months' },
-        { label: 'This December', value: 'This December' },
-      ], true)
-    }
-
-    if (content.includes('guest') || content.includes('party') || content.includes('travellers')) {
-      return renderChoiceGroup('Guest count', [
-        { label: '👤 1 Guest', value: '1 guest' },
-        { label: '👥 2 Guests', value: '2 guests' },
-        { label: '👨‍👩‍👦 3 Guests', value: '3 guests' },
-        { label: '🦁 4+ Guests', value: '4+ guests' },
-      ])
-    }
-
-    if (content.includes('budget') || content.includes('price') || content.includes('cost')) {
-      return renderChoiceGroup('Budget', [
-        { label: '💵 Under $1,500', value: 'Under $1,500' },
-        { label: '💵 $1,500 - $3,000', value: '$1,500 - $3,000' },
-        { label: '💵 $3,000 - $5,000', value: '$3,000 - $5,000' },
-        { label: '✨ $5,000+', value: '$5,000+' },
-      ])
-    }
-
-    if (
-      content.includes('style') ||
-      content.includes('accommodation') ||
-      content.includes('hotel') ||
-      content.includes('lodge') ||
-      content.includes('camp')
-    ) {
-      return renderChoiceGroup('Accommodation style', [
-        { label: '⛺ Budget Camps', value: 'Budget Camp' },
-        { label: '🏕️ Mid-range Safari Camps', value: 'Mid-range Safari Camp' },
-        { label: '🏰 Luxury Lodges', value: 'Luxury Lodge' },
-      ])
-    }
-
-    if (content.includes('transfer') || content.includes('transport') || content.includes('airport')) {
-      return renderChoiceGroup('Transport needs', [
-        { label: '🚗 4x4 Cruiser & Transfers', value: 'Include full transport and safari Land Cruiser' },
-        { label: '✈️ Airport Pickups Only', value: 'Airport transfers only' },
-        { label: '❌ No Transport Needed', value: 'No transport needed' },
-      ])
-    }
-
-    return (
-      <div className="rounded-2xl border border-safari-100 dark:border-gray-800 bg-white/95 dark:bg-gray-900/90 p-3 shadow-sm">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-safari-700 dark:text-safari-400 mb-2">
-          Quick planning choices
-        </p>
-        <div className="grid grid-cols-2 gap-2">
-          {[
-            { label: '🧭 Destination', value: 'I want to visit Kenya or Tanzania' },
-            { label: '📅 Dates', value: 'I want to travel next month' },
-            { label: '👥 Guests', value: '2 guests' },
-            { label: '💵 Budget', value: 'Budget around $3,000' },
-            { label: '🏨 Stay style', value: 'Luxury lodge' },
-            { label: '🧑‍💼 Talk to an agent', value: 'I would like to talk to a human agent' },
-          ].map((item) => (
-            <button
-              key={item.value}
-              onClick={() => handleSendMessage(item.value)}
-              className="px-3 py-2 bg-safari-50 dark:bg-gray-800 hover:bg-safari-100 dark:hover:bg-safari-900/40 text-gray-700 dark:text-gray-200 text-xs font-semibold rounded-xl border border-safari-100 dark:border-gray-700 transition-all shadow-sm text-left"
-            >
-              {item.label}
-            </button>
-          ))}
-        </div>
-      </div>
-    )
   }
 
   return (
@@ -594,27 +422,17 @@ export function SupportWidget() {
                   </div>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                {(!showQuickActions || conversation) && (
-                  <button
-                    onClick={handleBackToOptions}
-                    className="px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-xs font-medium transition-all"
-                  >
-                    Back to options
-                  </button>
-                )}
-                <button
-                  onClick={() => setIsOpen(false)}
-                  className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
+              <button
+                onClick={() => setIsOpen(false)}
+                className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
 
             {/* Content Drawer */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50/50 dark:bg-gray-950/20">
-              {!conversation && showQuickActions ? (
+              {!conversation ? (
                 // Greeting & Quick Actions
                 <div className="space-y-6 pt-4">
                   <div className="text-center space-y-2">
@@ -643,41 +461,6 @@ export function SupportWidget() {
                         </button>
                       ))}
                     </div>
-                  </div>
-                </div>
-              ) : !conversation ? (
-                <div className="space-y-4 pt-4">
-                  {!showQuickActions && (
-                    <button
-                      onClick={handleBackToOptions}
-                      className="inline-flex items-center gap-2 text-sm font-medium text-safari-700 dark:text-safari-400 hover:text-safari-800 dark:hover:text-safari-300"
-                    >
-                      <span>←</span>
-                      <span>Back to options</span>
-                    </button>
-                  )}
-                  <div className="rounded-2xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-800 p-4 text-sm text-gray-600 dark:text-gray-300">
-                    <p className="font-medium text-gray-900 dark:text-white mb-2">Choose another option</p>
-                    <p>Pick a new quick action or continue chatting with us.</p>
-                  </div>
-                  <div className="grid grid-cols-1 gap-2">
-                    {[
-                      { label: '🏨 Find Accommodation', action: 'Find Accommodation' },
-                      { label: '🦁 Plan a Safari', action: 'Plan a Safari' },
-                      { label: '🚗 Airport Transfers', action: 'Airport Transfers' },
-                      { label: '🏝️ Beach Holidays', action: 'Beach Holidays' },
-                      { label: '📅 Request a Quote', action: 'Request a Quote' },
-                      { label: '💬 Talk to an Agent', action: 'Talk to an Agent' },
-                    ].map((btn) => (
-                      <button
-                        key={btn.action}
-                        onClick={() => handleQuickAction(btn.action)}
-                        className="w-full text-left p-3.5 bg-white dark:bg-gray-800 hover:bg-safari-50 dark:hover:bg-safari-900/30 text-gray-700 dark:text-gray-200 text-sm font-medium rounded-2xl border border-gray-100 dark:border-gray-800 hover:border-safari-200 dark:hover:border-safari-800 transition-all flex items-center justify-between group shadow-sm"
-                      >
-                        <span>{btn.label}</span>
-                        <span className="text-gray-300 group-hover:text-safari-600 transition-colors">→</span>
-                      </button>
-                    ))}
                   </div>
                 </div>
               ) : (
@@ -793,9 +576,6 @@ export function SupportWidget() {
             {/* Input Footer */}
             {conversation && (
               <div className="p-3.5 bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 flex flex-col gap-2">
-                {/* Dynamic AI Suggestions */}
-                {renderAiSuggestions()}
-
                 {/* Escalation bar if AI chat */}
                 {conversation.status === 'pending' && !conversation.assignedAgent && (
                   <div className="flex items-center justify-between bg-amber-50 dark:bg-amber-950/20 px-3 py-2 rounded-xl border border-amber-100 dark:border-amber-900/30 text-xs text-amber-700 dark:text-amber-300">
