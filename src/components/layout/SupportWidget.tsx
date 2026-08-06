@@ -398,6 +398,133 @@ export function SupportWidget() {
       conversationId: conversation._id,
     })
   }
+  // Render inline AI questions assistant suggestions
+  const renderAiSuggestions = () => {
+    if (!messages || messages.length === 0) return null
+    const lastMsg = messages[messages.length - 1]
+    if (!lastMsg || lastMsg.senderType !== 'ai') return null
+
+    const content = lastMsg.content.toLowerCase()
+
+    // 1. Destination
+    if (content.includes('what destination') || content.includes('planning to visit') || content.includes('select a destination')) {
+      return (
+        <div className="flex flex-wrap gap-1.5 p-2 bg-gray-50/50 dark:bg-gray-800/30 rounded-2xl border border-dashed border-gray-200 dark:border-gray-800">
+          {[
+            { label: '🇰🇪 Kenya Safaris', value: 'Kenya' },
+            { label: '🇹🇿 Tanzania Adventure', value: 'Tanzania' },
+            { label: '🏝️ Zanzibar Beaches', value: 'Zanzibar' },
+          ].map((item) => (
+            <button
+              key={item.value}
+              onClick={() => handleSendMessage(item.value)}
+              className="px-3 py-1.5 bg-white dark:bg-gray-800 hover:bg-safari-50 dark:hover:bg-safari-950 text-gray-700 dark:text-gray-200 text-xs font-semibold rounded-xl border border-gray-200 dark:border-gray-700 hover:border-safari-300 transition-all shadow-sm"
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+      )
+    }
+
+    // 2. Dates
+    if (content.includes('dates') || content.includes('travel dates') || content.includes('looking to travel')) {
+      return (
+        <div className="flex flex-col gap-2 p-3 bg-gray-50/50 dark:bg-gray-800/30 rounded-2xl border border-dashed border-gray-200 dark:border-gray-850">
+          <div className="flex flex-wrap gap-1.5">
+            {['Next month', 'In 3 months', 'This December'].map((val) => (
+              <button
+                key={val}
+                onClick={() => handleSendMessage(val)}
+                className="px-2.5 py-1.5 bg-white dark:bg-gray-800 hover:bg-safari-50 dark:hover:bg-safari-950 text-gray-700 dark:text-gray-200 text-xs font-semibold rounded-xl border border-gray-200/80 dark:border-gray-700 hover:border-safari-300 transition-all shadow-sm"
+              >
+                {val}
+              </button>
+            ))}
+          </div>
+          <div className="flex items-center gap-1.5 border-t dark:border-gray-805 pt-2">
+            <span className="text-[10px] font-bold text-gray-400 uppercase">Or select date:</span>
+            <input
+              type="date"
+              className="text-xs bg-white dark:bg-gray-800 border rounded-lg px-2 py-1 outline-none text-gray-750 dark:text-gray-200"
+              onChange={(e) => {
+                if (e.target.value) {
+                  handleSendMessage(e.target.value)
+                }
+              }}
+            />
+          </div>
+        </div>
+      )
+    }
+
+    // 3. Guests
+    if (content.includes('how many guests') || content.includes('party')) {
+      return (
+        <div className="flex flex-wrap gap-1.5 p-2 bg-gray-50/50 dark:bg-gray-800/30 rounded-2xl border border-dashed border-gray-200 dark:border-gray-800">
+          {[
+            { label: '👤 1 Guest', value: '1 guest' },
+            { label: '👥 2 Guests', value: '2 guests' },
+            { label: '👨‍👩‍👦 3 Guests', value: '3 guests' },
+            { label: '🦁 4+ Guests', value: '4 guests' },
+          ].map((item) => (
+            <button
+              key={item.value}
+              onClick={() => handleSendMessage(item.value)}
+              className="px-3 py-1.5 bg-white dark:bg-gray-800 hover:bg-safari-50 dark:hover:bg-safari-950 text-gray-700 dark:text-gray-200 text-xs font-semibold rounded-xl border border-gray-200 dark:border-gray-700 hover:border-safari-300 transition-all shadow-sm"
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+      )
+    }
+
+    // 4. Budget
+    if (content.includes('budget') || content.includes('approximate budget')) {
+      return (
+        <div className="flex flex-wrap gap-1.5 p-2 bg-gray-50/50 dark:bg-gray-800/30 rounded-2xl border border-dashed border-gray-200 dark:border-gray-800">
+          {[
+            { label: '💵 Under $1,500', value: '1000 USD' },
+            { label: '💵 $1,500 - $3,000', value: '2500 USD' },
+            { label: '💵 $3,000 - $5,000', value: '4000 USD' },
+            { label: '✨ $5,000+', value: '6000 USD' },
+          ].map((item) => (
+            <button
+              key={item.value}
+              onClick={() => handleSendMessage(item.value)}
+              className="px-3 py-1.5 bg-white dark:bg-gray-800 hover:bg-safari-50 dark:hover:bg-safari-950 text-gray-700 dark:text-gray-200 text-xs font-semibold rounded-xl border border-gray-200 dark:border-gray-700 hover:border-safari-300 transition-all shadow-sm"
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+      )
+    }
+
+    // 5. Accommodations style
+    if (content.includes('style') || content.includes('preferred style') || content.includes('accommodation preference') || content.includes('accommodation costs')) {
+      return (
+        <div className="flex flex-wrap gap-1.5 p-2 bg-gray-50/50 dark:bg-gray-800/30 rounded-2xl border border-dashed border-gray-200 dark:border-gray-800">
+          {[
+            { label: '⛺ Budget Camps', value: 'Budget Camp' },
+            { label: '🏕️ Mid-range Safari Camps', value: 'Mid-range Safari Camp' },
+            { label: '🏰 Luxury Lodges', value: 'Luxury Lodge' },
+          ].map((item) => (
+            <button
+              key={item.value}
+              onClick={() => handleSendMessage(item.value)}
+              className="px-3 py-1.5 bg-white dark:bg-gray-800 hover:bg-safari-50 dark:hover:bg-safari-950 text-gray-700 dark:text-gray-200 text-xs font-semibold rounded-xl border border-gray-200 dark:border-gray-700 hover:border-safari-300 transition-all shadow-sm"
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+      )
+    }
+
+    return null
+  }
 
   return (
     <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
@@ -632,6 +759,9 @@ export function SupportWidget() {
             {/* Input Footer */}
             {conversation && (
               <div className="p-3.5 bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 flex flex-col gap-2">
+                {/* Dynamic AI Suggestions */}
+                {renderAiSuggestions()}
+
                 {/* Escalation bar if AI chat */}
                 {conversation.status === 'pending' && !conversation.assignedAgent && (
                   <div className="flex items-center justify-between bg-amber-50 dark:bg-amber-950/20 px-3 py-2 rounded-xl border border-amber-100 dark:border-amber-900/30 text-xs text-amber-700 dark:text-amber-300">
