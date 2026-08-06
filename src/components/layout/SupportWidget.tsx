@@ -406,47 +406,34 @@ export function SupportWidget() {
 
     const content = lastMsg.content.toLowerCase()
 
-    // 1. Destination
-    if (content.includes('what destination') || content.includes('planning to visit') || content.includes('select a destination')) {
-      return (
-        <div className="flex flex-wrap gap-1.5 p-2 bg-gray-50/50 dark:bg-gray-800/30 rounded-2xl border border-dashed border-gray-200 dark:border-gray-800">
-          {[
-            { label: '🇰🇪 Kenya Safaris', value: 'Kenya' },
-            { label: '🇹🇿 Tanzania Adventure', value: 'Tanzania' },
-            { label: '🏝️ Zanzibar Beaches', value: 'Zanzibar' },
-          ].map((item) => (
+    const renderChoiceGroup = (
+      title: string,
+      options: Array<{ label: string; value: string }>,
+      showDatePicker = false,
+    ) => (
+      <div className="rounded-2xl border border-safari-100 dark:border-gray-800 bg-white/95 dark:bg-gray-900/90 p-3 shadow-sm">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-safari-700 dark:text-safari-400 mb-2">
+          {title}
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {options.map((item) => (
             <button
               key={item.value}
               onClick={() => handleSendMessage(item.value)}
-              className="px-3 py-1.5 bg-white dark:bg-gray-800 hover:bg-safari-50 dark:hover:bg-safari-950 text-gray-700 dark:text-gray-200 text-xs font-semibold rounded-xl border border-gray-200 dark:border-gray-700 hover:border-safari-300 transition-all shadow-sm"
+              className="px-3 py-1.5 bg-safari-50 dark:bg-gray-800 hover:bg-safari-100 dark:hover:bg-safari-900/40 text-gray-700 dark:text-gray-200 text-xs font-semibold rounded-xl border border-safari-100 dark:border-gray-700 hover:border-safari-300 transition-all shadow-sm"
             >
               {item.label}
             </button>
           ))}
         </div>
-      )
-    }
-
-    // 2. Dates
-    if (content.includes('dates') || content.includes('travel dates') || content.includes('looking to travel')) {
-      return (
-        <div className="flex flex-col gap-2 p-3 bg-gray-50/50 dark:bg-gray-800/30 rounded-2xl border border-dashed border-gray-200 dark:border-gray-850">
-          <div className="flex flex-wrap gap-1.5">
-            {['Next month', 'In 3 months', 'This December'].map((val) => (
-              <button
-                key={val}
-                onClick={() => handleSendMessage(val)}
-                className="px-2.5 py-1.5 bg-white dark:bg-gray-800 hover:bg-safari-50 dark:hover:bg-safari-950 text-gray-700 dark:text-gray-200 text-xs font-semibold rounded-xl border border-gray-200/80 dark:border-gray-700 hover:border-safari-300 transition-all shadow-sm"
-              >
-                {val}
-              </button>
-            ))}
-          </div>
-          <div className="flex items-center gap-1.5 border-t dark:border-gray-805 pt-2">
-            <span className="text-[10px] font-bold text-gray-400 uppercase">Or select date:</span>
+        {showDatePicker && (
+          <div className="mt-2.5 flex flex-col gap-2 border-t border-gray-100 dark:border-gray-800 pt-2">
+            <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-gray-400">
+              Or pick an exact date
+            </span>
             <input
               type="date"
-              className="text-xs bg-white dark:bg-gray-800 border rounded-lg px-2 py-1 outline-none text-gray-750 dark:text-gray-200"
+              className="w-full text-xs bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-2 py-1.5 outline-none text-gray-700 dark:text-gray-200"
               onChange={(e) => {
                 if (e.target.value) {
                   handleSendMessage(e.target.value)
@@ -454,76 +441,96 @@ export function SupportWidget() {
               }}
             />
           </div>
-        </div>
-      )
+        )}
+      </div>
+    )
+
+    if (
+      content.includes('destination') ||
+      content.includes('visit') ||
+      content.includes('country') ||
+      content.includes('safari') ||
+      content.includes('beach') ||
+      content.includes('travel style')
+    ) {
+      return renderChoiceGroup('Destination', [
+        { label: '🇰🇪 Kenya Safaris', value: 'Kenya Safaris' },
+        { label: '🇹🇿 Tanzania Adventure', value: 'Tanzania Adventure' },
+        { label: '🏝️ Zanzibar Beaches', value: 'Zanzibar Beaches' },
+      ])
     }
 
-    // 3. Guests
-    if (content.includes('how many guests') || content.includes('party')) {
-      return (
-        <div className="flex flex-wrap gap-1.5 p-2 bg-gray-50/50 dark:bg-gray-800/30 rounded-2xl border border-dashed border-gray-200 dark:border-gray-800">
+    if (
+      content.includes('date') ||
+      content.includes('month') ||
+      content.includes('travel') ||
+      content.includes('when') ||
+      content.includes('season')
+    ) {
+      return renderChoiceGroup('Travel dates', [
+        { label: 'Next month', value: 'Next month' },
+        { label: 'In 3 months', value: 'In 3 months' },
+        { label: 'This December', value: 'This December' },
+      ], true)
+    }
+
+    if (content.includes('guest') || content.includes('party') || content.includes('travellers')) {
+      return renderChoiceGroup('Guest count', [
+        { label: '👤 1 Guest', value: '1 guest' },
+        { label: '👥 2 Guests', value: '2 guests' },
+        { label: '👨‍👩‍👦 3 Guests', value: '3 guests' },
+        { label: '🦁 4+ Guests', value: '4+ guests' },
+      ])
+    }
+
+    if (content.includes('budget') || content.includes('price') || content.includes('cost')) {
+      return renderChoiceGroup('Budget', [
+        { label: '💵 Under $1,500', value: 'Under $1,500' },
+        { label: '💵 $1,500 - $3,000', value: '$1,500 - $3,000' },
+        { label: '💵 $3,000 - $5,000', value: '$3,000 - $5,000' },
+        { label: '✨ $5,000+', value: '$5,000+' },
+      ])
+    }
+
+    if (
+      content.includes('style') ||
+      content.includes('accommodation') ||
+      content.includes('hotel') ||
+      content.includes('lodge') ||
+      content.includes('camp')
+    ) {
+      return renderChoiceGroup('Accommodation style', [
+        { label: '⛺ Budget Camps', value: 'Budget Camp' },
+        { label: '🏕️ Mid-range Safari Camps', value: 'Mid-range Safari Camp' },
+        { label: '🏰 Luxury Lodges', value: 'Luxury Lodge' },
+      ])
+    }
+
+    return (
+      <div className="rounded-2xl border border-safari-100 dark:border-gray-800 bg-white/95 dark:bg-gray-900/90 p-3 shadow-sm">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-safari-700 dark:text-safari-400 mb-2">
+          Quick planning choices
+        </p>
+        <div className="grid grid-cols-2 gap-2">
           {[
-            { label: '👤 1 Guest', value: '1 guest' },
-            { label: '👥 2 Guests', value: '2 guests' },
-            { label: '👨‍👩‍👦 3 Guests', value: '3 guests' },
-            { label: '🦁 4+ Guests', value: '4 guests' },
+            { label: '🧭 Destination', value: 'I want to visit Kenya or Tanzania' },
+            { label: '📅 Dates', value: 'I want to travel next month' },
+            { label: '👥 Guests', value: '2 guests' },
+            { label: '💵 Budget', value: 'Budget around $3,000' },
+            { label: '🏨 Stay style', value: 'Luxury lodge' },
+            { label: '🧑‍💼 Talk to an agent', value: 'I would like to talk to a human agent' },
           ].map((item) => (
             <button
               key={item.value}
               onClick={() => handleSendMessage(item.value)}
-              className="px-3 py-1.5 bg-white dark:bg-gray-800 hover:bg-safari-50 dark:hover:bg-safari-950 text-gray-700 dark:text-gray-200 text-xs font-semibold rounded-xl border border-gray-200 dark:border-gray-700 hover:border-safari-300 transition-all shadow-sm"
+              className="px-3 py-2 bg-safari-50 dark:bg-gray-800 hover:bg-safari-100 dark:hover:bg-safari-900/40 text-gray-700 dark:text-gray-200 text-xs font-semibold rounded-xl border border-safari-100 dark:border-gray-700 transition-all shadow-sm text-left"
             >
               {item.label}
             </button>
           ))}
         </div>
-      )
-    }
-
-    // 4. Budget
-    if (content.includes('budget') || content.includes('approximate budget')) {
-      return (
-        <div className="flex flex-wrap gap-1.5 p-2 bg-gray-50/50 dark:bg-gray-800/30 rounded-2xl border border-dashed border-gray-200 dark:border-gray-800">
-          {[
-            { label: '💵 Under $1,500', value: '1000 USD' },
-            { label: '💵 $1,500 - $3,000', value: '2500 USD' },
-            { label: '💵 $3,000 - $5,000', value: '4000 USD' },
-            { label: '✨ $5,000+', value: '6000 USD' },
-          ].map((item) => (
-            <button
-              key={item.value}
-              onClick={() => handleSendMessage(item.value)}
-              className="px-3 py-1.5 bg-white dark:bg-gray-800 hover:bg-safari-50 dark:hover:bg-safari-950 text-gray-700 dark:text-gray-200 text-xs font-semibold rounded-xl border border-gray-200 dark:border-gray-700 hover:border-safari-300 transition-all shadow-sm"
-            >
-              {item.label}
-            </button>
-          ))}
-        </div>
-      )
-    }
-
-    // 5. Accommodations style
-    if (content.includes('style') || content.includes('preferred style') || content.includes('accommodation preference') || content.includes('accommodation costs')) {
-      return (
-        <div className="flex flex-wrap gap-1.5 p-2 bg-gray-50/50 dark:bg-gray-800/30 rounded-2xl border border-dashed border-gray-200 dark:border-gray-800">
-          {[
-            { label: '⛺ Budget Camps', value: 'Budget Camp' },
-            { label: '🏕️ Mid-range Safari Camps', value: 'Mid-range Safari Camp' },
-            { label: '🏰 Luxury Lodges', value: 'Luxury Lodge' },
-          ].map((item) => (
-            <button
-              key={item.value}
-              onClick={() => handleSendMessage(item.value)}
-              className="px-3 py-1.5 bg-white dark:bg-gray-800 hover:bg-safari-50 dark:hover:bg-safari-950 text-gray-700 dark:text-gray-200 text-xs font-semibold rounded-xl border border-gray-200 dark:border-gray-700 hover:border-safari-300 transition-all shadow-sm"
-            >
-              {item.label}
-            </button>
-          ))}
-        </div>
-      )
-    }
-
-    return null
+      </div>
+    )
   }
 
   return (
