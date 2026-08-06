@@ -434,7 +434,7 @@ export function SupportWidget() {
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                {conversation && (
+                {(!showQuickActions || conversation) && (
                   <button
                     onClick={handleBackToOptions}
                     className="px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-xs font-medium transition-all"
@@ -486,6 +486,15 @@ export function SupportWidget() {
                 </div>
               ) : !conversation ? (
                 <div className="space-y-4 pt-4">
+                  {!showQuickActions && (
+                    <button
+                      onClick={handleBackToOptions}
+                      className="inline-flex items-center gap-2 text-sm font-medium text-safari-700 dark:text-safari-400 hover:text-safari-800 dark:hover:text-safari-300"
+                    >
+                      <span>←</span>
+                      <span>Back to options</span>
+                    </button>
+                  )}
                   <div className="rounded-2xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-800 p-4 text-sm text-gray-600 dark:text-gray-300">
                     <p className="font-medium text-gray-900 dark:text-white mb-2">Choose another option</p>
                     <p>Pick a new quick action or continue chatting with us.</p>
