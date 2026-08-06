@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { BarChart2, BookOpen, Users, MapPin, Star, Building2, Compass, UserCheck, BedDouble, Bus, ChevronRight, LogOut, Menu, X } from 'lucide-react'
+import { BarChart2, BookOpen, Users, MapPin, Star, Building2, Compass, UserCheck, BedDouble, Bus, ChevronRight, LogOut, Menu, X, MessageSquare } from 'lucide-react'
 import { useAuthStore } from '@/store'
 
 const SIDEBAR = [
@@ -17,6 +17,7 @@ const SIDEBAR = [
   { label: 'Transport', href: '/admin/transport', icon: Bus },
   { label: 'Reviews', href: '/admin/reviews', icon: Star },
   { label: 'All Listings', href: '/admin/listings', icon: Building2 },
+  { label: 'Support Chat', href: '/admin/support', icon: MessageSquare },
 ]
 
 interface AdminShellProps {

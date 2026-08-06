@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 import { PWAInstallPrompt } from '@/components/pwa/PWAInstallPrompt'
 import { CookieConsent } from '@/components/layout/CookieConsent'
+import { SupportWidget } from '@/components/layout/SupportWidget'
 import { authApi } from '@/lib/api'
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -54,6 +55,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         {children}
         <PWAInstallPrompt />
         <CookieConsent />
+        <SupportWidget />
       </ThemeProvider>
     </QueryClientProvider>
   )
