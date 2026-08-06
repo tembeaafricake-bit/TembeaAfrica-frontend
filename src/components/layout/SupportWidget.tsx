@@ -525,6 +525,14 @@ export function SupportWidget() {
       ])
     }
 
+    if (content.includes('transfer') || content.includes('transport') || content.includes('airport')) {
+      return renderChoiceGroup('Transport needs', [
+        { label: '🚗 4x4 Cruiser & Transfers', value: 'Include full transport and safari Land Cruiser' },
+        { label: '✈️ Airport Pickups Only', value: 'Airport transfers only' },
+        { label: '❌ No Transport Needed', value: 'No transport needed' },
+      ])
+    }
+
     return (
       <div className="rounded-2xl border border-safari-100 dark:border-gray-800 bg-white/95 dark:bg-gray-900/90 p-3 shadow-sm">
         <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-safari-700 dark:text-safari-400 mb-2">
