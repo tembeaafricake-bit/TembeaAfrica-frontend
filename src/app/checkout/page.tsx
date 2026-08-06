@@ -26,9 +26,7 @@ export default function CheckoutPage() {
   const [step, setStep] = useState<Step>('cart')
   const [loading, setLoading] = useState(false)
   const [bookingRef, setBookingRef] = useState('')
-  const [bookingMode, setBookingMode] = useState<'payment' | 'quote'>('payment')
   const [checkingAuth, setCheckingAuth] = useState(true)
-  const [selectedMode, setSelectedMode] = useState<'payment' | 'quote'>('payment')
 
   const [details, setDetails] = useState({
     firstName: user?.firstName || '', lastName: user?.lastName || '',
@@ -85,7 +83,7 @@ export default function CheckoutPage() {
     restoreSession()
   }, [isAuthenticated, setUser, authApi])
 
-  const submitBooking = async (mode: 'payment' | 'quote') => {
+  const handlePayment = async () => {
     if (!isAuthenticated) { router.push('/auth/login?next=/checkout'); return }
     setLoading(true)
     try {
@@ -93,40 +91,35 @@ export default function CheckoutPage() {
 
       if (bookingId) {
         booking = existingBooking ? existingBooking : (await bookingsApi.getOne(bookingId)).data
-        if (mode === 'payment') {
-          const { data: initData } = await paymentsApi.initializePaystack(bookingId)
-          if (initData?.paymentUrl) {
-            window.location.href = initData.paymentUrl
-            return
-          }
+        const { data: initData } = await paymentsApi.initializePaystack(bookingId)
+        if (initData?.paymentUrl) {
+          window.location.href = initData.paymentUrl
+          return
         }
       } else {
         const bookingData = {
           items: items.map(i => ({ type: i.type, itemId: i.id, name: i.name, quantity: i.quantity, price: usdToKes(i.price), startDate: i.startDate, endDate: i.endDate })),
           totalAmount: totalKes, currency: 'KES', guests: items[0]?.guests || 2,
-          guestDetails: details, paymentMethod: mode === 'payment' ? 'paystack' : 'quote_request',
+          guestDetails: details, paymentMethod: 'paystack',
           startDate: items[0]?.startDate, endDate: items[0]?.endDate,
         }
         const { data } = await bookingsApi.create(bookingData)
         booking = data
 
-        if (mode === 'payment') {
-          const { data: initData } = await paymentsApi.initializePaystack(booking._id)
-          if (initData?.paymentUrl) {
-            window.location.href = initData.paymentUrl
-            return
-          }
+        const { data: initData } = await paymentsApi.initializePaystack(booking._id)
+        if (initData?.paymentUrl) {
+          window.location.href = initData.paymentUrl
+          return
         }
       }
 
       if (booking) {
         setBookingRef(booking.bookingNumber || 'TA-' + Math.random().toString(36).substring(2, 8).toUpperCase())
-        setBookingMode(mode)
         setStep('success')
       }
     } catch (err: any) {
-      console.error('Booking submission error:', err)
-      toast.error(err?.response?.data?.message || (mode === 'payment' ? 'Booking or payment failed. Please try again.' : 'We could not submit your quote request. Please try again.'))
+      console.error('Payment initiation error:', err)
+      toast.error(err?.response?.data?.message || 'Booking or payment failed. Please try again.')
     } finally {
       setLoading(false)
     }
@@ -142,11 +135,11 @@ export default function CheckoutPage() {
             <div className="w-20 h-20 bg-safari-100 dark:bg-safari-900/30 rounded-full flex items-center justify-center mx-auto mb-5">
               <Check className="w-10 h-10 text-safari-600" />
             </div>
-            <h1 className="font-display text-2xl font-bold text-gray-900 dark:text-white mb-2">{bookingMode === 'payment' ? 'Booking Confirmed!' : 'Reservation Request Received!'}</h1>
-            <p className="text-gray-500 mb-4">{bookingMode === 'payment' ? 'Your African adventure is booked. Check your email for full details.' : 'We have received your reservation request. Our team will get back to you with a tailored quote and next steps.'}</p>
-            <div className={`rounded-2xl p-4 mb-6 ${bookingMode === 'payment' ? 'bg-safari-50 dark:bg-safari-900/20' : 'bg-amber-50 dark:bg-amber-900/20'}`}>
-              <p className="text-xs text-gray-400 mb-1">{bookingMode === 'payment' ? 'Booking reference' : 'Request reference'}</p>
-              <p className={`font-mono text-xl font-bold ${bookingMode === 'payment' ? 'text-safari-700' : 'text-amber-700'}`}>{bookingRef}</p>
+            <h1 className="font-display text-2xl font-bold text-gray-900 dark:text-white mb-2">Booking Confirmed!</h1>
+            <p className="text-gray-500 mb-4">Your African adventure is booked. Check your email for full details.</p>
+            <div className="bg-safari-50 dark:bg-safari-900/20 rounded-2xl p-4 mb-6">
+              <p className="text-xs text-gray-400 mb-1">Booking reference</p>
+              <p className="font-mono text-xl font-bold text-safari-700">{bookingRef}</p>
             </div>
             <div className="flex flex-col gap-3">
               <button onClick={() => router.push('/dashboard')} className="w-full bg-safari-700 text-white py-3 rounded-xl font-semibold hover:bg-safari-800 transition-colors">
@@ -278,18 +271,6 @@ export default function CheckoutPage() {
                         <div className="text-xs text-gray-500">Cards, mobile money, bank transfer</div>
                       </div>
                     </div>
-                    <div className="rounded-xl border border-dashed border-safari-300 bg-white dark:bg-gray-800 p-4">
-                      <p className="font-medium text-gray-900 dark:text-white text-sm mb-2">Need more time before paying?</p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">You can request a quote or reservation first and we’ll follow up with a tailored plan before any payment is made.</p>
-                      <div className="flex flex-wrap gap-2">
-                        <button type="button" onClick={() => setSelectedMode('payment')} className={`px-3 py-2 rounded-full text-sm font-medium transition-colors ${selectedMode === 'payment' ? 'bg-safari-700 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}`}>
-                          Pay now
-                        </button>
-                        <button type="button" onClick={() => setSelectedMode('quote')} className={`px-3 py-2 rounded-full text-sm font-medium transition-colors ${selectedMode === 'quote' ? 'bg-amber-600 text-white' : 'bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-amber-900/40'}`}>
-                          Request a quote
-                        </button>
-                      </div>
-                    </div>
                   </div>
                   <div className="flex items-center gap-2 text-xs text-gray-400 mb-6 bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
                     <Shield className="w-4 h-4 text-safari-600 flex-shrink-0" />
@@ -309,9 +290,9 @@ export default function CheckoutPage() {
                         Sign in to continue
                       </button>
                     ) : (
-                      <button onClick={() => submitBooking(selectedMode)} disabled={loading}
-                        className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-semibold transition-colors disabled:opacity-60 ${selectedMode === 'quote' ? 'bg-amber-600 text-white hover:bg-amber-700' : 'bg-safari-700 text-white hover:bg-safari-800'}`}>
-                        {loading ? <><Loader className="w-5 h-5 animate-spin" /> Processing…</> : selectedMode === 'quote' ? 'Request quote / reservation' : 'Pay for booking'}
+                      <button onClick={handlePayment} disabled={loading}
+                        className="flex-1 flex items-center justify-center gap-2 bg-safari-700 text-white py-3 rounded-xl font-semibold hover:bg-safari-800 transition-colors disabled:opacity-60">
+                        {loading ? <><Loader className="w-5 h-5 animate-spin" /> Processing…</> : 'Pay for booking'}
                       </button>
                     )}
                   </div>
