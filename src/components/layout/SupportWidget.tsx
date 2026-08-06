@@ -267,8 +267,9 @@ export function SupportWidget() {
         console.error('[SupportWidget] Recovery attempt failed:', retryErr)
       }
       
-      toast.error('Could not connect to live chat.')
-      console.error(err)
+      const errMsg = err?.response?.data?.message || err?.message || 'Unknown connection error'
+      toast.error(`Could not connect: ${errMsg}`)
+      console.error('[SupportWidget] Start chat error details:', err)
     }
   }
 
