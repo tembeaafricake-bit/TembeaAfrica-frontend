@@ -194,19 +194,79 @@ export function SupportWidget() {
 
   // 4. Start Chat
   const handleStartChat = async (initialTopic = 'Travel Inquiry') => {
-    if (!visitorId) return
+    let currentVisitorId = visitorId
+    
+    // Self-healing: if visitorId isn't initialized yet, try to initialize it immediately
+    if (!currentVisitorId) {
+      try {
+        const userAgent = typeof window !== 'undefined' ? navigator.userAgent : ''
+        const referrer = typeof document !== 'undefined' ? document.referrer : ''
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent)
+        const visitor = await supportApi.initVisitor({
+          device: isMobile ? 'Mobile' : 'Desktop',
+          browser: userAgent.substring(0, 100),
+          referrer: referrer.substring(0, 200),
+        })
+        if (visitor && visitor._id) {
+          localStorage.setItem('tembea_support_visitor_id', visitor._id)
+          setVisitorId(visitor._id)
+          currentVisitorId = visitor._id
+        }
+      } catch (e) {
+        console.error('[SupportWidget] Immediate visitor init failed:', e)
+      }
+    }
+
+    if (!currentVisitorId) {
+      toast.error('Could not connect to live chat. Please refresh the page.')
+      return
+    }
+
     try {
-      const conv = await supportApi.startConversation(visitorId, initialTopic)
+      const conv = await supportApi.startConversation(currentVisitorId, initialTopic)
       setConversation(conv)
       
       // Join conversation room in socket
-      const socket = connectSupportSocket(visitorId)
+      const socket = connectSupportSocket(currentVisitorId)
       socket.emit('join_conversation', { conversationId: conv._id })
 
       // Fetch message history
       const history = await supportApi.getMessages(conv._id)
       setMessages(history.data || [])
-    } catch (err) {
+    } catch (err: any) {
+      // Clear localStorage and retry once on failure (e.g. database reset or visitor not found)
+      console.warn('[SupportWidget] Start conversation failed, triggering self-healing recovery:', err)
+      localStorage.removeItem('tembea_support_visitor_id')
+      setVisitorId(null)
+      
+      try {
+        const userAgent = typeof window !== 'undefined' ? navigator.userAgent : ''
+        const referrer = typeof document !== 'undefined' ? document.referrer : ''
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent)
+        
+        const visitor = await supportApi.initVisitor({
+          device: isMobile ? 'Mobile' : 'Desktop',
+          browser: userAgent.substring(0, 100),
+          referrer: referrer.substring(0, 200),
+        })
+        if (visitor && visitor._id) {
+          localStorage.setItem('tembea_support_visitor_id', visitor._id)
+          setVisitorId(visitor._id)
+          
+          const conv = await supportApi.startConversation(visitor._id, initialTopic)
+          setConversation(conv)
+          
+          const socket = connectSupportSocket(visitor._id)
+          socket.emit('join_conversation', { conversationId: conv._id })
+          
+          const history = await supportApi.getMessages(conv._id)
+          setMessages(history.data || [])
+          return
+        }
+      } catch (retryErr) {
+        console.error('[SupportWidget] Recovery attempt failed:', retryErr)
+      }
+      
       toast.error('Could not connect to live chat.')
       console.error(err)
     }
