@@ -281,6 +281,24 @@ export function SupportWidget() {
     if (!text.trim() && attachmentUrls.length === 0) return
     if (!conversation || !visitorId) return
 
+    const optimisticMessage: ChatMessage = {
+      _id: `local-${Date.now()}`,
+      conversationId: conversation._id,
+      senderId: visitorId,
+      senderType: 'visitor',
+      content: text,
+      attachments: attachmentUrls.length > 0 ? attachmentUrls.map((url, index) => ({
+        url,
+        filename: `attachment-${index + 1}`,
+        fileType: 'file',
+        size: 0,
+      })) : undefined,
+      readBy: [visitorId],
+      createdAt: new Date().toISOString(),
+    }
+
+    setMessages((prev) => [...prev, optimisticMessage])
+
     try {
       const socket = getSupportSocket()
       if (socket && socket.connected) {
@@ -299,7 +317,7 @@ export function SupportWidget() {
           content: text,
           attachments: attachmentUrls,
         })
-        setMessages((prev) => [...prev, saved])
+        setMessages((prev) => prev.filter((m) => m._id !== optimisticMessage._id).concat(saved))
       }
 
       if (textToSend === undefined) {
@@ -309,6 +327,7 @@ export function SupportWidget() {
       // Stop typing emitter
       emitTyping(false)
     } catch (err) {
+      setMessages((prev) => prev.filter((m) => m._id !== optimisticMessage._id))
       toast.error('Failed to send message.')
       console.error(err)
     }
